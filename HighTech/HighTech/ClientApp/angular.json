@@ -132,5 +132,8 @@
       }
     }
   },
-  "defaultProject": "HighTech"
+  "defaultProject": "HighTech",
+  "cli": {
+    "analytics": "d0b06f54-521d-4e62-91bb-89a3559e8eeb"
+  }
 }
