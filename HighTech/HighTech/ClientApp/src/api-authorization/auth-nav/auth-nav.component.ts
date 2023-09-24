@@ -4,11 +4,11 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-login-menu',
-  templateUrl: './login-menu.component.html',
-  styleUrls: ['./login-menu.component.css']
+  selector: 'app-auth-nav',
+  templateUrl: './auth-nav.component.html',
+  styleUrls: ['./auth-nav.component.css']
 })
-export class LoginMenuComponent implements OnInit {
+export class AuthNavComponent implements OnInit {
   public isAuthenticated?: Observable<boolean>;
   public userName?: Observable<string | null | undefined>;
 

@@ -1,17 +1,17 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { LoginMenuComponent } from './login-menu.component';
+import { AuthNavComponent } from './auth-nav.component';
 import { AuthorizeService } from '../authorize.service';
 import { of } from 'rxjs';
 
 describe('LoginMenuComponent', () => {
-  let component: LoginMenuComponent;
-  let fixture: ComponentFixture<LoginMenuComponent>;
+  let component: AuthNavComponent;
+  let fixture: ComponentFixture<AuthNavComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule], 
-      declarations: [ LoginMenuComponent ]
+      declarations: [ AuthNavComponent ]
     })
     .compileComponents();
   }));
@@ -24,7 +24,7 @@ describe('LoginMenuComponent', () => {
     spyOn(authService, 'getUserFromStorage').and.returnValue(
       of(null));
 
-    fixture = TestBed.createComponent(LoginMenuComponent);
+    fixture = TestBed.createComponent(AuthNavComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
