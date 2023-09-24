@@ -396,3 +396,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/HighTech/HighTech/ClientApp/.angular/cache/15.2.7
