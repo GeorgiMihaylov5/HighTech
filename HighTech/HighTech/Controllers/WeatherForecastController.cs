@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HighTech.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Administrator")]
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase

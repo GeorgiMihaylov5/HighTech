@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthorizeService } from '../authorize.service';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
+import { ITokenUser } from '../models/token-user.model';
 
 @Component({
   selector: 'app-auth-nav',
@@ -10,12 +11,20 @@ import { map } from 'rxjs/operators';
 })
 export class AuthNavComponent implements OnInit {
   public isAuthenticated?: Observable<boolean>;
-  public userName?: Observable<string | null | undefined>;
+  public name: Observable<string | null>;
 
-  constructor(private authorizeService: AuthorizeService) { }
+  constructor(private authorizeService: AuthorizeService) {
+    this.setData();
+  }
 
   ngOnInit() {
+    this.authorizeService.authorization.subscribe(_ => {
+      this.setData();
+    })
+  }
+
+  setData() {
     this.isAuthenticated = this.authorizeService.isAuthenticated();
-    this.userName = this.authorizeService.getUser().pipe(map(u => u && u.name));
+    this.name = this.authorizeService.getUserName();
   }
 }

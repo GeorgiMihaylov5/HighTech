@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthorizeService, AuthenticationResultStatus } from '../authorize.service';
+import { AuthorizeService } from '../authorize.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { LoginActions, QueryParameterNames, ApplicationPaths, ReturnUrlType } from '../api-authorization.constants';
+import { AuthenticationResultStatus, INavigationState } from '../models/navigation-state.model';
 
 // The main responsibility of this component is to handle the user's login process.
 // This is the starting point for the login process. Any component that needs to authenticate
@@ -123,6 +124,3 @@ export class LoginComponent implements OnInit {
   }
 }
 
-interface INavigationState {
-  [ReturnUrlType]: string;
-}

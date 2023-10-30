@@ -1,14 +1,58 @@
 <div class="register-container">
-    <form (ngSubmit)="login()">
+    <form (ngSubmit)="register(f)" #f="ngForm">
       <h2>Login</h2>
+      <div class="form-group">
+        <label for="firstname">First Name:</label>
+        <input
+          type="text"
+          id="firstname"
+          name="firstname"
+          ngModel
+        />
+      </div>
+      <div class="form-group">
+        <label for="lastname">Last Name:</label>
+        <input
+          type="text"
+          id="lastname"
+          name="lastname"
+          ngModel
+        />
+      </div>
+      <div class="form-group">
+        <label for="phone-number">Phone Number:</label>
+        <input
+          type="text"
+          id="phone-number"
+          name="phone-number"
+          ngModel
+        />
+      </div>
+      <div class="form-group">
+        <label for="address">Address:</label>
+        <input
+          type="text"
+          id="address"
+          name="address"
+          ngModel
+        />
+      </div>
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          ngModel
+        />
+      </div>
       <div class="form-group">
         <label for="username">Username:</label>
         <input
           type="text"
           id="username"
           name="username"
-          [(ngModel)] = "username"
-          required
+          ngModel
         />
       </div>
       <div class="form-group">
@@ -17,21 +61,24 @@
           type="password"
           id="password"
           name="password"
-          [(ngModel)] = "password"
-          required
+          ngModel
         />
       </div>
       <div class="form-group">
-        <label for="password">Confirm Password:</label>
+        <label for="confirm-password">Confirm Password:</label>
         <input
           type="password"
-          id="password"
-          name="password"
-          [(ngModel)] = "confirmPassword"
-          required
+          id="confirm-password"
+          name="confirm-password"
+          ngModel
         />
       </div>
       <button type="submit">Login</button>
     </form>
   </div>
+
+
+
+
+
   

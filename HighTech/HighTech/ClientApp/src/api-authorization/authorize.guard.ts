@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, combineLatest, of } from 'rxjs';
 import { AuthorizeService } from './authorize.service';
-import { tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { ApplicationPaths, QueryParameterNames } from './api-authorization.constants';
 
 @Injectable({
@@ -14,9 +14,23 @@ export class AuthorizeGuard implements CanActivate {
   canActivate(
     _next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-      return this.authorize.isAuthenticated()
-        .pipe(tap(isAuthenticated => this.handleAuthorization(isAuthenticated, state)));
+    return combineLatest([
+        this.authorize.isAuthenticated(),
+        this.authorize.getUser()
+      ])
+      .pipe(map(data => {
+        const isAuthenticated = data[0];
+        const role = data[1]?.role;
+
+        if (this.handleAuthorization(isAuthenticated, state)) {
+          return role === _next.data.role as string;
+        }
+
+        return false;
+      })
+      )
   }
+
 
   private handleAuthorization(isAuthenticated: boolean, state: RouterStateSnapshot) {
     if (!isAuthenticated) {
@@ -25,6 +39,9 @@ export class AuthorizeGuard implements CanActivate {
           [QueryParameterNames.ReturnUrl]: state.url
         }
       });
+
+      return false;
     }
+    return true;
   }
 }

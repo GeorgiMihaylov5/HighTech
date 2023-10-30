@@ -1,5 +1,5 @@
 <div class="login-container">
-    <form (ngSubmit)="login()">
+    <form (ngSubmit)="login(f)" #f="ngForm">
       <h2>Login</h2>
       <div class="form-group">
         <label for="username">Username:</label>
@@ -7,7 +7,7 @@
           type="text"
           id="username"
           name="username"
-          [(ngModel)] = "username"
+          ngModel
           required
         />
       </div>
@@ -17,11 +17,10 @@
           type="password"
           id="password"
           name="password"
-          [(ngModel)] = "password"
+          ngModel
           required
         />
       </div>
       <button type="submit">Login</button>
     </form>
   </div>
-  

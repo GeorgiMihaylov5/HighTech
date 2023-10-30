@@ -11,7 +11,7 @@
     "HighTech": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:7140;http://localhost:5222",
+      "applicationUrl": "https://localhost:7140",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.SpaProxy"

@@ -9,6 +9,10 @@ import { ApplicationPaths } from './api-authorization.constants';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
+export function tokenGetter() {
+  return localStorage.getItem("access_token");
+}
+
 @NgModule({
   imports: [
     CommonModule,
