@@ -20,7 +20,6 @@ namespace HighTech.Controllers
         private readonly ILogger<ChangePasswordModel> logger;
         private readonly IClientService service;
         private readonly JWTService jwtService;
-        private string[] roles = new string[1];
 
         public ClientsController(SignInManager<ApplicationUser> _signInManager,
             UserManager<ApplicationUser> _userManager,
@@ -55,42 +54,9 @@ namespace HighTech.Controllers
                 return Unauthorized("Invalid username or password!");
             }
             var userRoles = await userManager.GetRolesAsync(user);
-            roles = userRoles.ToArray();
 
-            var a = CreateApplicationUserDto(user);
-            return a;
-
-            //try
-            //{
-            //    await signInManager.SignOutAsync();
-            //}
-            //catch
-            //{
-
-            //}
-            //var result = await signInManager.PasswordSignInAsync(registerModel.Username, registerModel.Password, true, lockoutOnFailure: false);
-
-            //if (!result.Succeeded)
-            //{
-            //    return BadRequest();
-            //}
-            //return Json(result);
+            return Json(CreateApplicationUserDto(user, userRoles));
         }
-
-        public UserDto CreateApplicationUserDto(ApplicationUser user)
-        {
-            return new UserDto
-            {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                JWT = jwtService.CreateJWT(user, roles)
-            };
-        }
-
-
-
-
-
 
         [HttpPost]
         public async Task<IActionResult> Register(RegisterModel registerModel)
@@ -111,15 +77,6 @@ namespace HighTech.Controllers
 
             var result = await userManager.CreateAsync(user, registerModel.Password);
 
-            if (!result.Succeeded)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            return Ok(user);
-
-            
-
             if (result.Succeeded)
             {
                 var created = service.CreateClient(registerModel.Address ?? string.Empty, user.Id);
@@ -129,11 +86,23 @@ namespace HighTech.Controllers
                     await userManager.AddToRoleAsync(user, "Client");
                     await signInManager.SignInAsync(user, isPersistent: false);
 
-                    return Json(user);
+                    var userRoles = await userManager.GetRolesAsync(user);
+
+                    return Json(CreateApplicationUserDto(user, userRoles));
                 }
             }
 
-            return BadRequest();
+            return BadRequest(result.Errors);
+        }
+
+        private UserDto CreateApplicationUserDto(ApplicationUser user, IList<string> roles)
+        {
+            return new UserDto
+            {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                JWT = jwtService.CreateJWT(user, roles)
+            };
         }
 
     }

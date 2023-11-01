@@ -1,14 +1,14 @@
 import { Component, Inject, Input } from "@angular/core";
-import { AuthenticationResultStatus, INavigationState } from "../models/navigation-state.model";
+import { AuthenticationResultStatus, INavigationState } from "../../models/navigation-state.model";
 import { BehaviorSubject } from "rxjs";
-import { AuthorizeService } from "../authorize.service";
-import { ApplicationPaths, QueryParameterNames } from "../api-authorization.constants";
+import { AuthorizeService } from "../../services/authorize.service";
+import { ApplicationPaths, QueryParameterNames } from "../../api-authorization.constants";
 import { NgForm } from "@angular/forms";
-import { IApplicationUser } from "../models/user.model";
-import { LoginRM } from "../models/login-request.model";
+import { AppUser } from "../../models/user.model";
+import { LoginRM } from "../../models/login-request.model";
 import { HttpClient } from "@angular/common/http";
 import { ActivatedRoute, Router } from "@angular/router";
-import { User } from "oidc-client";
+import { AuthUser } from "../../models/token-user.model";
 
 @Component({
   selector: 'app-login',
@@ -28,13 +28,10 @@ export class LoginComponent {
   }
 
   public async login(form: NgForm): Promise<void> {
-    this.http.post<IApplicationUser>(this.baseUrl + 'clients/login', form.value).subscribe(async(user: IApplicationUser) => {
+    const returnUrl = ''
+    const state: INavigationState = { returnUrl };
 
-      const returnUrl = ''
-      const state: INavigationState = { returnUrl };
-
-      const result = await this.authService.signIn(state, user);
-
+    this.authService.login(state, form.value).subscribe(async result => {
       this.message.next(null);
       switch (result.status) {
         case AuthenticationResultStatus.Redirect:
@@ -50,7 +47,7 @@ export class LoginComponent {
         default:
           throw new Error(`Invalid status result ${(result as any).status}.`);
       }
-    })
+    });
   }
 
   private async navigateToReturnUrl(returnUrl: string) {

@@ -16,12 +16,10 @@ namespace HighTech.Services
             config = _config;
             jwtKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JWT:Key"]));
         }
-        public string CreateJWT(ApplicationUser user, string[]? roles)
+        public string CreateJWT(ApplicationUser user, IList<string> roles)
         {
             var userClaims = new List<Claim>()
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.GivenName, user.FirstName!),
                 new Claim(ClaimTypes.Surname, user.LastName!),
             };
@@ -34,7 +32,7 @@ namespace HighTech.Services
                 }
             }
 
-            var credentials = new SigningCredentials(jwtKey, SecurityAlgorithms.HmacSha512Signature);
+            var credentials = new SigningCredentials(jwtKey, SecurityAlgorithms.HmacSha256);
             var tokenDecriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(userClaims),

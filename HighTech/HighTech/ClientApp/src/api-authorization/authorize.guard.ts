@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { Observable, combineLatest, of } from 'rxjs';
-import { AuthorizeService } from './authorize.service';
+import { AuthorizeService } from './services/authorize.service';
 import { map, tap } from 'rxjs/operators';
 import { ApplicationPaths, QueryParameterNames } from './api-authorization.constants';
 
@@ -16,7 +16,7 @@ export class AuthorizeGuard implements CanActivate {
     state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
     return combineLatest([
         this.authorize.isAuthenticated(),
-        this.authorize.getUser()
+        this.authorize.getAuthUser()
       ])
       .pipe(map(data => {
         const isAuthenticated = data[0];

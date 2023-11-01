@@ -1,4 +1,4 @@
-export interface ITokenUser {
+export interface AuthUser {
     given_name: string;
     family_name: string;
     jwt: string;

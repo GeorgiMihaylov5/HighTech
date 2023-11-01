@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthorizeService } from '../authorize.service';
+import { AuthorizeService } from '../../services/authorize.service';
 import { Observable, of } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
-import { ITokenUser } from '../models/token-user.model';
 
 @Component({
   selector: 'app-auth-nav',
@@ -18,7 +16,7 @@ export class AuthNavComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.authorizeService.authorization.subscribe(_ => {
+    this.authorizeService.authorizationChange.subscribe(_ => {
       this.setData();
     })
   }

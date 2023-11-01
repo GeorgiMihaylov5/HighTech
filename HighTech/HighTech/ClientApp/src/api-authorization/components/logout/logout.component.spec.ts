@@ -3,7 +3,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { LogoutComponent } from './logout.component';
 import { HomeComponent } from 'src/app/home/home.component';
 import { ActivatedRoute, convertToParamMap, Params, UrlSegment } from '@angular/router';
-import { LogoutActions } from '../api-authorization.constants';
+import { LogoutActions } from '../../api-authorization.constants';
 
 describe('LogoutComponent', () => {
   let component: LogoutComponent;

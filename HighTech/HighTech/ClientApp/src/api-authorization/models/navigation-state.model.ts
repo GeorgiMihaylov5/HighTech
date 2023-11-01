@@ -28,7 +28,3 @@ export enum AuthenticationResultStatus {
     Redirect,
     Fail
 }
-
-export interface IUser {
-    name?: string;
-}

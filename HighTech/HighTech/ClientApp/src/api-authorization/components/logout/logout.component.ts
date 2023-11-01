@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthorizeService } from '../authorize.service';
+import { AuthorizeService } from '../../services/authorize.service';
 import { BehaviorSubject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { take } from 'rxjs/operators';
-import { LogoutActions, ApplicationPaths, ReturnUrlType } from '../api-authorization.constants';
-import { AuthenticationResultStatus } from '../models/navigation-state.model';
+import { LogoutActions, ApplicationPaths, ReturnUrlType } from '../../api-authorization.constants';
+import { AuthenticationResultStatus } from '../../models/navigation-state.model';
 
 // The main responsibility of this component is to handle the user's logout process.
 // This is the starting point for the logout process, which is usually initiated when a
@@ -23,20 +23,14 @@ export class LogoutComponent implements OnInit {
     private router: Router) { }
 
   async ngOnInit() {
-
     const action = this.activatedRoute.snapshot.url[1];
     switch (action.path) {
      case LogoutActions.Logout:
        if (!!window.history.state.local) {
          await this.logout(this.getReturnUrl());
        } else {
-         // This prevents regular links to <app>/authentication/logout from triggering a logout
          this.message.next('The logout was not initiated from within the page.');
        }
-
-       break;
-     case LogoutActions.LogoutCallback:
-       await this.processLogoutCallback();
        break;
      case LogoutActions.LoggedOut:
        this.message.next('You successfully logged out!');
@@ -48,11 +42,15 @@ export class LogoutComponent implements OnInit {
 
   private async logout(returnUrl: string): Promise<void> {
     const state: INavigationState = { returnUrl };
+
+    this
+
+
     const isauthenticated = await this.authorizeService.isAuthenticated().pipe(
       take(1)
     ).toPromise();
     if (isauthenticated) {
-      const result = await this.authorizeService.signOut(state);
+      const result = await this.authorizeService.logout(state);
       switch (result.status) {
         case AuthenticationResultStatus.Redirect:
           break;
@@ -70,24 +68,6 @@ export class LogoutComponent implements OnInit {
     }
   }
 
-  private async processLogoutCallback(): Promise<void> {
-    const url = window.location.href;
-    const result = await this.authorizeService.completeSignOut(url);
-    switch (result.status) {
-      case AuthenticationResultStatus.Redirect:
-        // There should not be any redirects as the only time completeAuthentication finishes
-        // is when we are doing a redirect sign in flow.
-        throw new Error('Should not redirect.');
-      case AuthenticationResultStatus.Success:
-        await this.navigateToReturnUrl(this.getReturnUrl(result.state));
-        break;
-      case AuthenticationResultStatus.Fail:
-        this.message.next(result.message);
-        break;
-      default:
-        throw new Error('Invalid authentication result status.');
-    }
-  }
 
   private async navigateToReturnUrl(returnUrl: string) {
     await this.router.navigateByUrl(returnUrl, {
