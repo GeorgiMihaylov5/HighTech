@@ -39,16 +39,17 @@ namespace HighTech.Services
             return context.Clients.ToList();
         }
 
+        //TODO
         public string GetFullName(string clientId)
         {
             throw new NotImplementedException();
         }
-
+        //TODO
         public bool Remove(string clientId)
         {
             throw new NotImplementedException();
         }
-
+        //TODO
         public bool Update(string id, string phone, string address)
         {
             throw new NotImplementedException();

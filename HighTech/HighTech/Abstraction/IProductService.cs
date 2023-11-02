@@ -11,6 +11,7 @@ namespace HighTech.Abstraction
         public bool Remove(string id);
         public bool MakeDiscount(string id, int discount);
         public bool RemoveDiscount(string id);
+        //TODO
         // List<Product> Search(string filter, int minPrice, int maxPrice, ICollection<string> manufacturers, ICollection<string> models, IEnumerable<Product> oldProducts);
     }
 }
