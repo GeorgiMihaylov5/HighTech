@@ -43,6 +43,8 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddTransient<IClientService, ClientService>();
 builder.Services.AddTransient<IJWTService, JWTService>();
+builder.Services.AddTransient<IProductService, ProductService>();
+
 
 builder.Services.Configure<JWTServiceOption>(options =>
 {
