@@ -17,11 +17,11 @@ namespace HighTech.Controllers
         private readonly SignInManager<AppUser> signInManager;
         private readonly ILogger<ChangePasswordModel> logger;
         private readonly IClientService service;
-        private readonly JWTService jwtService;
+        private readonly IJWTService jwtService;
 
         public ClientsController(SignInManager<AppUser> _signInManager,
             UserManager<AppUser> _userManager,
-            JWTService _jwtService,
+            IJWTService _jwtService,
             ILogger<ChangePasswordModel> _logger, 
             IClientService _clientService)
         {
