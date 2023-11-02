@@ -1,6 +1,7 @@
 using HighTech.Abstraction;
 using HighTech.Data;
 using HighTech.Models;
+using HighTech.Options;
 using HighTech.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -23,7 +24,6 @@ builder.Services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireCo
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-builder.Services.AddScoped<JWTService>();
 
 builder.Services.AddAuthentication()
     .AddJwtBearer(options =>
@@ -42,7 +42,14 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 builder.Services.AddTransient<IClientService, ClientService>();
+builder.Services.AddTransient<IJWTService, JWTService>();
 
+builder.Services.Configure<JWTServiceOption>(options =>
+{
+    options.JwtKey = builder.Configuration["JWT:Key"];
+    options.Issuer = builder.Configuration["JWT:Issuer"];
+    options.ExpiresDays = int.Parse(builder.Configuration["JWT:ExpiresDays"]);
+});
 
 builder.Services.Configure<IdentityOptions>(option =>
 {
@@ -53,8 +60,7 @@ builder.Services.Configure<IdentityOptions>(option =>
     option.Password.RequireNonAlphanumeric = false;
     option.Password.RequireUppercase = false;
     option.Password.RequiredUniqueChars = 0;
-}
-            );
+});
 
 var app = builder.Build();
 
