@@ -40,11 +40,11 @@ namespace PernikComputers.Infrastructure
 
         private static async Task SeedAdministrator(IServiceProvider serviceProvider)
         {
-            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
 
             if (await userManager.FindByNameAsync("admin") == null)
             {
-                ApplicationUser user = new ApplicationUser();
+                AppUser user = new AppUser();
                 user.UserName = "admin";
                 user.Email = "admin@admin.com";
 

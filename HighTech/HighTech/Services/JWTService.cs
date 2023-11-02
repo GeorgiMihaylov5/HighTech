@@ -16,7 +16,7 @@ namespace HighTech.Services
             config = _config;
             jwtKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["JWT:Key"]));
         }
-        public string CreateJWT(ApplicationUser user, IList<string> roles)
+        public string CreateJWT(AppUser user, IList<string> roles)
         {
             var userClaims = new List<Claim>()
             {

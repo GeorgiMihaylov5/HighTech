@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HighTech.Models
 {
@@ -12,6 +12,6 @@ namespace HighTech.Models
         [MaxLength(40)]
         public string? Address { get; set; }
         public string? UserId { get; set; }
-        public virtual ApplicationUser? User { get; set; }
+        public virtual AppUser? User { get; set; }
     }
 }

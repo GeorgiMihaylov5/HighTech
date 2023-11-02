@@ -1,20 +1,42 @@
-﻿using Duende.IdentityServer.EntityFramework.Options;
-using HighTech.Models;
-using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
+﻿using HighTech.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace HighTech.Data
 {
-    public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<AppUser>
     {
-        public ApplicationDbContext(DbContextOptions options, IOptions<OperationalStoreOptions> operationalStoreOptions)
-            : base(options, operationalStoreOptions)
+        public ApplicationDbContext(DbContextOptions options)
+            : base(options)
         {
 
         }
 
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Client> Clients { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Field> Fields { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<ProductField> ProductsFields { get; set; }
+        public DbSet<CategoryField> CategoriesFields { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<CategoryField>(entity =>
+            {
+                entity.HasKey(e => new { e.CategoryId, e.FieldId });
+
+                entity.HasOne(e => e.Category)
+                    .WithMany(c => c.CategoryFields)
+                    .HasForeignKey(e => e.CategoryId);
+
+                entity.HasOne(e => e.Field)
+                    .WithMany(a => a.CategoryFields)
+                    .HasForeignKey(e => e.FieldId);
+            });
+        }
     }
 }

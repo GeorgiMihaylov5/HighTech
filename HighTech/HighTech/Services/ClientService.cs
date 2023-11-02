@@ -1,7 +1,6 @@
 ﻿using HighTech.Abstraction;
 using HighTech.Data;
 using HighTech.Models;
-using static Duende.IdentityServer.Models.IdentityResources;
 
 namespace HighTech.Services
 {

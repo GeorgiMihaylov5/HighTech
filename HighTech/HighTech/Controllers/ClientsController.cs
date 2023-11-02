@@ -15,14 +15,14 @@ namespace HighTech.Controllers
     [Route("[controller]/[action]")]
     public class ClientsController : Controller
     {
-        private readonly UserManager<ApplicationUser> userManager;
-        private readonly SignInManager<ApplicationUser> signInManager;
+        private readonly UserManager<AppUser> userManager;
+        private readonly SignInManager<AppUser> signInManager;
         private readonly ILogger<ChangePasswordModel> logger;
         private readonly IClientService service;
         private readonly JWTService jwtService;
 
-        public ClientsController(SignInManager<ApplicationUser> _signInManager,
-            UserManager<ApplicationUser> _userManager,
+        public ClientsController(SignInManager<AppUser> _signInManager,
+            UserManager<AppUser> _userManager,
             JWTService _jwtService,
             ILogger<ChangePasswordModel> _logger, 
             IClientService _clientService)
@@ -67,7 +67,7 @@ namespace HighTech.Controllers
                 return BadRequest($"An existing account is using {registerModel.Email}. Please try with another email!");
             };
 
-            var user = new ApplicationUser
+            var user = new AppUser
             {
                FirstName = registerModel.FirstName,
                LastName = registerModel.LastName,
@@ -95,7 +95,7 @@ namespace HighTech.Controllers
             return BadRequest(result.Errors);
         }
 
-        private UserDto CreateApplicationUserDto(ApplicationUser user, IList<string> roles)
+        private UserDto CreateApplicationUserDto(AppUser user, IList<string> roles)
         {
             return new UserDto
             {
