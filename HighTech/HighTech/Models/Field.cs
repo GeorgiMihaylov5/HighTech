@@ -8,6 +8,6 @@ namespace HighTech.Models
         public string? Id { get; set; }
         public string? Name { get; set; }
         public TypeCode TypeCode { get; set; }
-        public virtual ICollection<CategoryField>? CategoryFields { get; set; }
+        public virtual ICollection<Category>? Categories { get; set; }
     }
 }

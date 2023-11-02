@@ -39,7 +39,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 builder.Services.AddTransient<IClientService, ClientService>();
-builder.Services.AddTransient<IEmployeeService, IEmployeeService>();
+builder.Services.AddTransient<IEmployeeService, EmployeeService>();
 builder.Services.AddTransient<IJWTService, JWTService>();
 builder.Services.AddTransient<IProductService, ProductService>();
 

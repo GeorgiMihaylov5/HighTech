@@ -19,24 +19,5 @@ namespace HighTech.Data
         public DbSet<Field> Fields { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<ProductField> ProductsFields { get; set; }
-        public DbSet<CategoryField> CategoriesFields { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<CategoryField>(entity =>
-            {
-                entity.HasKey(e => new { e.CategoryId, e.FieldId });
-
-                entity.HasOne(e => e.Category)
-                    .WithMany(c => c.CategoryFields)
-                    .HasForeignKey(e => e.CategoryId);
-
-                entity.HasOne(e => e.Field)
-                    .WithMany(a => a.CategoryFields)
-                    .HasForeignKey(e => e.FieldId);
-            });
-        }
     }
 }
