@@ -1,6 +1,6 @@
-﻿namespace HighTech.RequestModels
+﻿namespace HighTech.DTOs
 {
-    public class RegisterModel
+    public class RegisterDTO
     {
         public string? Username { get; set; }
         public string? Password { get; set; }

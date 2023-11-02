@@ -39,7 +39,7 @@ namespace HighTech.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<ActionResult<UserDto>> Login(LoginModel loginModel)
+        public async Task<ActionResult<UserDto>> Login(LoginDTO loginModel)
         {
             var user = await userManager.FindByNameAsync(loginModel.Username);
             if (user is null)
@@ -59,7 +59,7 @@ namespace HighTech.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterModel registerModel)
+        public async Task<IActionResult> Register(RegisterDTO registerModel)
         {
 
             if (await userManager.Users.AnyAsync(u => u.Email == registerModel.Email!.ToLower()))
