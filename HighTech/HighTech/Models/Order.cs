@@ -5,6 +5,7 @@ namespace HighTech.Models
 {
     public class Order
     {
+        //TODO
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string? Id { get; set; }
         public DateTime OrderedOn { get; set; }
