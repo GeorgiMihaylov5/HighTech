@@ -2,11 +2,9 @@
 using HighTech.Areas.Identity.Pages.Account.Manage;
 using HighTech.DTOs;
 using HighTech.Models;
-using HighTech.RequestModels;
 using HighTech.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 
 namespace HighTech.Controllers
