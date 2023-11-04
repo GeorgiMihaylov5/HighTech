@@ -13,6 +13,20 @@ namespace HighTech.Services
         {
             context = _context;
         }
+        public ProductField AddProductField(string productId, string fieldId, string value)
+        {
+            var field = new ProductField()
+            {
+                ProductId = productId,
+                FieldId = fieldId,
+                Value = value,
+            };
+
+            context.ProductsFields.Add(field);
+            context.SaveChanges();
+
+            return field;
+        }
 
         public bool CreateField(string id, TypeCode typeCode)
         {
@@ -39,6 +53,20 @@ namespace HighTech.Services
             return context.SaveChanges() != 0;
         }
 
+        public bool EditProductFieldValue(string pfId, string value)
+        {
+            var productField = context.ProductsFields.FirstOrDefault(x => x.Id == pfId);
+
+            if (productField is null)
+            {
+                return false;
+            }
+
+            productField.Value = value;
+
+            return context.SaveChanges() != 0;
+        }
+
         public Field GetField(string id)
         {
             return context.Fields.FirstOrDefault(x => x.Id == id);
@@ -50,6 +78,13 @@ namespace HighTech.Services
                 .Include(x => x.ProductsFields)
                 .Where(f => f.CategoryFields!.Select(x => x.FieldId).Contains(f.Id))
                 .ToList();
+        }
+
+        public ICollection<ProductField> GetProductFields(string id)
+        {
+            return context.ProductsFields
+                .Include(pf => pf.Field)
+                .Where(x => x.ProductId == id).ToList();
         }
 
         public bool RemoveField(string id)

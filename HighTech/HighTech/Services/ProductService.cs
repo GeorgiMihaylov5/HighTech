@@ -47,7 +47,6 @@ namespace HighTech.Services
 
             return product;
         }
-
         public Product Edit(string id, string manufacturer, string model, int warranty, decimal price, decimal discount, int quantity, string image)
         {
             var product = Get(id);
@@ -116,42 +115,6 @@ namespace HighTech.Services
             product.Discount = 0;
 
             context.Products.Update(product);
-
-            return context.SaveChanges() != 0;
-        }
-
-        public ProductField AddProductField(string productId, string fieldId, string value)
-        {
-            var field = new ProductField()
-            {
-                ProductId = productId,
-                FieldId = fieldId,
-                Value = value,
-            };
-
-            context.ProductsFields.Add(field);
-            context.SaveChanges();
-
-            return field;
-        }
-
-        public ICollection<ProductField> GetProductFields(string id)
-        {
-            return context.ProductsFields
-                .Include(pf => pf.Field)
-                .Where(x => x.ProductId == id).ToList();
-        }
-
-        public bool EditProductFieldValue(string pfId, string value)
-        {
-            var productField = context.ProductsFields.FirstOrDefault(x => x.Id == pfId);
-
-            if (productField is null)
-            {
-                return false;
-            }
-
-            productField.Value = value;
 
             return context.SaveChanges() != 0;
         }

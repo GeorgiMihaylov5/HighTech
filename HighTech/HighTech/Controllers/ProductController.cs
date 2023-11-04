@@ -11,12 +11,15 @@ namespace HighTech.Controllers
     {
         private readonly IProductService productService;
         private readonly ICategoryService categoryService;
+        private readonly IFieldService fieldService;
 
         public ProductController(IProductService _productService,
-            ICategoryService _categoryService)
+            ICategoryService _categoryService,
+            IFieldService _fieldService)
         {
             productService = _productService;
             categoryService = _categoryService;
+            fieldService = _fieldService;
         }
 
         public IActionResult Get(string id)
@@ -44,7 +47,7 @@ namespace HighTech.Controllers
 
             if (products.Count == 0)
             {
-                return Json(new ProductDTO[0]);
+                return Json(Array.Empty<ProductDTO>());
             }
 
             var category = categoryService.GetCategoryByProduct(products.First().Id);
@@ -74,7 +77,7 @@ namespace HighTech.Controllers
             {
                 foreach (var field in dto.Fields)
                 {
-                    productService.AddProductField(product.Id, field.FieldName, field.Value);
+                    fieldService.AddProductField(product.Id, field.FieldName, field.Value);
                 }
             }
             dto.Id = product.Id;
@@ -98,14 +101,14 @@ namespace HighTech.Controllers
                 return Json(dto);
             }
 
-            var productFields = productService.GetProductFields(dto.Id).OrderBy(pf => pf.FieldId).ToList();
+            var productFields = fieldService.GetProductFields(dto.Id).OrderBy(pf => pf.FieldId).ToList();
             var dtoValues = dto.Fields.OrderBy(pf => pf.FieldName).Select(f => f.Value).ToList();
 
             for (int i = 0; i < productFields.Count; i++)
             {
                 if (productFields[i].Value != dtoValues[i])
                 {
-                    productService.EditProductFieldValue(productFields[i].Id, dtoValues[i]);
+                    fieldService.EditProductFieldValue(productFields[i].Id, dtoValues[i]);
                 }
             }
 
@@ -139,7 +142,7 @@ namespace HighTech.Controllers
                 Fields = new List<FieldDTO>()
             };
 
-            var productFields = productService.GetProductFields(p.Id);
+            var productFields = fieldService.GetProductFields(p.Id);
 
             if (productFields.Count > 0)
             {
