@@ -69,7 +69,7 @@ namespace HighTech.Services
             return context.SaveChanges() != 0;
         }
 
-        public Order? GetOrder(string id)
+        public Order GetOrder(string id)
         {
             return context.Orders
                 .Include(o => o.OrderedProducts)

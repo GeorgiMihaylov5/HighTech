@@ -39,7 +39,7 @@ namespace HighTech.Services
             return context.SaveChanges() != 0;
         }
 
-        public Field? GetField(string id)
+        public Field GetField(string id)
         {
             return context.Fields.FirstOrDefault(x => x.Id == id);
         }

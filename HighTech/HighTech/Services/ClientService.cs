@@ -29,7 +29,7 @@ namespace HighTech.Services
             return context.SaveChanges() != 0;
         }
 
-        public Client? GetClient(string id)
+        public Client GetClient(string id)
         {
             return context.Clients.FirstOrDefault(x => x.UserId == id);
         }

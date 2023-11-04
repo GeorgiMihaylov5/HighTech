@@ -43,17 +43,26 @@ namespace HighTech.Services
             return context.Categories.ToList();
         }
 
-        public Category? GetCategory(string id)
+        public Category GetCategory(string id)
         {
             return context.Categories.FirstOrDefault(c => c.Id == id);
+        }
+
+        public Category GetCategoryByProduct(string id)
+        {
+            return context.ProductsFields
+                .Where(pf => pf.ProductId == id)
+                .SelectMany(pf => pf.Field.CategoryFields)
+                .Select(cf => cf.Category)
+                .FirstOrDefault();
         }
 
         public bool RemoveCategory(string id)
         {
             var category = GetCategory(id);
 
-            if (category is null) 
-            { 
+            if (category is null)
+            {
                 return false;
             }
 

@@ -24,6 +24,12 @@ namespace HighTech.Services
             return context.SaveChanges() != 0;
         }
 
+        public CategoryField Get(string categoryId, string fieldId)
+        {
+            return context.CategoriesFields
+                .FirstOrDefault(cf => cf.CategoryId == categoryId && cf.FieldId == fieldId);
+        }
+
         public ICollection<CategoryField> GetAll()
         {
             return context.CategoriesFields.ToList();
@@ -31,8 +37,7 @@ namespace HighTech.Services
 
         public bool RemoveCategoryField(string categoryId, string fieldId)
         {
-            var categoryField = context.CategoriesFields
-                .FirstOrDefault(cf => cf.CategoryId == categoryId && cf.FieldId == fieldId);
+            var categoryField = Get(categoryId, fieldId);
 
             if (categoryField is null)
             {

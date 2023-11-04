@@ -29,7 +29,7 @@ namespace HighTech.Services
             return context.SaveChanges() != 0;
         }
 
-        public Employee? GetEmployee(string employeeId)
+        public Employee GetEmployee(string employeeId)
         {
             return context.Employees.FirstOrDefault(x => x.UserId == employeeId);
         }

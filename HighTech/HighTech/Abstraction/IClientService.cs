@@ -5,7 +5,7 @@ namespace HighTech.Abstraction
     public interface IClientService
     {
         public List<Client> GetClients();
-        public Client? GetClient(string id);
+        public Client GetClient(string id);
         public bool CreateClient(string address, string userId);
         public bool Remove(string clientId);
         public string GetFullName(string clientId);

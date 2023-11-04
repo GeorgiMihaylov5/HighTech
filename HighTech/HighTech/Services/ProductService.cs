@@ -1,7 +1,6 @@
 ﻿using HighTech.Abstraction;
 using HighTech.Data;
 using HighTech.Models;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 namespace HighTech.Services
@@ -15,14 +14,14 @@ namespace HighTech.Services
             context = _context;
         }
 
-        public Product? Get(string id)
+        public Product Get(string id)
         {
             return context.Products.Where(x => x.IsRemoved != true)
                 .Include(p => p.ProductFields)
                 .FirstOrDefault(x => x.Id == id);
         }
 
-        public List<Product> GetAll()
+        public ICollection<Product> GetAll()
         {
             return context.Products
                 .Where(x => x.IsRemoved != true)
@@ -30,9 +29,9 @@ namespace HighTech.Services
                 .ToList();
         }
 
-        public bool Create(string manufacturer, string model, int warranty, decimal price, decimal discount, int quantity, string image, ICollection<ProductField> fields)
+        public Product Create(string manufacturer, string model, int warranty, decimal price, decimal discount, int quantity, string image)
         {
-            context.Products.Add(new Product()
+            var product = new Product()
             {
                 Manufacturer = manufacturer,
                 Model = model,
@@ -40,20 +39,22 @@ namespace HighTech.Services
                 Price = price,
                 Discount = discount,
                 Quantity = quantity,
-                Image = image,
-                ProductFields = fields
-            });
+                Image = image
+            };
 
-            return context.SaveChanges() != 0;
+            context.Products.Add(product);
+            context.SaveChanges();
+
+            return product;
         }
 
-        public bool Edit(string id, string manufacturer, string model, int warranty, decimal price, decimal discount, int quantity, string image, ICollection<ProductField> fields)
+        public Product Edit(string id, string manufacturer, string model, int warranty, decimal price, decimal discount, int quantity, string image)
         {
             var product = Get(id);
 
             if (product is null)
             {
-                return false;
+                return null;
             }
 
             product.Manufacturer = manufacturer;
@@ -63,11 +64,11 @@ namespace HighTech.Services
             product.Discount = discount;
             product.Quantity = quantity;
             product.Image = image;
-            product.ProductFields = fields;
 
             context.Update(product);
+            context.SaveChanges();
 
-            return context.SaveChanges() != 0;
+            return product;
         }
 
         public bool Remove(string id)
@@ -115,6 +116,42 @@ namespace HighTech.Services
             product.Discount = 0;
 
             context.Products.Update(product);
+
+            return context.SaveChanges() != 0;
+        }
+
+        public ProductField AddProductField(string productId, string fieldId, string value)
+        {
+            var field = new ProductField()
+            {
+                ProductId = productId,
+                FieldId = fieldId,
+                Value = value,
+            };
+
+            context.ProductsFields.Add(field);
+            context.SaveChanges();
+
+            return field;
+        }
+
+        public ICollection<ProductField> GetProductFields(string id)
+        {
+            return context.ProductsFields
+                .Include(pf => pf.Field)
+                .Where(x => x.ProductId == id).ToList();
+        }
+
+        public bool EditProductFieldValue(string pfId, string value)
+        {
+            var productField = context.ProductsFields.FirstOrDefault(x => x.Id == pfId);
+
+            if (productField is null)
+            {
+                return false;
+            }
+
+            productField.Value = value;
 
             return context.SaveChanges() != 0;
         }

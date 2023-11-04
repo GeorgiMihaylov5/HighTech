@@ -7,11 +7,11 @@ namespace HighTech.Models
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public string? Id { get; set; }
+        public string Id { get; set; }
         [Required]
         [MaxLength(30)]
-        public string? JobTitle { get; set; }
-        public string? UserId { get; set; }
-        public virtual AppUser? User { get; set; }
+        public string JobTitle { get; set; }
+        public string UserId { get; set; } 
+        public virtual AppUser User { get; set; }
     }
 }

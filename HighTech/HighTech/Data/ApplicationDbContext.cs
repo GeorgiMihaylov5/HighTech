@@ -13,15 +13,15 @@ namespace HighTech.Data
 
         }
 
-        public DbSet<Employee> Employees { get; set; }
-        public DbSet<Client> Clients { get; set; }
-        public DbSet<Field> Fields { get; set; }
-        public DbSet<Product> Products { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderedProduct> OrderedProducts { get; set; }
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<ProductField> ProductsFields { get; set; }
-        public DbSet<CategoryField> CategoriesFields { get; set; }
+        public DbSet<Employee> Employees { get; set; } 
+        public DbSet<Client> Clients { get; set; } 
+        public DbSet<Field> Fields { get; set; } 
+        public DbSet<Product> Products { get; set; } 
+        public DbSet<Order> Orders { get; set; } 
+        public DbSet<OrderedProduct> OrderedProducts { get; set; } 
+        public DbSet<Category> Categories { get; set; } 
+        public DbSet<ProductField> ProductsFields { get; set; } 
+        public DbSet<CategoryField> CategoriesFields { get; set; } 
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
