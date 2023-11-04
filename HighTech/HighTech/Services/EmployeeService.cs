@@ -54,7 +54,7 @@ namespace HighTech.Services
         {
             var employees = GetEmployee(id);
 
-            if (employees == null)
+            if (employees is null)
             {
                 return false;
             }

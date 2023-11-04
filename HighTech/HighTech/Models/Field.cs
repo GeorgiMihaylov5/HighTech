@@ -1,13 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace HighTech.Models
+﻿namespace HighTech.Models
 {
     public class Field
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string? Id { get; set; }
-        public string? Name { get; set; }
         public TypeCode TypeCode { get; set; }
-        public virtual ICollection<Category>? Categories { get; set; }
+        public virtual ICollection<CategoryField>? CategoryFields { get; set; }
+        public virtual ICollection<ProductField>? ProductsFields { get; set; }
+
     }
 }

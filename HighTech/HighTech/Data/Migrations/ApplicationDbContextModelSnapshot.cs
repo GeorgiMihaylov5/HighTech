@@ -95,10 +95,10 @@ namespace HighTech.Data.Migrations
 
             modelBuilder.Entity("HighTech.Models.Category", b =>
                 {
-                    b.Property<string>("CategoryId")
+                    b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("CategoryId");
+                    b.HasKey("Id");
 
                     b.ToTable("Categories");
                 });
@@ -163,11 +163,7 @@ namespace HighTech.Data.Migrations
             modelBuilder.Entity("HighTech.Models.Field", b =>
                 {
                     b.Property<string>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TypeCode")
                         .HasColumnType("int");
@@ -183,9 +179,6 @@ namespace HighTech.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("Count")
-                        .HasColumnType("int");
-
                     b.Property<string>("CustomerId")
                         .HasColumnType("nvarchar(450)");
 
@@ -195,12 +188,6 @@ namespace HighTech.Data.Migrations
                     b.Property<DateTime>("OrderedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("OrderedPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("ProductId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -208,9 +195,34 @@ namespace HighTech.Data.Migrations
 
                     b.HasIndex("CustomerId");
 
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("HighTech.Models.OrderedProduct", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OrderId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<decimal>("OrderedPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ProductId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("OrderedProducts");
                 });
 
             modelBuilder.Entity("HighTech.Models.Product", b =>
@@ -452,11 +464,20 @@ namespace HighTech.Data.Migrations
                         .WithMany()
                         .HasForeignKey("CustomerId");
 
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("HighTech.Models.OrderedProduct", b =>
+                {
+                    b.HasOne("HighTech.Models.Order", "Order")
+                        .WithMany("OrderedProducts")
+                        .HasForeignKey("OrderId");
+
                     b.HasOne("HighTech.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId");
 
-                    b.Navigation("Customer");
+                    b.Navigation("Order");
 
                     b.Navigation("Product");
                 });
@@ -464,8 +485,9 @@ namespace HighTech.Data.Migrations
             modelBuilder.Entity("HighTech.Models.ProductField", b =>
                 {
                     b.HasOne("HighTech.Models.Field", "Field")
-                        .WithMany()
-                        .HasForeignKey("FieldId");
+                        .WithMany("ProductsFields")
+                        .HasForeignKey("FieldId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("HighTech.Models.Product", "Product")
                         .WithMany("ProductFields")
@@ -535,6 +557,13 @@ namespace HighTech.Data.Migrations
             modelBuilder.Entity("HighTech.Models.Field", b =>
                 {
                     b.Navigation("CategoryFields");
+
+                    b.Navigation("ProductsFields");
+                });
+
+            modelBuilder.Entity("HighTech.Models.Order", b =>
+                {
+                    b.Navigation("OrderedProducts");
                 });
 
             modelBuilder.Entity("HighTech.Models.Product", b =>

@@ -42,7 +42,7 @@ namespace PernikComputers.Infrastructure
         {
             var userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
 
-            if (await userManager.FindByNameAsync("admin") == null)
+            if (await userManager.FindByNameAsync("admin") is null)
             {
                 AppUser user = new AppUser();
                 user.UserName = "admin";

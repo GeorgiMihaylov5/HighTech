@@ -42,6 +42,10 @@ builder.Services.AddTransient<IClientService, ClientService>();
 builder.Services.AddTransient<IEmployeeService, EmployeeService>();
 builder.Services.AddTransient<IJWTService, JWTService>();
 builder.Services.AddTransient<IProductService, ProductService>();
+builder.Services.AddTransient<IFieldService, FieldService>();
+builder.Services.AddTransient<ICategoryService, CategoryService>();
+builder.Services.AddTransient<ICategoryFieldService, CategoryFieldService>();
+builder.Services.AddTransient<IOrderService, OrderService>();
 
 
 builder.Services.Configure<JWTServiceOption>(options =>

@@ -1,6 +1,8 @@
 ﻿using HighTech.Abstraction;
 using HighTech.Data;
 using HighTech.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
 
 namespace HighTech.Services
 {
@@ -15,15 +17,20 @@ namespace HighTech.Services
 
         public Product? Get(string id)
         {
-            return context.Products.Where(x => x.IsRemoved != true).FirstOrDefault(x => x.Id == id);
+            return context.Products.Where(x => x.IsRemoved != true)
+                .Include(p => p.ProductFields)
+                .FirstOrDefault(x => x.Id == id);
         }
 
         public List<Product> GetAll()
         {
-            return context.Products.Where(x => x.IsRemoved != true).ToList();
+            return context.Products
+                .Where(x => x.IsRemoved != true)
+                .Include(p => p.ProductFields)
+                .ToList();
         }
 
-        public bool Create(string manufacturer, string model, int warranty, decimal price, decimal discount, int quantity, string image)
+        public bool Create(string manufacturer, string model, int warranty, decimal price, decimal discount, int quantity, string image, ICollection<ProductField> fields)
         {
             context.Products.Add(new Product()
             {
@@ -34,16 +41,17 @@ namespace HighTech.Services
                 Discount = discount,
                 Quantity = quantity,
                 Image = image,
+                ProductFields = fields
             });
 
             return context.SaveChanges() != 0;
         }
 
-        public bool Edit(string id, string manufacturer, string model, int warranty, decimal price, decimal discount, int quantity, string image)
+        public bool Edit(string id, string manufacturer, string model, int warranty, decimal price, decimal discount, int quantity, string image, ICollection<ProductField> fields)
         {
             var product = Get(id);
 
-            if (product == null)
+            if (product is null)
             {
                 return false;
             }
@@ -55,6 +63,7 @@ namespace HighTech.Services
             product.Discount = discount;
             product.Quantity = quantity;
             product.Image = image;
+            product.ProductFields = fields;
 
             context.Update(product);
 
@@ -65,7 +74,7 @@ namespace HighTech.Services
         {
             var product = Get(id);
 
-            if (product == null)
+            if (product is null)
             {
                 return false;
             }
@@ -80,7 +89,7 @@ namespace HighTech.Services
         {
             var product = Get(id);
 
-            if (product == null)
+            if (product is null)
             {
                 return false;
             }
@@ -97,7 +106,7 @@ namespace HighTech.Services
         {
             var product = Get(id);
 
-            if (product == null)
+            if (product is null)
             {
                 return false;
             }

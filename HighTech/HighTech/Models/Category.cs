@@ -2,7 +2,7 @@
 {
     public class Category
     {
-        public string? CategoryId { get; set; }
-        public virtual ICollection<Field>? Fields { get; set; }
+        public string? Id { get; set; }
+        public virtual ICollection<CategoryField>? CategoryFields { get; set; }
     }
 }
