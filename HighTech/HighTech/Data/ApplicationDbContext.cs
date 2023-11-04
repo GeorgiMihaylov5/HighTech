@@ -21,11 +21,11 @@ namespace HighTech.Data
         public DbSet<OrderedProduct> OrderedProducts { get; set; } 
         public DbSet<Category> Categories { get; set; } 
         public DbSet<ProductField> ProductsFields { get; set; } 
-        public DbSet<CategoryField> CategoriesFields { get; set; } 
+        public DbSet<Category> CategoriesFields { get; set; } 
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<CategoryField>()
+            builder.Entity<Category>()
                 .HasKey(c => new { c.CategoryId, c.FieldId });
 
             builder.Entity<Category>()
@@ -34,7 +34,7 @@ namespace HighTech.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<Field>()
-                .HasMany(c => c.CategoryFields)
+                .HasMany(c => c.Categories)
                 .WithOne(cf => cf.Field)
                 .OnDelete(DeleteBehavior.Cascade);
 

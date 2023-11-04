@@ -44,7 +44,7 @@ builder.Services.AddTransient<IJWTService, JWTService>();
 builder.Services.AddTransient<IProductService, ProductService>();
 builder.Services.AddTransient<IFieldService, FieldService>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
-builder.Services.AddTransient<ICategoryFieldService, CategoryFieldService>();
+builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<IOrderService, OrderService>();
 
 

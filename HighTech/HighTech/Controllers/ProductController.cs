@@ -38,7 +38,7 @@ namespace HighTech.Controllers
 
             var category = categoryService.GetCategoryByProduct(product.Id);
 
-            return Json(ConvertToProductDTO(product, category.Id));
+            return Json(ConvertToProductDTO(product, category.CategoryId));
         }
 
         public IActionResult GetAll()
@@ -56,7 +56,7 @@ namespace HighTech.Controllers
 
             foreach (var p in products)
             {
-                dtos.Add(ConvertToProductDTO(p, category.Id));
+                dtos.Add(ConvertToProductDTO(p, category.CategoryId));
             }
 
             return Json(dtos);

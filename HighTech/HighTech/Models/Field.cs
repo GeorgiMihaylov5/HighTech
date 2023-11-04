@@ -4,7 +4,7 @@
     {
         public string Id { get; set; } 
         public TypeCode TypeCode { get; set; }
-        public virtual ICollection<CategoryField> CategoryFields { get; set; }
+        public virtual ICollection<Category> Categories { get; set; }
         public virtual ICollection<ProductField> ProductsFields { get; set; }
 
     }

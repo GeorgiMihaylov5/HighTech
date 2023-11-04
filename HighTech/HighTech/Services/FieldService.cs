@@ -76,7 +76,7 @@ namespace HighTech.Services
         {
             return context.Fields
                 .Include(x => x.ProductsFields)
-                .Where(f => f.CategoryFields!.Select(x => x.FieldId).Contains(f.Id))
+                .Where(f => f.Categories!.Select(x => x.FieldId).Contains(f.Id))
                 .ToList();
         }
 

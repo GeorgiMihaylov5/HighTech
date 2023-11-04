@@ -1,7 +1,6 @@
 ﻿using HighTech.Abstraction;
 using HighTech.Data;
 using HighTech.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace HighTech.Services
 {
@@ -13,60 +12,47 @@ namespace HighTech.Services
         {
             context = _context;
         }
-        public bool CreateCategory(string categoryName)
+
+        public bool CreateCategoryField(string categoryId, string fieldId)
         {
-            context.Categories.Add(new Category()
+            context.CategoriesFields.Add(new Category()
             {
-                Id = categoryName,
+                CategoryId = categoryId,
+                FieldId = fieldId
             });
 
             return context.SaveChanges() != 0;
         }
 
-        public bool EditCategory(string id)
+        public Category Get(string categoryId, string fieldId)
         {
-            //TODO ON UPDATE CASCADE
-            var category = GetCategory(id);
-
-            if (category is null)
-            {
-                return false;
-            }
-
-            category.Id = id;
-
-            return context.SaveChanges() != 0;
+            return context.CategoriesFields
+                .FirstOrDefault(cf => cf.CategoryId == categoryId && cf.FieldId == fieldId);
         }
 
-        public ICollection<Category> GetCategories()
+        public ICollection<Category> GetAll()
         {
-            return context.Categories.ToList();
-        }
-
-        public Category GetCategory(string id)
-        {
-            return context.Categories.FirstOrDefault(c => c.Id == id);
+            return context.CategoriesFields.ToList();
         }
 
         public Category GetCategoryByProduct(string id)
         {
             return context.ProductsFields
                 .Where(pf => pf.ProductId == id)
-                .SelectMany(pf => pf.Field.CategoryFields)
-                .Select(cf => cf.Category)
+                .SelectMany(pf => pf.Field.Categories)
                 .FirstOrDefault();
         }
 
-        public bool RemoveCategory(string id)
+        public bool RemoveCategoryField(string categoryId, string fieldId)
         {
-            var category = GetCategory(id);
+            var categoryField = Get(categoryId, fieldId);
 
-            if (category is null)
+            if (categoryField is null)
             {
                 return false;
             }
 
-            context.Categories.Remove(category);
+            context.CategoriesFields.Remove(categoryField);
             return context.SaveChanges() != 0;
         }
     }
