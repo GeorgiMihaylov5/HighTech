@@ -47,6 +47,8 @@ namespace PernikComputers.Infrastructure
                 AppUser user = new AppUser();
                 user.UserName = "admin";
                 user.Email = "admin@admin.com";
+                user.FirstName = "Admin";
+                user.LastName = "Admin";
 
                 var result = await userManager.CreateAsync
                 (user, "123!@#qweQWE");
@@ -57,6 +59,5 @@ namespace PernikComputers.Infrastructure
                 }
             }
         }
-
     }
 }

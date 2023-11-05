@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HighTech.Controllers
 {
+    [ApiController]
+    [Route("[controller]/[action]")]
     public class FieldController : Controller
     {
         private readonly IFieldService fieldService;

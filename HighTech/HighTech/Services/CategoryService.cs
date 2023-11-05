@@ -15,7 +15,7 @@ namespace HighTech.Services
 
         public bool CreateCategoryField(string categoryId, string fieldId)
         {
-            context.CategoriesFields.Add(new Category()
+            context.Categories.Add(new Category()
             {
                 CategoryId = categoryId,
                 FieldId = fieldId
@@ -26,13 +26,13 @@ namespace HighTech.Services
 
         public Category Get(string categoryId, string fieldId)
         {
-            return context.CategoriesFields
+            return context.Categories
                 .FirstOrDefault(cf => cf.CategoryId == categoryId && cf.FieldId == fieldId);
         }
 
         public ICollection<Category> GetAll()
         {
-            return context.CategoriesFields.ToList();
+            return context.Categories.ToList();
         }
 
         public Category GetCategoryByProduct(string id)
@@ -52,7 +52,7 @@ namespace HighTech.Services
                 return false;
             }
 
-            context.CategoriesFields.Remove(categoryField);
+            context.Categories.Remove(categoryField);
             return context.SaveChanges() != 0;
         }
     }

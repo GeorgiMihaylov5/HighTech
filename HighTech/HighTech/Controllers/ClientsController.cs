@@ -1,8 +1,6 @@
 ﻿using HighTech.Abstraction;
-using HighTech.Areas.Identity.Pages.Account.Manage;
 using HighTech.DTOs;
 using HighTech.Models;
-using HighTech.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,18 +13,15 @@ namespace HighTech.Controllers
     {
         private readonly UserManager<AppUser> userManager;
         private readonly SignInManager<AppUser> signInManager;
-        private readonly ILogger<ChangePasswordModel> logger;
         private readonly IClientService service;
         private readonly IJWTService jwtService;
 
         public ClientsController(SignInManager<AppUser> _signInManager,
             UserManager<AppUser> _userManager,
-            IJWTService _jwtService,
-            ILogger<ChangePasswordModel> _logger, 
+            IJWTService _jwtService, 
             IClientService _clientService)
         {
             signInManager = _signInManager;
-            logger = _logger;
             userManager = _userManager;
             service = _clientService;
             jwtService = _jwtService;

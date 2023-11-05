@@ -6,7 +6,7 @@ namespace HighTech.Abstraction
     {
         public List<Client> GetClients();
         public Client GetClient(string id);
-        public bool CreateClient(string address, string userId);
+        public Client CreateClient(string address, string userId);
         public bool Remove(string clientId);
         public string GetFullName(string clientId);
         public bool Update(string id, string phone, string address);

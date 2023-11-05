@@ -38,7 +38,7 @@ namespace HighTech.Controllers
 
             var category = categoryService.GetCategoryByProduct(product.Id);
 
-            return Json(ConvertToProductDTO(product, category.CategoryId));
+            return Json(ConvertToProductDTO(product, category?.CategoryId));
         }
 
         public IActionResult GetAll()
@@ -56,7 +56,7 @@ namespace HighTech.Controllers
 
             foreach (var p in products)
             {
-                dtos.Add(ConvertToProductDTO(p, category.CategoryId));
+                dtos.Add(ConvertToProductDTO(p, category?.CategoryId));
             }
 
             return Json(dtos);
@@ -116,14 +116,14 @@ namespace HighTech.Controllers
         }
 
         [HttpDelete]
-        public IActionResult Remove(ProductDTO product)
+        public IActionResult Remove(ProductDTO dto)
         {
-            if (product is null || product.Id is null)
+            if (dto is null || dto.Id is null)
             {
                 return BadRequest();
             }
 
-            return Json(productService.Remove(product.Id));
+            return Json(productService.Remove(dto.Id));
         }
 
         private ProductDTO ConvertToProductDTO(Product p, string categoryName)

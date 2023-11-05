@@ -95,16 +95,6 @@ namespace HighTech.Data.Migrations
 
             modelBuilder.Entity("HighTech.Models.Category", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categories");
-                });
-
-            modelBuilder.Entity("HighTech.Models.CategoryField", b =>
-                {
                     b.Property<string>("CategoryId")
                         .HasColumnType("nvarchar(450)");
 
@@ -115,7 +105,7 @@ namespace HighTech.Data.Migrations
 
                     b.HasIndex("FieldId");
 
-                    b.ToTable("CategoriesFields");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("HighTech.Models.Client", b =>
@@ -421,21 +411,13 @@ namespace HighTech.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("HighTech.Models.CategoryField", b =>
+            modelBuilder.Entity("HighTech.Models.Category", b =>
                 {
-                    b.HasOne("HighTech.Models.Category", "Category")
-                        .WithMany("CategoryFields")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("HighTech.Models.Field", "Field")
-                        .WithMany("CategoryFields")
+                        .WithMany("Categories")
                         .HasForeignKey("FieldId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Category");
 
                     b.Navigation("Field");
                 });
@@ -549,14 +531,9 @@ namespace HighTech.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("HighTech.Models.Category", b =>
-                {
-                    b.Navigation("CategoryFields");
-                });
-
             modelBuilder.Entity("HighTech.Models.Field", b =>
                 {
-                    b.Navigation("CategoryFields");
+                    b.Navigation("Categories");
 
                     b.Navigation("ProductsFields");
                 });

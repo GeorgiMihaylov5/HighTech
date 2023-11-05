@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HighTech.Controllers
 {
+    [ApiController]
+    [Route("[controller]/[action]")]
     public class CategoryController : Controller
     {
         private readonly ICategoryService categoryService;

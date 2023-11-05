@@ -13,20 +13,23 @@ namespace HighTech.Services
             context = _context;
         }
 
-        public bool CreateEmployee(string jobTitle, string userId)
+        public Employee CreateEmployee(string jobTitle, string userId)
         {
             if (context.Employees.Any(x => x.UserId == userId))
             {
                 throw new InvalidOperationException("User already exist.");
             }
 
-            context.Employees.Add(new Employee()
+            var emp = new Employee()
             {
                 JobTitle = jobTitle,
                 UserId = userId,
-            });
+            };
 
-            return context.SaveChanges() != 0;
+            context.Employees.Add(emp);
+            context.SaveChanges();
+
+            return emp;
         }
 
         public Employee GetEmployee(string employeeId)
@@ -34,7 +37,7 @@ namespace HighTech.Services
             return context.Employees.FirstOrDefault(x => x.UserId == employeeId);
         }
 
-        public List<Employee> GetEmployees()
+        public ICollection<Employee> GetEmployees()
         {
             return context.Employees.ToList();
         }
