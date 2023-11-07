@@ -3,7 +3,7 @@ import { Component, Inject, Input } from "@angular/core";
 import { RegisterRM } from "../../models/register-request.model";
 import { NgForm } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
-import { AuthorizeService } from "../../services/authorize.service";
+import { AuthorizeService } from "../../services/authorize-facade.service";
 import { AuthenticationResultStatus, INavigationState } from "../../models/navigation-state.model";
 import { ApplicationPaths, QueryParameterNames } from "../../api-authorization.constants";
 import { BehaviorSubject, tap } from "rxjs";

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { Observable, combineLatest, of } from 'rxjs';
-import { AuthorizeService } from './services/authorize.service';
+import { AuthorizeService } from './services/authorize-facade.service';
 import { map, tap } from 'rxjs/operators';
 import { ApplicationPaths, QueryParameterNames } from './api-authorization.constants';
 

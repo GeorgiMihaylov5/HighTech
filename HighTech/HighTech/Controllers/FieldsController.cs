@@ -5,13 +5,13 @@ namespace HighTech.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class FieldController : Controller
+    public class FieldsController : Controller
     {
         private readonly IFieldService fieldService;
         private readonly ICategoryService categoryService;
 
 
-        public FieldController(IFieldService fieldService, ICategoryService categoryService)
+        public FieldsController(IFieldService fieldService, ICategoryService categoryService)
         {
             this.fieldService = fieldService;
             this.categoryService = categoryService;

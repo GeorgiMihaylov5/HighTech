@@ -2,24 +2,34 @@
 using HighTech.DTOs;
 using HighTech.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace HighTech.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class ProductController : Controller
+    public class ProductsController : Controller
     {
         private readonly IProductService productService;
         private readonly ICategoryService categoryService;
         private readonly IFieldService fieldService;
 
-        public ProductController(IProductService _productService,
+        public ProductsController(IProductService _productService,
             ICategoryService _categoryService,
             IFieldService _fieldService)
         {
             productService = _productService;
             categoryService = _categoryService;
             fieldService = _fieldService;
+        }
+
+        public override JsonResult Json(object data)
+        {
+            var settings = new JsonSerializerOptions
+            {
+            };
+
+            return base.Json(data, settings);
         }
 
         public IActionResult Get(string id)

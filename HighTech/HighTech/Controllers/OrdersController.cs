@@ -8,11 +8,11 @@ namespace HighTech.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class OrderController : Controller
+    public class OrdersController : Controller
     {
         private readonly IOrderService orderService;
 
-        public OrderController(IOrderService _orderService)
+        public OrdersController(IOrderService _orderService)
         {
             orderService = _orderService;
         }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthorizeService } from '../../services/authorize.service';
+import { AuthorizeService } from '../../services/authorize-facade.service';
 import { Observable, of } from 'rxjs';
 
 @Component({

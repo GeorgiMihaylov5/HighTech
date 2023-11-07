@@ -4,17 +4,19 @@ using HighTech.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace HighTech.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class EmployeeContoller : Controller
+    public class EmployeesContoller : Controller
     {
         private readonly UserManager<AppUser> userManager;
         private readonly IEmployeeService employeeService;
 
-        public EmployeeContoller(UserManager<AppUser> _userManager,IEmployeeService _employeeService)
+        public EmployeesContoller(UserManager<AppUser> _userManager,IEmployeeService _employeeService)
         {
             userManager = _userManager;
             employeeService = _employeeService;
@@ -162,6 +164,16 @@ namespace HighTech.Controllers
             }
 
             return BadRequest();
+        }
+
+        public override JsonResult Json(object data)
+        {
+            var settings = new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
+            };
+
+            return base.Json(data, settings);
         }
     }
 }

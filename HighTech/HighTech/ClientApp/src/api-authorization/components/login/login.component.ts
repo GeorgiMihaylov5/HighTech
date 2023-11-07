@@ -1,7 +1,7 @@
 import { Component, Inject, Input } from "@angular/core";
 import { AuthenticationResultStatus, INavigationState } from "../../models/navigation-state.model";
 import { BehaviorSubject } from "rxjs";
-import { AuthorizeService } from "../../services/authorize.service";
+import { AuthorizeService } from "../../services/authorize-facade.service";
 import { ApplicationPaths, QueryParameterNames } from "../../api-authorization.constants";
 import { NgForm } from "@angular/forms";
 import { AppUser } from "../../models/user.model";

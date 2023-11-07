@@ -6,11 +6,11 @@ namespace HighTech.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class CategoryController : Controller
+    public class CategoriesController : Controller
     {
         private readonly ICategoryService categoryService;
 
-        public CategoryController(ICategoryService _categoryService)
+        public CategoriesController(ICategoryService _categoryService)
         {
             categoryService = _categoryService;
         }

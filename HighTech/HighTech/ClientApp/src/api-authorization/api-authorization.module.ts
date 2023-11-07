@@ -10,7 +10,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { ProfileComponent } from 'src/app/profile/profile.component';
 import { UserService } from './services/user.service';
-import { AuthorizeService } from './services/authorize.service';
+import { AuthorizeService } from './services/authorize-facade.service';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
