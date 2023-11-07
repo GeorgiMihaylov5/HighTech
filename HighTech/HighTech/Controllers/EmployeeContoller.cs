@@ -27,17 +27,18 @@ namespace HighTech.Controllers
                 .Select(e => new EmployeeDTO()
                 {
                     Id = e.Id,
-                    FirstName = e.User.FirstName,
-                    LastName = e.User.LastName,
-                    Email = e.User.Email,
-                    PhoneNumber = e.User.PhoneNumber,
-                    Username = e.User.UserName,
                     JobTitle = e.JobTitle,
-                    UserId = e.UserId
-
+                    User = new UserDTO()
+                    {
+                        Id = e.User.Id,
+                        FirstName = e.User.FirstName,
+                        LastName = e.User.LastName,
+                        Email = e.User.Email,
+                        PhoneNumber = e.User.PhoneNumber,
+                        Username = e.User.UserName,
+                    }
                 })
-                .OrderBy(x => x.FirstName)
-                .ThenBy(x => x.UserId)
+                .OrderBy(x => x.User.FirstName)
                 .ToList();
 
             var admins = (await userManager
@@ -48,7 +49,7 @@ namespace HighTech.Controllers
 
             for (int i = 0; i < Math.Min(employeesDTO.Count, admins.Count); i++)
             {
-                if (employeesDTO[i].UserId == admins[i].Id)
+                if (employeesDTO[i].User.Id == admins[i].Id)
                 {
                     employeesDTO[i].IsAdmin = true;
                 }
@@ -60,7 +61,7 @@ namespace HighTech.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(EmployeeDTO dto)
         {
-            var employee = await userManager.FindByNameAsync(dto.Username);
+            var employee = await userManager.FindByNameAsync(dto.User.Username);
 
             if (employee is not null)
             {
@@ -69,10 +70,10 @@ namespace HighTech.Controllers
 
             var user = new AppUser
             {
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                Email = dto.Email,
-                UserName = dto.Username
+                FirstName = dto.User.FirstName,
+                LastName = dto.User.LastName,
+                Email = dto.User.Email,
+                UserName = dto.User.Username
             };
 
             var result = await userManager.CreateAsync(user, "employee123");

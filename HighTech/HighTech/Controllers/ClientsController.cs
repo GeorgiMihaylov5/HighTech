@@ -31,8 +31,9 @@ namespace HighTech.Controllers
         {
             return View();
         }
+
         [HttpPost]
-        public async Task<ActionResult<UserDto>> Login(LoginDTO loginModel)
+        public async Task<ActionResult<ClientDTO>> Login(LoginDTO loginModel)
         {
             var user = await userManager.FindByNameAsync(loginModel.Username);
             if (user is null)
@@ -48,7 +49,10 @@ namespace HighTech.Controllers
             }
             var userRoles = await userManager.GetRolesAsync(user);
 
-            return Json(CreateApplicationUserDto(user, userRoles));
+            return Json(CreateClientDTO(new Client()
+            {
+                User = user,
+            }, userRoles));
         }
 
         [HttpPost]
@@ -72,29 +76,43 @@ namespace HighTech.Controllers
 
             if (result.Succeeded)
             {
-                var created = service.CreateClient(registerModel.Address ?? string.Empty, user.Id);
+                var cleint = service.CreateClient(registerModel.Address, user.Id);
 
-                if (created)
+                if (cleint is not null)
                 {
                     await userManager.AddToRoleAsync(user, "Client");
                     await signInManager.SignInAsync(user, isPersistent: false);
 
                     var userRoles = await userManager.GetRolesAsync(user);
-
-                    return Json(CreateApplicationUserDto(user, userRoles));
+                    
+                    return Json(CreateClientDTO(cleint, userRoles));
                 }
             }
 
             return BadRequest(result.Errors);
         }
 
-        private UserDto CreateApplicationUserDto(AppUser user, IList<string> roles)
+        private UserDTO CreateUserDTO(AppUser user)
         {
-            return new UserDto
+            return new UserDTO
             {
+                Id = user.Id,
+                Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                JWT = jwtService.CreateJWT(user, roles)
+                PhoneNumber = user.PhoneNumber,
+                Username = user.UserName,
+            };
+        }
+
+        private ClientDTO CreateClientDTO(Client client, IList<string> roles)
+        {
+            return new ClientDTO
+            {
+                Id = client.Id,
+                Address = client.Address,
+                JWT = jwtService.CreateJWT(client, roles),
+                User = CreateUserDTO(client.User)
             };
         }
 

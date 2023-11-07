@@ -44,11 +44,13 @@ namespace PernikComputers.Infrastructure
 
             if (await userManager.FindByNameAsync("admin") is null)
             {
-                AppUser user = new AppUser();
-                user.UserName = "admin";
-                user.Email = "admin@admin.com";
-                user.FirstName = "Admin";
-                user.LastName = "Admin";
+                var user = new AppUser
+                {
+                    UserName = "admin",
+                    Email = "admin@admin.com",
+                    FirstName = "Admin",
+                    LastName = "Admin"
+                };
 
                 var result = await userManager.CreateAsync
                 (user, "123!@#qweQWE");

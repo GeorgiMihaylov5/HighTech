@@ -43,6 +43,19 @@ namespace HighTech.Services
                 .FirstOrDefault();
         }
 
+        public bool RemoveCategories(string categoryId)
+        {
+            var categoryFields = context.Categories.Where(c => c.CategoryId == categoryId).ToList();
+
+            if (categoryFields is null || categoryFields.Count == 0)
+            {
+                return false;
+            }
+
+            context.RemoveRange(categoryFields);
+            return context.SaveChanges() != 0;
+        }
+
         public bool RemoveCategoryField(string categoryId, string fieldId)
         {
             var categoryField = Get(categoryId, fieldId);

@@ -15,16 +15,19 @@ namespace HighTech.Services
             context = _context;
         }
 
-        public bool CreateOrder(DateTime orderedOn, string customerId)
+        public Order CreateOrder(DateTime orderedOn, string customerId)
         {
-            context.Orders.Add(new Order()
+            var order = new Order()
             {
                 OrderedOn = orderedOn,
                 CustomerId = customerId,
                 Status = OrderStatus.Pending,
-            });
+            };
 
-            return context.SaveChanges() != 0;
+            context.Orders.Add(order);
+            context.SaveChanges();
+
+            return order;
         }
 
         public bool CreateOrderedProduct(string productId, string orderId, decimal price, int count)
@@ -67,6 +70,14 @@ namespace HighTech.Services
             orderedProduct.Count = count;
 
             return context.SaveChanges() != 0;
+        }
+
+        public ICollection<Order> GetMyOrders(string userId)
+        {
+            return context.Orders
+               .Include(o => o.OrderedProducts)
+               .Where(o => o.CustomerId == userId)
+               .ToList();
         }
 
         public Order GetOrder(string id)

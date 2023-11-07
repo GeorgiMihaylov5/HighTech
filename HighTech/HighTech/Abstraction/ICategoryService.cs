@@ -7,6 +7,7 @@ namespace HighTech.Abstraction
         public ICollection<Category> GetAll();
         public Category Get(string categoryId, string fieldId);
         public Category GetCategoryByProduct(string id);
+        public bool RemoveCategories(string categoryId);
         public bool CreateCategoryField(string categoryId, string fieldId);
         public bool RemoveCategoryField(string categoryId, string fieldId);
     }

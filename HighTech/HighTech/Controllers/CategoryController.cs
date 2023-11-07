@@ -15,9 +15,46 @@ namespace HighTech.Controllers
             categoryService = _categoryService;
         }
 
-        public IActionResult Create(CategoryDTO category)
+        public IActionResult Create(CategoryDTO dto)
         {
-            return View();
+            var categoryCreated = categoryService.CreateCategoryField(dto.CategoryId, dto.Field.FieldName);
+
+            if (!categoryCreated)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
+        }
+
+        public IActionResult GetAll()
+        {
+            var categories = categoryService
+                .GetAll()
+                .Select(c => new CategoryDTO()
+                {
+                    CategoryId = c.CategoryId,
+                    Field = new FieldDTO() 
+                    { 
+                        FieldName = c.Field.Id,
+                        TypeCode = c.Field.TypeCode,
+                        Value = null
+                    },
+                });
+
+            return Json(categories);
+        }
+
+        public IActionResult Remove(string id)
+        {
+            if (id is null)
+            {
+                NotFound();
+            }
+
+            var removed = categoryService.RemoveCategories(id);
+            //TODO Way to return boolean values
+            return Ok(removed);
         }
     }
 }

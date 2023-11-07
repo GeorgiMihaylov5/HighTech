@@ -22,12 +22,12 @@ namespace HighTech.Services
             issuer = options.Value.Issuer;
         }
 
-        public string CreateJWT(AppUser user, IList<string> roles)
+        public string CreateJWT(Client client, IList<string> roles)
         {
             var userClaims = new List<Claim>()
             {
-                new Claim(ClaimTypes.GivenName, user.FirstName!),
-                new Claim(ClaimTypes.Surname, user.LastName!),
+                new Claim(ClaimTypes.GivenName, client.User.FirstName!),
+                new Claim(ClaimTypes.Surname, client.User.LastName!),
             };
 
             if (roles is not null)

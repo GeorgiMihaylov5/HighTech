@@ -4,6 +4,6 @@ namespace HighTech.Abstraction
 {
     public interface IJWTService
     {
-        public string CreateJWT(AppUser user, IList<string> roles);
+        public string CreateJWT(Client user, IList<string> roles);
     }
 }

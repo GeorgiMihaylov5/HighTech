@@ -9,20 +9,18 @@ namespace HighTech.Controllers
     {
         private readonly IFieldService fieldService;
         private readonly ICategoryService categoryService;
-        private readonly ICategoryService categoryFieldService;
 
 
-        public FieldController(IFieldService fieldService, ICategoryService categoryService, ICategoryService categoryFieldService)
+        public FieldController(IFieldService fieldService, ICategoryService categoryService)
         {
             this.fieldService = fieldService;
             this.categoryService = categoryService;
-            this.categoryFieldService = categoryFieldService;
         }
 
         public IActionResult Create(string categoryName, string fieldName, TypeCode typeCode)
         {
             fieldService.CreateField(fieldName, typeCode);
-            categoryFieldService.CreateCategoryField(categoryName, fieldName);
+            categoryService.CreateCategoryField(categoryName, fieldName);
 
             return Json(fieldService.GetFieldsByCategory(categoryName));
         }
