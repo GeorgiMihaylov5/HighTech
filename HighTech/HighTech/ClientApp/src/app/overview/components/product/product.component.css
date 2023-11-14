@@ -1,3 +1,23 @@
+/* NEW */
+.cursor-pointer:hover {
+    cursor: pointer;
+}
+
+.center-title {
+    width: fit-content;
+    margin: auto;
+}
+
+.link {
+    text-decoration: none;
+}
+.link:hover {
+    text-decoration: underline;
+}
+
+
+
+
 .div-m-top {
     margin-top: 30px;
 }

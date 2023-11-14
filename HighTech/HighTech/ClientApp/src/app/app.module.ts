@@ -13,6 +13,7 @@ import { OverviewComponent } from './overview/overview.component';
 import { CommonModule } from '@angular/common';
 import { State } from './core/state.service';
 import { ProductDetailComponent } from './overview/components/product-detail/product-detail.component';
+import { DetailResolver } from './overview/resolvers/detail.resolver';
 
 
 @NgModule({
@@ -32,7 +33,7 @@ import { ProductDetailComponent } from './overview/components/product-detail/pro
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'products', component: OverviewComponent },
-      { path: 'detail', component: ProductDetailComponent }
+      { path: 'detail', component: ProductDetailComponent, resolve: { 'detailFacade': DetailResolver } }
       // { path: 'fetch-data', component: FetchDataComponent, canActivate: [AuthorizeGuard], data: { role: "Administrator"} },
       // { path: 'authenticate', component: AuthNavComponent}
     ], { useHash: true })

@@ -1,9 +1,9 @@
-<div class="w-100 list-group-item rounded">
+<div class="w-100 h-100 list-group-item rounded text-center d-flex flex-column justify-content-around">
     <div>
         <!-- asp-action="Details" asp-controller="Products" asp-route-id="@item.Id" -->
-        <a>
-            <img [src]="product.Image" width="200" height="175">
-            <h5>{{ product.Manufacturer }} {{ product.Model }}</h5>
+        <a class="link">
+            <img [src]="product.Image" width="200" height="175" (click)="routeToDetail()" class="cursor-pointer">
+            <h5 (click)="routeToDetail()" class="cursor-pointer center-title title-underline">{{ product.Manufacturer }} {{ product.Model }}</h5>
         </a>
     </div>
     <div *ngIf="product.Quantity == 0">

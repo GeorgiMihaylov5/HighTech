@@ -41,12 +41,12 @@
         <table class="table table-striped">
             <tbody>
                     <!-- var line = item.Split(':'); -->
-                <tr *ngFor="let item in product.Fields">
+                <tr *ngFor="let item of product.Fields">
                     <td>
-                        <strong>{{ item.Name }}</strong>
+                        <strong>{{ item.FieldName }}</strong>
                     </td>
                     <td>
-                       {{ item.value }}
+                       {{ item.Value }}
                     </td>
                 </tr>
             </tbody>
