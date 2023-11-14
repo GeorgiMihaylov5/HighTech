@@ -1,5 +1,5 @@
-<div class="register-container">
-    <form (ngSubmit)="register(f)" #f="ngForm">
+<!-- <div class="register-container">
+    <form (ngSubmit)="register(f)" #f="ngForm" ngNativeValidate>
       <h2>Login</h2>
       <div class="form-group">
         <label for="firstname">First Name:</label>
@@ -76,9 +76,68 @@
       <button type="submit">Register</button>
     </form>
   </div>
+   -->
 
+   <!-- TODO -->
 
-
-
-
-  
+<div class="text-center">
+  <div class="d-lg-inline-block align-top col-8" style="max-width: 419px">
+    <h1 class="text-center mb-3">Register</h1>
+    <div class="d-flex flex-nowrap flex-column child-flex">
+      <div>
+        <span><i class="bi bi-person-bounding-box icon-size"></i></span>
+        <div class="d-inline-block icon-div-width-4">
+          <input asp-for="FirstName" class="form-control" placeholder="First Name" />
+        </div>
+        <div class="d-inline-block icon-div-width-4">
+          <input asp-for="LastName" class="form-control" placeholder="Last Name" />
+        </div>
+      </div>
+      <div>
+        <span><i class="bi bi-telephone-fill icon-size"></i></span>
+        <div>
+          <input asp-for="PhoneNumber" class="form-control" placeholder="Phone Number" />
+        </div>
+      </div>
+      <div>
+        <span><i class="bi bi-geo-alt-fill icon-size"></i></span>
+        <div>
+          <input asp-for="Address" class="form-control" placeholder="Address" />
+        </div>
+      </div>
+      <div>
+        <span><i class="bi bi-envelope-fill icon-size"></i></span>
+        <div>
+          <input asp-for="Email" class="form-control" placeholder="Email" />
+        </div>
+      </div>
+      <div>
+        <span><i class="bi bi-person-circle icon-size icon-size"></i></span>
+        <div>
+          <input asp-for="Username" class="form-control" placeholder="Username" id="username" />
+        </div>
+      </div>
+      <div>
+        <span><i class="bi bi-lock-fill icon-size"></i></span>
+        <div>
+          <input asp-for="Password" class="form-control" placeholder="Password" />
+        </div>
+      </div>
+      <div>
+        <span><i class="bi bi-key-fill icon-size"></i></span>
+        <div>
+          <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" />
+        </div>
+      </div>
+      <div class="justify-content-center">
+        <button type="submit" class="btn-radius btn btn-outline-primary btn-lg">REGISTER</button>
+      </div>
+      <div class="justify-content-center">
+        <p class="mt-1 ml-4">Already have an account? <a>Login here</a></p>
+      </div>
+    </div>
+  </div>
+  <div class="d-inline align-top col-3">
+    <img src="../../../assets/images/registerImage.webp" width="400" height="400" />
+  </div>
+</div>

@@ -1,26 +1,33 @@
-<div class="login-container">
-    <form (ngSubmit)="login(f)" #f="ngForm">
-      <h2>Login</h2>
-      <div class="form-group">
-        <label for="username">Username:</label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          ngModel
-          required
-        />
+<form (ngSubmit)="login(f)" #f="ngForm" ngNativeValidate>
+  <div class="text-center d-flex flex-nowrap flex-column">
+    <div>
+      <h1 class="mb-3">Welcome!</h1>
+    </div>
+    <div class="mb-2">
+      <span><i class="bi bi-person-circle icon-size"></i></span>
+      <div class="d-inline-block icon-div-width-9">
+        <input class="form-control" placeholder="Username"  type="text"
+        id="username"
+        name="username"
+        ngModel
+        required />
       </div>
-      <div class="form-group">
-        <label for="password">Password:</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          ngModel
-          required
-        />
+    </div>
+    <div class="mb-2">
+      <span><i class="bi bi-lock-fill icon-size"></i></span>
+      <div class="d-inline-block">
+        <input class="form-control" placeholder="Password" type="password"
+        id="password"
+        name="password"
+        ngModel
+        required />
       </div>
-      <button type="submit">Login</button>
-    </form>
+    </div>
+    <div class="mt-4">
+      <button type="submit" class="btn-radius btn btn-outline-primary btn-lg">LOGIN</button>
+    </div>
+    <div class="mt-2" style="margin-left: 32px;">
+      <a>Register as new user</a>
+    </div>
   </div>
+</form>

@@ -1,0 +1,231 @@
+.div-m-top {
+    margin-top: 30px;
+}
+
+/*.b-inline-top {
+    display: inline-block;
+    vertical-align: top;
+}*/
+
+#filter-left {
+    margin-left: 25px;
+}
+
+
+    .filter-form input {
+        padding: 8px;
+        font-size: 13px;
+        border: 1px solid grey;
+        width: 33%;
+        background: #f1f1f1;
+        text-align: center;
+    }
+
+    .filter-form button {
+        width: 100px;
+        padding: 8px;
+        background: #2196F3;
+        color: white;
+        font-size: 13px;
+        border: 1px solid grey;
+        border-left: none;
+        cursor: pointer;
+        margin-left: 5px;
+    }
+
+        .filter-form button:hover {
+            background: #0b7dda;
+        }
+
+#filter-price {
+    margin: auto;
+    margin-bottom: 30px;
+}
+
+#filter-dash {
+    font-size: 23px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.filter-per-category {
+    padding: 0;
+}
+
+.products-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+    /*justify-content: space-between;*/
+}
+
+/* .products-list-item {
+    max-width: 100%;
+    flex: 0 0 30%;
+    text-align: center;
+    margin: 0 5px 10px 5px;
+} */
+
+.filter-titles {
+    width: 88%;
+    display: block;
+    border-bottom: #e5e5e5 1px solid;
+    padding: 7px;
+    text-align: left;
+}
+
+#products ul li:last-child {
+    margin-bottom: 10px !important;
+}
+.wh-input {
+    width: 30px !important;
+    height: 11px !important;
+}
+
+/*---------------------Details-----------------------*/
+
+#productTitle {
+    margin: 30px 0;
+}
+
+.details-item-price {
+    margin: 20px 30px;
+}
+
+
+@media (max-width: 992px) {
+    #products {
+        max-width: 90%;
+    }
+
+    #filter-left {
+        max-width: 59%;
+        margin: auto;
+    }
+
+    .details-item-price {
+        display: inline-block !important;
+        width: 35%;
+        margin-bottom: 40px;
+    }
+}
+
+
+/*--------DROPDOWN MENU-----------*/
+.dropdown-menu li {
+    position: relative;
+}
+
+.dropdown-menu .dropdown-submenu {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: -7px;
+}
+
+.dropdown-menu .dropdown-submenu-left {
+    right: 100%;
+    left: auto;
+}
+
+.dropdown-menu > li:hover > .dropdown-submenu {
+    display: block;
+}
+.pointer:hover {
+    cursor: pointer;
+}
+/*-----------MyOrders---------------*/
+
+.order-container {
+    border: 2px solid #00a8b9;
+    border-radius: 10px;
+    padding: 20px;
+}
+.order-details-btn {
+    background-color: #1b6ec2;
+    color: white;
+}
+.order-price-p {
+    display: inline-block;
+}
+.order-container-flex {
+    display: flex;
+    justify-content: space-between;
+}
+
+/*------------Admin Panel-------------*/
+.a-primary {
+    color: blue !important;
+}
+    .a-primary:hover {
+        color: white !important;
+    }
+
+
+
+/*--------Home-------*/
+.text-block {
+    position: absolute;
+    top: 6vw;
+    left: 4vw;
+    padding: 10px 15px 6px 15px;
+}
+
+.some-paragraph {
+    font-size: 2vw;
+}
+@media (min-width: 674px) {
+    .justify-content-smd-start {
+        justify-content: start !important;
+    }
+}
+
+/*--------Register---------*/
+.icon-width {
+    width: 20px;
+}
+.icon-div-width-4 {
+    width: 45%;
+}
+.icon-div-width-9 {
+    width: 91%;
+}
+.icon-div-mw-3 {
+    min-width: 350px;
+}
+/*-------Login-------*/
+.btn-radius {
+    padding: 10px 35px 10px 35px;
+    border-radius: 20px;
+    width: 300px;
+    margin-left: 32px;
+}
+
+
+/*--------------Create--------*/
+.w-130 {
+    width: 130px;
+}
+.w-200 {
+    width: 200px;
+}
+
+
+/*--------------Edit Order--------*/
+
+.w-fit-content {
+    width: fit-content;
+}
+
+
+/*-------Contacts-------*/
+.rounded-2 {
+    border-radius: 2.25rem !important;
+}
+.bg-blue {
+    background-color:#2196f3 !important;
+}
+
+/*------Periphery------------*/
+.h-17px {
+    height: 17px;
+}

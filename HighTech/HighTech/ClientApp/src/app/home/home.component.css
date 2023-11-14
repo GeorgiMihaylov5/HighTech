@@ -1,0 +1,15 @@
+.text-block {
+    position: absolute;
+    top: 6vw;
+    left: 4vw;
+    padding: 10px 15px 6px 15px;
+}
+
+.some-paragraph {
+    font-size: 2vw;
+}
+@media (min-width: 674px) {
+    .justify-content-smd-start {
+        justify-content: start !important;
+    }
+}

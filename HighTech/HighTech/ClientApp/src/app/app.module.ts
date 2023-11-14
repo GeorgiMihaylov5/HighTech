@@ -9,9 +9,11 @@ import { HomeComponent } from './home/home.component';
 import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.module';
 import { AuthorizeInterceptor } from 'src/api-authorization/authorize.interceptor';
 import { OverviewModule } from './overview/overview.module';
-import { ProductComponent } from './overview/components/product/product.component';
 import { OverviewComponent } from './overview/overview.component';
 import { CommonModule } from '@angular/common';
+import { State } from './core/state.service';
+import { ProductDetailComponent } from './overview/components/product-detail/product-detail.component';
+
 
 @NgModule({
   declarations: [
@@ -29,13 +31,19 @@ import { CommonModule } from '@angular/common';
     //TODO
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
-       { path: 'products', component: OverviewComponent },
+      { path: 'products', component: OverviewComponent },
+      { path: 'detail', component: ProductDetailComponent }
       // { path: 'fetch-data', component: FetchDataComponent, canActivate: [AuthorizeGuard], data: { role: "Administrator"} },
       // { path: 'authenticate', component: AuthNavComponent}
-    ],  { useHash: true })
+    ], { useHash: true })
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true }, 
+    State,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthorizeInterceptor,
+      multi: true
+    },
   ],
   bootstrap: [AppComponent]
 })

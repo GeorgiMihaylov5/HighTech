@@ -1,0 +1,55 @@
+<div class="text-center">
+    <div class="d-lg-inline-block align-top" style="margin-right: 50px">
+        <img [src]="product.Image" width="400" height="350"/>
+    </div>
+    <div class="d-lg-inline-block align-top">
+        <h2 id="productTitle">
+          {{ product.Manufacturer }} - {{ product.Model }}
+        </h2>
+        <div class="d-lg-inline-block align-top details-item-price">
+            <h5>Single price</h5>
+            <hr />
+            <span id="pricePerProduct">{{product.Price}}</span>
+            <span> lv.</span>
+        </div>
+        <div class="d-lg-inline-block align-top details-item-price">
+            <h5>Total price</h5>
+            <hr />
+            <span id="totalPrice">{{product.Price}}</span>
+            <span> lv.</span>
+        </div>
+            <!-- @if(Model.Quantity > 0)
+            {
+                <p>In Stock: @Model.Quantity</p>
+            }
+            else
+            {
+                <p class="text-danger">Not Available</p>
+            } -->
+
+        <!-- @await Html.PartialAsync("~/Views/Products/_OrderPartialView.cshtml", new OrderCreateBindingModel
+   {
+       ProductId = Model.Id,
+       Category = Model.Category,
+       Manufacturer = Model.Manufacturer,
+       Model = Model.Model,
+       Price = Model.Price.ToString()
+   }) -->
+    </div>
+    <div style="margin-top: 45px">
+        <h2>Technical Details</h2>
+        <table class="table table-striped">
+            <tbody>
+                    <!-- var line = item.Split(':'); -->
+                <tr *ngFor="let item in product.Fields">
+                    <td>
+                        <strong>{{ item.Name }}</strong>
+                    </td>
+                    <td>
+                       {{ item.value }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

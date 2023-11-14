@@ -1,0 +1,20 @@
+.icon-size {
+    font-size: 20px;
+    margin: 10px;
+}
+
+.child-flex div {
+    display: flex;
+    align-items: center;
+}
+.btn-radius {
+    padding: 10px 35px 10px 35px;
+    border-radius: 20px;
+    width: 300px;
+    margin-left: 32px;
+}
+
+.child-flex > div > div {
+    width: 90%;
+    margin: 5px;
+}
