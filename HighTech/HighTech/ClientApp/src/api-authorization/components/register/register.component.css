@@ -18,3 +18,10 @@
     width: 90%;
     margin: 5px;
 }
+
+.link {
+    text-decoration: none;
+}
+.link:hover {
+    text-decoration: underline;
+}
