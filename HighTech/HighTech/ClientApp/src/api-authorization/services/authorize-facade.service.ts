@@ -6,6 +6,7 @@ import { LoginRM } from '../models/login-request.model';
 import { AuthUser } from '../models/token-user.model';
 import { UserService } from './user.service';
 import { RegisterRM } from '../models/register-request.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,8 @@ import { RegisterRM } from '../models/register-request.model';
 export class AuthorizeService {
   @Output() authorizationChange = new EventEmitter();
 
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService,
+    private toastrService: ToastrService) { }
 
   public isAuthenticated(): Observable<boolean> {
     return this.getAccessTokenExpireDate().pipe(
@@ -111,6 +113,12 @@ export class AuthorizeService {
 
   public register(state: any, user: RegisterRM): Observable<IAuthenticationResult> {
     try{
+      if(user.Password !== user.ConfirmPassword) {
+        //TODO
+        this.toastrService.error('Passwords dont match!')
+        throw Error();
+      }
+
       return this.userService.register(user).pipe(
         map((user: AuthUser) => {
             this.setAccessToken(user.jwt);

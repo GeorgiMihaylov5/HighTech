@@ -58,11 +58,15 @@ namespace HighTech.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterDTO registerModel)
         {
-
             if (await userManager.Users.AnyAsync(u => u.Email == registerModel.Email!.ToLower()))
             {
                 return BadRequest($"An existing account is using {registerModel.Email}. Please try with another email!");
             };
+
+            if(registerModel.Password != registerModel.ConfirmPassword)
+            {
+                return BadRequest("Paswords don't match!");
+            }
 
             var user = new AppUser
             {
