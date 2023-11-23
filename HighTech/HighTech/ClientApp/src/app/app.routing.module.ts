@@ -23,9 +23,8 @@ const routes: Routes = [
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes, { useHash: true })
   ],
-  providers: [{ provide: LocationStrategy, useClass: PathLocationStrategy }],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

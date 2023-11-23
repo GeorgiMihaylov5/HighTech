@@ -1,0 +1,22 @@
+.menu {
+    padding: 10px 5px;
+    font-size: 16px;
+}
+
+.menu div {
+    padding: 8px 75px;
+    border: 2px solid transparent;
+    border-radius: 10px;
+}
+
+.menu div:hover {
+    cursor: pointer;
+}
+
+.selected-tab {
+    background-color: #0275d8;
+    border-color: #0275d8;
+}
+.selected-tab span {
+    color: white;
+}

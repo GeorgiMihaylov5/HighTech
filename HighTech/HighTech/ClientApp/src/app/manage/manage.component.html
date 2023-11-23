@@ -1,21 +1,22 @@
-<div>
-    <ul class="nav nav-pills flex-column" id="accountMenu">
-        <li class="nav-item">
-            <a class="btn nav-link profile-nav" (click)="ChangeTab(0)">Profile</a>
-        </li>
-        <li class="nav-item">
-            <a class="btn nav-link profile-nav" (click)="ChangeTab(1)">Orders</a>
-        </li>
-        <li class="nav-item">
-            <a class="btn nav-link profile-nav" (click)="ChangeTab(2)">Change Password</a>
-        </li>
+<div class="d-flex flex-column flex-md-row">
+    <div class="menu text-center">
+        <div [ngClass]="{'selected-tab': currentTab == 0}" (click)="ChangeTab(0)">
+            <span>Profile</span>
+        </div>
+        <div [ngClass]="{'selected-tab': currentTab == 1}" (click)="ChangeTab(1)">
+            <span>Orders</span>
+        </div>
+        <div [ngClass]="{'selected-tab': currentTab == 2}" (click)="ChangeTab(2)">
+            <span>Change Password</span>
+        </div>
+        <div [ngClass]="{'selected-tab': currentTab == 3}" (click)="ChangeTab(3)">
+            <span>Control Panel</span>
+        </div>
+
         <!-- @if (User.IsInRole("Administrator") || User.IsInRole("Employee"))
         { -->
-
-            <li class="nav-item mb-3">
-                <a class="btn nav-link profile-nav" (click)="ChangeTab(3)">Control Panel</a>
-            </li>
-
-    </ul>
-    <app-profile *ngIf="currentTab == 0"></app-profile>
+    </div>
+    <div class="">
+        <app-profile *ngIf="currentTab == 0"></app-profile>
+    </div>
 </div>
