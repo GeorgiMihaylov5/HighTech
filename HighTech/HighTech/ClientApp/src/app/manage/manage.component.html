@@ -1,0 +1,21 @@
+<div>
+    <ul class="nav nav-pills flex-column" id="accountMenu">
+        <li class="nav-item">
+            <a class="btn nav-link profile-nav" (click)="ChangeTab(0)">Profile</a>
+        </li>
+        <li class="nav-item">
+            <a class="btn nav-link profile-nav" (click)="ChangeTab(1)">Orders</a>
+        </li>
+        <li class="nav-item">
+            <a class="btn nav-link profile-nav" (click)="ChangeTab(2)">Change Password</a>
+        </li>
+        <!-- @if (User.IsInRole("Administrator") || User.IsInRole("Employee"))
+        { -->
+
+            <li class="nav-item mb-3">
+                <a class="btn nav-link profile-nav" (click)="ChangeTab(3)">Control Panel</a>
+            </li>
+
+    </ul>
+    <app-profile *ngIf="currentTab == 0"></app-profile>
+</div>

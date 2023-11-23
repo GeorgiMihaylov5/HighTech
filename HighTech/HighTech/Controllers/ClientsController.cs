@@ -49,10 +49,7 @@ namespace HighTech.Controllers
             }
             var userRoles = await userManager.GetRolesAsync(user);
 
-            return Json(CreateClientDTO(new Client()
-            {
-                User = user,
-            }, userRoles));
+            return Json(CreateAuthUserDTO(user, userRoles));
         }
 
         [HttpPost]
@@ -89,7 +86,7 @@ namespace HighTech.Controllers
 
                     var userRoles = await userManager.GetRolesAsync(user);
                     
-                    return Json(CreateClientDTO(cleint, userRoles));
+                    return Json(CreateAuthUserDTO(user, userRoles));
                 }
             }
 
@@ -109,14 +106,16 @@ namespace HighTech.Controllers
             };
         }
 
-        private ClientDTO CreateClientDTO(Client client, IList<string> roles)
+        private AuthUser CreateAuthUserDTO(AppUser user, IList<string> roles)
         {
-            return new ClientDTO
+            return new AuthUser
             {
-                Id = client.Id,
-                Address = client.Address,
-                JWT = jwtService.CreateJWT(client, roles),
-                User = CreateUserDTO(client.User)
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Role = roles,
+                Jwt = jwtService.CreateJWT(user, roles),
+                Exp = new DateTime().AddDays(jwtService.ExpiresDays).Ticks
             };
         }
 

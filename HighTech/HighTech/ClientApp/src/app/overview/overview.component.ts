@@ -16,6 +16,15 @@ export class OverviewComponent implements OnInit {
     constructor(private overviewFacade: OverviewFacade) {
 
     }
+
+    public get Manufactorers(): string[] {
+        if(!this.products) {
+            return [];
+        }
+
+        return [...new Set(this.products.map(p => p.Manufacturer))]
+    }
+
     ngOnInit(): void {
         this.isLoading = true;
 

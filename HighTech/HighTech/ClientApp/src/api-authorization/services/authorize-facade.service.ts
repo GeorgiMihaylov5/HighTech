@@ -23,6 +23,8 @@ export class AuthorizeService {
         if (exp && exp > new Date()) {
           return true;
         }
+
+        this.removeAccessToken();
         return false;
       })
     )
@@ -63,7 +65,7 @@ export class AuthorizeService {
         if (user == null) {
           return null;
         }
-        return user.given_name;
+        return user.firstName;
       })
     )
   }

@@ -1,10 +1,10 @@
 <h1 class="text-center">Products</h1>
 <hr />
 
-<div class="d-flex">
-    <div style="margin-right: 30px;">
+<div class="d-flex justify-content-around">
+    <div class="col-3">
         <!-- TODO -->
-        <ng-container class="filter-form row">
+        <form class="filter-form row">
             <div class="col-12 p-0 mb-3 w-100">
                 <h4 class="filter-titles">Filters</h4>
                 <div class="d-block">
@@ -23,18 +23,18 @@
             <div class="col-12 p-0 mb-3 w-100">
                 <h4 class="filter-titles">Price</h4>
                 <input type="number" placeholder="Min price" min="0" name="minPrice"
-                    max="@{if(Model.Count() > 0) Model.Select(x => x.Price).Max();}" />
+                    max="" />
                 <span id="filter-dash">-</span>
                 <input type="number" placeholder="Max price" name="maxPrice"
-                    max="@{if(Model.Count() > 0) Model.Select(x => x.Price).Max();}" onchange="minInput()" />
+                    max="" onchange="minInput()" />
             </div>
             <div class="col-12 p-0 mb-3">
                 <h4 class="filter-titles">Manufacturer</h4>
-                <!-- @foreach (var item in ViewBag.Manufacturers)
+                <!-- @foreach (var item in ViewBag.Manufacturers) //TODO for and Id
                     { -->
-                <div class="d-block">
+                <div class="d-block" *ngFor="let m of Manufactorers">
                     <input type="checkbox" value="@item" id="@item" name="manufacturers" class="wh-input" />
-                    <label for="@item">@item</label>
+                    <label for="@item">{{ m }}</label>
                 </div>
 
             </div>
@@ -42,19 +42,19 @@
                 <h4 class="filter-titles">Model</h4>
                 <!-- @foreach (var item in ViewBag.Models)
                     { -->
-                <div class="d-block">
+                <div class="d-block" *ngFor="let p of products">
                     <input type="checkbox" value="@item" id="@item" name="models" class="wh-input" />
-                    <label for="@item">@item</label>
+                    <label for="@item">{{p.Model}}</label>
                 </div>
             </div>
             <div class="d-block col-12 text-center p-0 mb-3">
                 <hr />
-                <button type="submit" class="btn"><i class="fa fa-search"></i></button>
+                <button type="submit" class="btn"><i class="bi bi-search"></i></button>
             </div>
-        </ng-container>
+        </form>
     </div>
 
-   <div class="flex-row flex-wrap list-group" *ngIf="!isLoading">
+   <div class="flex-row flex-wrap list-group col-7" *ngIf="!isLoading">
         <app-product *ngFor="let p of products" 
         [product]="p"
         class="m-2"></app-product>
