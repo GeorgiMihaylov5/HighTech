@@ -20,3 +20,11 @@
 .selected-tab span {
     color: white;
 }
+
+.max-width {
+    max-width: 500px;
+}
+
+.margin-left {
+    margin-left: 25px;
+}

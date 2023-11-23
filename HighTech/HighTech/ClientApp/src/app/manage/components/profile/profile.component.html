@@ -1,1 +1,46 @@
-<p>My profile</p>
+<form #f="ngForm" ngNativeValidate>
+    <div class="d-lg-inline-block align-top col-12">
+        <div class="d-flex flex-nowrap flex-column child-mb">
+            <div>
+                <p>Username</p>
+                <div>
+                    <input class="form-control" name="username" ngModel disabled />
+                </div>
+            </div>
+            <div>
+                <p>Email</p>
+                <div>
+                    <input class="form-control" name="email" ngModel disabled />
+                </div>
+            </div>
+            <div>
+                <p>First Name</p>
+                <div>
+                    <input class="form-control" name="firstName" ngModel />
+                </div>
+            </div>
+            <div>
+                <p>Last Name</p>
+                <div>
+                    <input class="form-control" name="lastName" ngModel />
+                </div>
+            </div>
+            <div>
+                <p>Phone Number</p>
+                <div>
+                    <input class="form-control" name="phoneNumber" ngModel />
+                </div>
+            </div>
+            <div>
+                <p>Address</p>
+                <div>
+                    <input class="form-control" name="address" ngModel />
+                </div>
+            </div>
+            <div class="justify-content-center">
+                <button type="submit" class="btn-radius btn btn-outline-primary btn-lg">Save</button>
+                <span class="pointer underline margin-left">Cancel</span>
+            </div>
+        </div>
+    </div>
+</form>

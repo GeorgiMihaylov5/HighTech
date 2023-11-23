@@ -1,0 +1,16 @@
+p {
+    margin: 0;
+}
+
+.child-mb div {
+    margin-bottom: 10px;
+}
+.pointer:hover {
+ cursor: pointer;
+}
+.underline:hover {
+    text-decoration: underline;
+}
+.margin-left {
+    margin-left: 10px;
+}
