@@ -35,9 +35,6 @@ builder.Services.AddAuthentication()
         };
     });
 
-builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
-
 builder.Services.AddTransient<IClientService, ClientService>();
 builder.Services.AddTransient<IEmployeeService, EmployeeService>();
 builder.Services.AddTransient<IJWTService, JWTService>();
@@ -91,7 +88,6 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
-app.MapRazorPages();
 
 app.MapFallbackToFile("index.html"); ;
 

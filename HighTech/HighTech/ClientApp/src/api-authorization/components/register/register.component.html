@@ -28,25 +28,25 @@
         <div>
           <span><i class="bi bi-envelope-fill icon-size"></i></span>
           <div>
-            <input class="form-control" placeholder="Email" name="email" ngModel/>
+            <input class="form-control" placeholder="Email" name="email" ngModel required/>
           </div>
         </div>
         <div>
           <span><i class="bi bi-person-circle icon-size icon-size"></i></span>
           <div>
-            <input class="form-control" placeholder="Username" name="username" ngModel/>
+            <input class="form-control" placeholder="Username" name="username" ngModel required/>
           </div>
         </div>
         <div>
           <span><i class="bi bi-lock-fill icon-size"></i></span>
           <div>
-            <input class="form-control" placeholder="Password" type="password" name="password" ngModel/>
+            <input class="form-control" placeholder="Password" type="password" name="password" ngModel required min="3"/>
           </div>
         </div>
         <div>
           <span><i class="bi bi-key-fill icon-size"></i></span>
           <div>
-            <input class="form-control" placeholder="Confirm Password" type="password" name="confirmPassword" ngModel/>
+            <input class="form-control" placeholder="Confirm Password" type="password" name="confirmPassword" ngModel required min="3"/>
           </div>
         </div>
         <div class="justify-content-center">

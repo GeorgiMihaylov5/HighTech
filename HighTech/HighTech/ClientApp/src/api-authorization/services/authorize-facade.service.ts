@@ -3,7 +3,7 @@ import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AuthenticationResultStatus, IAuthenticationResult } from '../models/navigation-state.model';
 import { LoginRM } from '../models/login-request.model';
-import { AuthUser } from '../models/token-user.model';
+import { IToken } from '../models/token.model';
 import { UserService } from './user.service';
 import { RegisterRM } from '../models/register-request.model';
 import { ToastrService } from 'ngx-toastr';
@@ -35,8 +35,8 @@ export class AuthorizeService {
   }
 
   private getAccessTokenExpireDate(): Observable<Date | null> {
-    return this.getAuthUser().pipe(
-      map((user: AuthUser | null) => {
+    return this.getTokenData().pipe(
+      map((user: IToken | null) => {
         if (user == null) {
           return null;
         }
@@ -47,25 +47,25 @@ export class AuthorizeService {
     )
   }
 
-  public getAuthUser(): Observable<AuthUser | null> {
+  public getTokenData(): Observable<IToken | null> {
     return this.getAccessToken().pipe(
       map((token: string | null) => {
         if (token == null) {
           return null;
         }
         
-        return JSON.parse(atob(token.split('.')[1])) as AuthUser
+        return JSON.parse(atob(token.split('.')[1])) as IToken
       })
     )
   }
 
   public getUserName(): Observable<string | null> {
-    return this.getAuthUser().pipe(
-      map((user: AuthUser | null) => {
+    return this.getTokenData().pipe(
+      map((user: IToken | null) => {
         if (user == null) {
           return null;
         }
-        return user.firstName;
+        return user.given_name;
       })
     )
   }
@@ -99,7 +99,7 @@ export class AuthorizeService {
 
   public login(state: any, user: LoginRM): Observable<IAuthenticationResult> {
     return this.userService.login(user).pipe(
-      map((user: AuthUser) => {
+      map((user: IToken) => {
         try {
           this.setAccessToken(user.jwt);
           this.authorizationChange.emit();
@@ -122,7 +122,7 @@ export class AuthorizeService {
       }
 
       return this.userService.register(user).pipe(
-        map((user: AuthUser) => {
+        map((user: IToken) => {
             this.setAccessToken(user.jwt);
             this.authorizationChange.emit();
   

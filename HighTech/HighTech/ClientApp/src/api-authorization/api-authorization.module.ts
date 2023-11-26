@@ -8,12 +8,10 @@ import { RouterModule, Routes } from '@angular/router';
 import { ApplicationPaths } from './api-authorization.constants';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { ProfileComponent } from 'src/app/manage/components/profile/profile.component';
 import { UserService } from './services/user.service';
 import { AuthorizeService } from './services/authorize-facade.service';
 import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ManageComponent } from 'src/app/manage/manage.component';
 
 export const apiRoutes: Routes =       [
   { path: ApplicationPaths.Register, component: RegisterComponent },

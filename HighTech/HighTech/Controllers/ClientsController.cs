@@ -1,9 +1,11 @@
 ﻿using HighTech.Abstraction;
 using HighTech.DTOs;
 using HighTech.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace HighTech.Controllers
 {
@@ -30,6 +32,42 @@ namespace HighTech.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult EditClient(ClientDTO dto)
+        {
+            var updatedClient = service.Update(dto.Id, dto.FirstName, dto.LastName, dto.PhoneNumber, dto.Address);
+
+            if(updatedClient)
+            {
+                return Json(dto);
+            }
+
+            return BadRequest();
+        }
+
+        [Authorize]
+        public IActionResult GetByUsername(string username)
+        {
+            if (username is null)
+            {
+                return BadRequest($"There is not a user with {username} username.");
+            }
+
+            var client = service.GetClientByUsername(username);
+
+            return Json(new ClientDTO()
+            {
+                Id = client.Id,
+                Username = client.User.UserName,
+                Email = client.User.Email,
+                FirstName = client.User.FirstName,
+                LastName = client.User.LastName,
+                Address = client.Address,
+                PhoneNumber = client.User.PhoneNumber
+            });
         }
 
         [HttpPost]
@@ -91,6 +129,31 @@ namespace HighTech.Controllers
             }
 
             return BadRequest(result.Errors);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDTO dto)
+        {
+            var user = await userManager.FindByNameAsync(dto.Username);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with username '{dto.Username}'.");
+            }
+
+            if (dto.NewPassword == dto.OldPassword)
+            {
+                return BadRequest("Passwords doesn't match");
+            }
+
+            var changePasswordResult = await userManager
+                .ChangePasswordAsync(user, dto.OldPassword, dto.NewPassword);
+
+            if (!changePasswordResult.Succeeded)
+            {
+                return BadRequest(changePasswordResult.Errors);
+            }
+
+            return Ok();
         }
 
         private UserDTO CreateUserDTO(AppUser user)

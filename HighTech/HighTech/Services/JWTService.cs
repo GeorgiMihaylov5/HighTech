@@ -31,6 +31,7 @@ namespace HighTech.Services
             {
                 new Claim(ClaimTypes.GivenName, user.FirstName!),
                 new Claim(ClaimTypes.Surname, user.LastName!),
+                new Claim(ClaimTypes.NameIdentifier, user.UserName!),
             };
 
             if (roles is not null)

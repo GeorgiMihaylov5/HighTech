@@ -1,10 +1,7 @@
 ﻿namespace HighTech.DTOs
 {
-    public class ClientDTO
+    public class ClientDTO: UserDTO
     {
-        public string Id { get; set; }
         public string Address { get; set; }
-        public UserDTO User { get; set; }
-        public string JWT { get; set; }
     }
 }

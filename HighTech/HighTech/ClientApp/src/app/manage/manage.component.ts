@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { Observable, map, switchMap } from 'rxjs';
+import { IToken } from 'src/api-authorization/models/token.model';
+import { AuthorizeService } from 'src/api-authorization/services/authorize-facade.service';
 
 @Component({
   selector: 'app-manage',
@@ -6,11 +9,17 @@ import { Component } from '@angular/core';
   styleUrls: ['./manage.component.css']
 })
 export class ManageComponent {
- public currentTab: TabType = TabType.Profile;
+  public currentTab: TabType = TabType.Profile;
+  public token: Observable<IToken>;
 
- public ChangeTab(tab: TabType): void {
-  this.currentTab = tab;
- }
+
+  constructor(authService: AuthorizeService) {
+    this.token = authService.getTokenData();
+  }
+
+  public ChangeTab(tab: TabType): void {
+    this.currentTab = tab;
+  }
 }
 
 export enum TabType {

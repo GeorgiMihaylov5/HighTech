@@ -9,10 +9,10 @@ import { AuthorizeInterceptor } from 'src/api-authorization/authorize.intercepto
 import { OverviewModule } from './overview/overview.module';
 import { CommonModule } from '@angular/common';
 import { State } from './core/state.service';
-import { ProfileComponent } from './manage/components/profile/profile.component';
 import { AppRoutingModule } from './app.routing.module';
-import { ManageComponent } from './manage/manage.component';
 import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.module';
+import { ErrorService } from './services/error.service';
+import { ManageModule } from './manage/manage.module';
 
 
 @NgModule({
@@ -20,17 +20,16 @@ import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.
     AppComponent,
     NavMenuComponent,
     HomeComponent,
-    ProfileComponent,
-    ManageComponent
   ],
   imports: [
     OverviewModule,
+    ManageModule,
     CommonModule,
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
-    FormsModule,
     AppRoutingModule,
     ApiAuthorizationModule,
+    
   ],
   providers: [
     State,
@@ -39,6 +38,7 @@ import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.
       useClass: AuthorizeInterceptor,
       multi: true
     },
+    ErrorService
   ],
   bootstrap: [AppComponent]
 })

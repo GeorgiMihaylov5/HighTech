@@ -1,6 +1,7 @@
 ﻿using HighTech.Abstraction;
 using HighTech.Data;
 using HighTech.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace HighTech.Services
 {
@@ -38,6 +39,11 @@ namespace HighTech.Services
             return context.Clients.FirstOrDefault(x => x.UserId == id);
         }
 
+        public Client GetClientByUsername(string username)
+        {
+            return context.Clients.Include(c => c.User).FirstOrDefault(x => x.User.UserName == username);
+        }
+
         public List<Client> GetClients()
         {
             return context.Clients.ToList();
@@ -53,10 +59,31 @@ namespace HighTech.Services
         {
             throw new NotImplementedException();
         }
-        //TODO
-        public bool Update(string id, string phone, string address)
+
+        public bool Update(string id, string firstName, string lastName, string phone, string address)
         {
-            throw new NotImplementedException();
+            var client = context.Clients.Find(id);
+
+            if (client == null)
+            {
+                return false;
+            }
+            var user = context.Users.FirstOrDefault(x => x.Id == client.UserId);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            user.FirstName = firstName;
+            user.LastName = lastName;
+            user.PhoneNumber = phone;
+            client.Address = address;
+
+            context.Clients.Update(client);
+            context.Users.Update(user);
+
+            return context.SaveChanges() != 0;
         }
     }
 }

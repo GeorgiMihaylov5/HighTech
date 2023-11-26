@@ -1,10 +1,11 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { LoginRM } from "../models/login-request.model";
 import { Inject, Injectable } from "@angular/core";
-import { AuthUser } from "../models/token-user.model";
+import { IToken } from "../models/token.model";
 import { Observable, OperatorFunction, catchError, throwError } from "rxjs";
 import { RegisterRM } from "../models/register-request.model";
 import { ToastrService } from "ngx-toastr";
+import { ErrorService } from "src/app/services/error.service";
 
 @Injectable({
   providedIn: "root"
@@ -12,19 +13,19 @@ import { ToastrService } from "ngx-toastr";
 export class UserService {
   constructor(private http: HttpClient,
     @Inject('BASE_URL') private baseUrl: string,
-    private toastr: ToastrService) { }
+    private errorService: ErrorService) { }
 
-  public login(user: LoginRM): Observable<AuthUser> {
-    return this.http.post<AuthUser>(`${this.baseUrl}clients/login`, user)
+  public login(user: LoginRM): Observable<IToken> {
+    return this.http.post<IToken>(`${this.baseUrl}clients/login`, user)
       .pipe(
-        catchError(this.handleError.bind(this))
+        catchError(this.errorService.handleError.bind(this.errorService))
       );;
   }
 
-  public register(user: RegisterRM): Observable<AuthUser> {
-    return this.http.post<AuthUser>(`${this.baseUrl}clients/register`, user)
+  public register(user: RegisterRM): Observable<IToken> {
+    return this.http.post<IToken>(`${this.baseUrl}clients/register`, user)
       .pipe(
-        catchError(this.handleError.bind(this))
+        catchError(this.errorService.handleError.bind(this.errorService))
       );
   }
 
@@ -32,14 +33,4 @@ export class UserService {
     //TODO
   }
 
-  private handleError(error: HttpErrorResponse) {
-    if (error.status === 0) {
-      console.error('An error occurred:', error.error);
-    } else {
-      this.toastr.error(error.error)
-      console.error(
-        `Backend returned code ${error.status}, body was: `, error.error);
-    }
-    return throwError(() => new Error('Something bad happened; please try again later.'));
-  }
 }

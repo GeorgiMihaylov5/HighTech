@@ -8,7 +8,7 @@ import { AppUser } from "../../models/user.model";
 import { LoginRM } from "../../models/login-request.model";
 import { HttpClient } from "@angular/common/http";
 import { ActivatedRoute, Router } from "@angular/router";
-import { AuthUser } from "../../models/token-user.model";
+import { IToken } from "../../models/token.model";
 
 @Component({
   selector: 'app-login',

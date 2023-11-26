@@ -16,7 +16,7 @@ export class AuthorizeGuard implements CanActivate {
     state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
     return combineLatest([
         this.authorize.isAuthenticated(),
-        this.authorize.getAuthUser()
+        this.authorize.getTokenData()
       ])
       .pipe(map(data => {
         const isAuthenticated = data[0];
