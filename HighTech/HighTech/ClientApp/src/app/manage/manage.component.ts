@@ -24,7 +24,7 @@ export class ManageComponent {
 
 export enum TabType {
   Profile = 0,
-  Orders = 1,
+  MyOrders = 1,
   ChangePassword = 2,
   ControlPanel = 3
 }

@@ -1,0 +1,23 @@
+<div>
+    <ul class="nav nav-tabs align-items-end justify-content-around">
+        <li class="nav-item" (click)="ChangeTab(0)">
+            <a class="nav-link" [ngClass]="{'active': controlPanelTab == 0}">Orders</a>
+        </li>
+        <li class="nav-item" (click)="ChangeTab(1)">
+            <a class="nav-link" role="tab" [ngClass]="{'active': controlPanelTab == 1}">Clients</a>
+        </li>
+        <li class="nav-item" (click)="ChangeTab(2)">
+            <a class="nav-link"[ngClass]="{'active': controlPanelTab == 2}">Employees</a>
+        </li>
+        <li class="nav-item" (click)="ChangeTab(3)">
+            <a class="nav-link" [class]="{'active': controlPanelTab == 3}">Products</a>
+        </li>
+    </ul>
+    
+    <div class="max-width w-100 margin-left">
+        <app-orders [token]="token" *ngIf="controlPanelTab == 0"></app-orders>
+        <app-clients *ngIf="controlPanelTab == 1"></app-clients>
+        <app-employees *ngIf="controlPanelTab == 2"></app-employees>
+        <app-products-table *ngIf="controlPanelTab == 3"></app-products-table>
+    </div>
+</div>

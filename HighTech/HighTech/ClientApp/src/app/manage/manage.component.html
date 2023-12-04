@@ -18,6 +18,8 @@
     </div>
     <div class="max-width w-100 margin-left">
         <app-profile [token]="token" *ngIf="currentTab == 0"></app-profile>
+        <app-orders [token]="token" *ngIf="currentTab == 1"></app-orders>
         <app-change-password [token]="token" *ngIf="currentTab == 2"></app-change-password>
+        <app-control-panel [token]="token" *ngIf="currentTab == 3"></app-control-panel>
     </div>
 </div>
