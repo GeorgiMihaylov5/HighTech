@@ -10,6 +10,11 @@ import { OrdersComponent } from "./components/orders/orders.component";
 import { EmployeesComponent } from "./components/control-panel/components/employees/employees.component";
 import { ClientsComponent } from "./components/control-panel/components/clients/clients.component";
 import { ProductsTableComponent } from "./components/control-panel/components/products-table/products-table.component";
+import { EmployeeService } from "./services/employee.service";
+import { ActivatedRoute } from "@angular/router";
+import { AppRoutingModule } from "../app.routing.module";
+import { OverviewFacade } from "../overview/services/overview-facade.service";
+import { ManageServiceFacade } from "./services/manage-facade.service";
 
 @NgModule({
   declarations: [
@@ -24,10 +29,13 @@ import { ProductsTableComponent } from "./components/control-panel/components/pr
   ],
   imports: [
     CommonModule,
-    FormsModule
+    FormsModule, 
+    AppRoutingModule
   ],
   providers: [
     ClientService,
+    EmployeeService,
+    ManageServiceFacade
   ]
 })
 export class ManageModule { }

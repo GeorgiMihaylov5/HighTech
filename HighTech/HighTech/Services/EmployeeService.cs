@@ -1,6 +1,8 @@
 ﻿using HighTech.Abstraction;
 using HighTech.Data;
 using HighTech.Models;
+using Microsoft.EntityFrameworkCore;
+using static Duende.IdentityServer.Models.IdentityResources;
 
 namespace HighTech.Services
 {
@@ -34,12 +36,17 @@ namespace HighTech.Services
 
         public Employee GetEmployee(string employeeId)
         {
-            return context.Employees.FirstOrDefault(x => x.UserId == employeeId);
+            return context.Employees.Include(c => c.User).FirstOrDefault(x => x.UserId == employeeId);
+        }
+
+        public Employee GetEmployeeByUsername(string username)
+        {
+            return context.Employees.Include(c => c.User).FirstOrDefault(x => x.User.UserName == username);
         }
 
         public ICollection<Employee> GetEmployees()
         {
-            return context.Employees.ToList();
+            return context.Employees.Include(c => c.User).ToList();
         }
 
         //TODO
@@ -53,18 +60,29 @@ namespace HighTech.Services
             throw new NotImplementedException();
         }
 
-        public bool Update(string id, string jobTitle)
+        public bool Update(string id, string firstName, string lastName, string phone)
         {
-            var employees = GetEmployee(id);
+            var employee = context.Employees.Find(id);
 
-            if (employees is null)
+            if (employee is null)
             {
                 return false;
             }
 
-            employees.JobTitle = jobTitle;
+            var user = context.Users.FirstOrDefault(x => x.Id == employee.UserId);
 
-            context.Employees.Update(employees);
+            if (user is null)
+            {
+                return false;
+            }
+
+            user.FirstName = firstName;
+            user.LastName = lastName;
+            user.PhoneNumber = phone;
+
+            context.Employees.Update(employee);
+            context.Users.Update(user);
+
             return context.SaveChanges() != 0;
         }
     }

@@ -1,4 +1,5 @@
-﻿using HighTech.Models;
+﻿using HighTech.Abstraction;
+using HighTech.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace PernikComputers.Infrastructure
@@ -8,7 +9,6 @@ namespace PernikComputers.Infrastructure
         public static async Task<IApplicationBuilder> PrepareDatabase(this IApplicationBuilder app)
         {
             using var serviceScope = app.ApplicationServices.CreateScope();
-
             var services = serviceScope.ServiceProvider;
 
             await RoleSeeder(services);
@@ -41,6 +41,12 @@ namespace PernikComputers.Infrastructure
         private static async Task SeedAdministrator(IServiceProvider serviceProvider)
         {
             var userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
+            var employeeService = serviceProvider.GetService<IEmployeeService>();
+
+            if (employeeService is null)
+            {
+                throw new NullReferenceException("EmployeeService is null");
+            }
 
             if (await userManager.FindByNameAsync("admin") is null)
             {
@@ -51,6 +57,7 @@ namespace PernikComputers.Infrastructure
                     FirstName = "Admin",
                     LastName = "Admin"
                 };
+                
 
                 var result = await userManager.CreateAsync
                 (user, "123!@#qweQWE");
@@ -59,6 +66,8 @@ namespace PernikComputers.Infrastructure
                 {
                     userManager.AddToRoleAsync(user, "Administrator").Wait();
                 }
+
+                employeeService.CreateEmployee("Owner", user.Id);
             }
         }
     }

@@ -21,10 +21,10 @@
     color: white;
 }
 
-.max-width {
-    max-width: 500px;
-}
-
 .margin-left {
     margin-left: 25px;
+}
+
+.min-width {
+    min-width: 300px;
 }

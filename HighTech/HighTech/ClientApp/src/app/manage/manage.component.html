@@ -1,25 +1,24 @@
-<div class="d-flex flex-column flex-md-row">
-    <div class="menu text-center">
-        <div [ngClass]="{'selected-tab': currentTab == 0}" (click)="ChangeTab(0)">
+<div class="d-flex flex-column flex-lg-row">
+    <div class="menu text-center min-width">
+        <div [ngClass]="{'selected-tab': currentTab == 0}" (click)="ChangeTab(0)" [routerLink]="['/manage', { outlets: { 'manage': ['profile'] } }]
+            ">
             <span>Profile</span>
         </div>
-        <div [ngClass]="{'selected-tab': currentTab == 1}" (click)="ChangeTab(1)">
+        <div [ngClass]="{'selected-tab': currentTab == 1}" (click)="ChangeTab(1)"
+            [routerLink]="['/manage', { outlets: { 'manage': ['orders'] } }]">
             <span>Orders</span>
         </div>
-        <div [ngClass]="{'selected-tab': currentTab == 2}" (click)="ChangeTab(2)">
+        <div [ngClass]="{'selected-tab': currentTab == 2}" (click)="ChangeTab(2)"
+            [routerLink]="['/manage', { outlets: { 'manage': ['change-password'] } }]">
             <span>Change Password</span>
         </div>
-        <div [ngClass]="{'selected-tab': currentTab == 3}" (click)="ChangeTab(3)">
+        <div [ngClass]="{'selected-tab': currentTab == 3}" (click)="ChangeTab(3)"
+            *ngIf="(manageService.token | async).role.includes('Administrator')"
+            [routerLink]="['/manage', { outlets: { 'manage': ['control-panel'] } }]">
             <span>Control Panel</span>
         </div>
-
-        <!-- @if (User.IsInRole("Administrator") || User.IsInRole("Employee"))
-        { -->
     </div>
-    <div class="max-width w-100 margin-left">
-        <app-profile [token]="token" *ngIf="currentTab == 0"></app-profile>
-        <app-orders [token]="token" *ngIf="currentTab == 1"></app-orders>
-        <app-change-password [token]="token" *ngIf="currentTab == 2"></app-change-password>
-        <app-control-panel [token]="token" *ngIf="currentTab == 3"></app-control-panel>
+    <div class="w-100 margin-left">
+        <router-outlet name="manage"></router-outlet>
     </div>
 </div>

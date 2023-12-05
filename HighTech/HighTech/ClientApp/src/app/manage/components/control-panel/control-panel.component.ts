@@ -1,15 +1,20 @@
-import { Component, Input } from '@angular/core';
-import { Observable } from 'rxjs';
-import { IToken } from 'src/api-authorization/models/token.model';
+import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-control-panel',
   templateUrl: './control-panel.component.html',
   styleUrls: ['./control-panel.component.css']
 })
-export class ControlPanelComponent {
-  @Input() token: Observable<IToken>;
+export class ControlPanelComponent implements OnInit{
   public controlPanelTab: ControlPanelTabType = ControlPanelTabType.Orders;
+
+  constructor(private router: Router) {
+      
+  }
+  ngOnInit(): void {
+    this.router.navigate([{ outlets: { 'control-panel': ['orders'] } }]);
+  }
 
   public ChangeTab(tab: ControlPanelTabType): void {
     this.controlPanelTab = tab;

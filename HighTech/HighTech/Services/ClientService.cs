@@ -46,7 +46,7 @@ namespace HighTech.Services
 
         public List<Client> GetClients()
         {
-            return context.Clients.ToList();
+            return context.Clients.Include(c => c.User).ToList();
         }
 
         //TODO

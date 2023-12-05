@@ -1,20 +1,21 @@
-import { Component } from '@angular/core';
-import { Observable, map, switchMap } from 'rxjs';
-import { IToken } from 'src/api-authorization/models/token.model';
-import { AuthorizeService } from 'src/api-authorization/services/authorize-facade.service';
+import { Component, OnInit } from '@angular/core';
+import { ManageServiceFacade } from './services/manage-facade.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-manage',
   templateUrl: './manage.component.html',
   styleUrls: ['./manage.component.css']
 })
-export class ManageComponent {
+export class ManageComponent implements OnInit{
   public currentTab: TabType = TabType.Profile;
-  public token: Observable<IToken>;
 
-
-  constructor(authService: AuthorizeService) {
-    this.token = authService.getTokenData();
+  constructor(public manageService: ManageServiceFacade,
+    private router: Router) {
+      
+  }
+  ngOnInit(): void {
+    this.router.navigate(['/manage', { outlets: { 'manage': ['profile'] } }]);
   }
 
   public ChangeTab(tab: TabType): void {

@@ -1,10 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { IClient } from 'src/app/models/client.model';
-import { ClientService } from '../../services/client.service';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { NgForm } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { IToken } from 'src/api-authorization/models/token.model';
+import { IEmployee } from '../../../models/employee.model';
+import { ManageServiceFacade } from '../../services/manage-facade.service';
 
 @Component({
   selector: 'app-profile',
@@ -14,39 +15,43 @@ import { IToken } from 'src/api-authorization/models/token.model';
 export class ProfileComponent implements OnInit {
   @Input() token: Observable<IToken>;
 
-   public client: IClient = {
+  public value: IClient | IEmployee = {
     id: '',
     firstName: '',
     lastName: '',
     username: '',
     address: '',
     phoneNumber: '',
-    email: ''
+    email: '',
+    jobTitle: ''
   };
 
-  public originalValue: IClient;
+  public isEmp: boolean = false;
+  public originalValue: IClient | IEmployee;
 
-  constructor(private clientApi: ClientService,
-    private toastr: ToastrService) {
-
-      
-  }
+  constructor(private manageService: ManageServiceFacade,
+    private toastr: ToastrService) { }
   ngOnInit(): void {
+    this.manageService.getProfileData().subscribe(data => {
+      this.value = data;
+      this.originalValue = { ...data };
+    });
+  }
 
-    this.token.subscribe(data => {
-      this.clientApi.getClient(data.nameid).subscribe(client => {
-        this.client = client;
-        this.originalValue = { ...client };
-      })
-    })
+  isClient(value: IClient | IEmployee): value is IClient {
+    return typeof value === 'object' && 'address' in value;
+  }
+
+  isEmployee(value: IClient | IEmployee): value is IEmployee {
+    return typeof value === 'object' && 'jobTitle' in value;
   }
 
   editProfile(form: NgForm) {
-    this.clientApi.editUser(form.value).subscribe((client: IClient) => {
-      this.client = client;
-      this.originalValue = { ...client };
-      this.toastr.success('You successfully update your profile!')
-    })
+   this.manageService.editProfile(form.value).subscribe(data => {
+    this.value = data;
+    this.originalValue = { ...data };
+    this.toastr.success('You successfully update your profile!');
+   })
   }
 
 }

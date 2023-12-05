@@ -9,6 +9,7 @@ import { ToastrModule } from "ngx-toastr";
 import { DetailFacade } from "./services/detail-facade.service";
 import { DetailGuard } from "./resolvers/detail.resolver";
 import { ProductDetailComponent } from "./components/product-detail/product-detail.component";
+import { AppRoutingModule } from "../app.routing.module";
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { ProductDetailComponent } from "./components/product-detail/product-deta
     ProductDetailComponent
   ],
   imports: [
+    AppRoutingModule,
     CommonModule,
     HttpClientModule,
     BrowserAnimationsModule,

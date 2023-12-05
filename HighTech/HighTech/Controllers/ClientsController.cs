@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace HighTech.Controllers
 {
@@ -29,9 +28,22 @@ namespace HighTech.Controllers
             jwtService = _jwtService;
         }
 
-        public IActionResult Index()
+        [Authorize(Roles = "Administrator")]
+        public IActionResult GetAll()
         {
-            return View();
+            var clients = service.GetClients().Select(client => new ClientDTO()
+            {
+                Id = client.Id,
+                UserId = client.UserId,
+                Username = client.User.UserName,
+                Email = client.User.Email,
+                FirstName = client.User.FirstName,
+                LastName = client.User.LastName,
+                Address = client.Address,
+                PhoneNumber = client.User.PhoneNumber
+            });
+
+            return Json(clients);
         }
 
         [Authorize]
@@ -58,9 +70,15 @@ namespace HighTech.Controllers
 
             var client = service.GetClientByUsername(username);
 
+            if (client is null)
+            {
+                return Json(null);
+            }
+
             return Json(new ClientDTO()
             {
                 Id = client.Id,
+                UserId = client.UserId,
                 Username = client.User.UserName,
                 Email = client.User.Email,
                 FirstName = client.User.FirstName,
@@ -160,7 +178,7 @@ namespace HighTech.Controllers
         {
             return new UserDTO
             {
-                Id = user.Id,
+                UserId = user.Id,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,

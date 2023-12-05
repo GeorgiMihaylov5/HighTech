@@ -1,1 +1,31 @@
-<p>employees works!</p>
+<div class="">
+    <div class="table-responsive">
+        <table class="table table-hover text-center">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>FullName</th>
+                    <th>Phone</th>
+                    <th>Job Title</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let emp of employees">
+                    <td>{{ emp.username }}</td>
+                    <td>{{ emp.email }}</td>
+                    <td>{{ emp.firstName + emp.lastName }}</td>
+                    <td>{{ emp.phoneNumber }}</td>
+                    <td>{{ emp.jobTitle }}</td>
+                    <td *ngIf="emp.isAdmin">
+                        <button class="btn btn-danger" (click)="demote(emp)">Demote</button>
+                    </td>
+                    <td *ngIf="!emp.isAdmin">
+                        <button class="btn btn-success" (click)="promote(emp)">Promote</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

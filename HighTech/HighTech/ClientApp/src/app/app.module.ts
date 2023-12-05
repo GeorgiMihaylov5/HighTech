@@ -22,12 +22,12 @@ import { ManageModule } from './manage/manage.module';
     HomeComponent,
   ],
   imports: [
+    HttpClientModule,
+    AppRoutingModule,
     OverviewModule,
     ManageModule,
     CommonModule,
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
-    HttpClientModule,
-    AppRoutingModule,
     ApiAuthorizationModule,
     
   ],

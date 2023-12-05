@@ -4,24 +4,23 @@ using HighTech.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json;
 
 namespace HighTech.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class EmployeesContoller : Controller
+    public class EmployeesController : Controller
     {
         private readonly UserManager<AppUser> userManager;
         private readonly IEmployeeService employeeService;
 
-        public EmployeesContoller(UserManager<AppUser> _userManager,IEmployeeService _employeeService)
+        public EmployeesController(UserManager<AppUser> _userManager,IEmployeeService _employeeService)
         {
             userManager = _userManager;
             employeeService = _employeeService;
         }
 
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> GetAll()
         {
             var employeesDTO = employeeService
@@ -30,17 +29,14 @@ namespace HighTech.Controllers
                 {
                     Id = e.Id,
                     JobTitle = e.JobTitle,
-                    User = new UserDTO()
-                    {
-                        Id = e.User.Id,
-                        FirstName = e.User.FirstName,
-                        LastName = e.User.LastName,
-                        Email = e.User.Email,
-                        PhoneNumber = e.User.PhoneNumber,
-                        Username = e.User.UserName,
-                    }
+                    UserId = e.User.Id,
+                    FirstName = e.User.FirstName,
+                    LastName = e.User.LastName,
+                    Email = e.User.Email,
+                    PhoneNumber = e.User.PhoneNumber,
+                    Username = e.User.UserName,
                 })
-                .OrderBy(x => x.User.FirstName)
+                .OrderBy(x => x.FirstName)
                 .ToList();
 
             var admins = (await userManager
@@ -51,7 +47,7 @@ namespace HighTech.Controllers
 
             for (int i = 0; i < Math.Min(employeesDTO.Count, admins.Count); i++)
             {
-                if (employeesDTO[i].User.Id == admins[i].Id)
+                if (employeesDTO[i].UserId == admins[i].Id)
                 {
                     employeesDTO[i].IsAdmin = true;
                 }
@@ -60,10 +56,38 @@ namespace HighTech.Controllers
             return Json(employeesDTO);
         }
 
+        [Authorize]
+        public IActionResult GetByUsername(string username)
+        {
+            if (username is null)
+            {
+                return BadRequest($"There is not a user with {username} username.");
+            }
+
+            var employee = employeeService.GetEmployeeByUsername(username);
+
+            if (employee is null)
+            {
+                return Json(null);
+            }
+
+            return Json(new EmployeeDTO()
+            {
+                Id = employee.Id,
+                UserId = employee.UserId,
+                Username = employee.User.UserName,
+                Email = employee.User.Email,
+                FirstName = employee.User.FirstName,
+                LastName = employee.User.LastName,
+                JobTitle = employee.JobTitle,
+                PhoneNumber = employee.User.PhoneNumber
+            });
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(EmployeeDTO dto)
         {
-            var employee = await userManager.FindByNameAsync(dto.User.Username);
+            var employee = await userManager.FindByNameAsync(dto.Username);
 
             if (employee is not null)
             {
@@ -72,15 +96,15 @@ namespace HighTech.Controllers
 
             var user = new AppUser
             {
-                FirstName = dto.User.FirstName,
-                LastName = dto.User.LastName,
-                Email = dto.User.Email,
-                UserName = dto.User.Username
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
+                Email = dto.Email,
+                UserName = dto.Username
             };
 
             var result = await userManager.CreateAsync(user, "employee123");
 
-            if (result.Succeeded!)
+            if (!result.Succeeded)
             {
                 return BadRequest(result.Errors);
             }
@@ -102,18 +126,18 @@ namespace HighTech.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> Promote(string userId)
+        public async Task<IActionResult> Promote(EmployeeDTO dto)
         {
-            if (userId is null)
+            if (dto is null)
             {
-                return BadRequest("User id cannot be null!");
+                return BadRequest("User cannot be null!");
             }
 
-            var user = await userManager.FindByIdAsync(userId);
+            var user = await userManager.FindByIdAsync(dto.UserId);
 
             if (user == null)
             {
-                return BadRequest($"Cannot find user with {userId} id!");
+                return BadRequest($"Cannot find user with {dto.UserId} id!");
             }
 
             if(await userManager.IsInRoleAsync(user, "Administrator"))
@@ -126,19 +150,20 @@ namespace HighTech.Controllers
             return Ok();
         }
 
+        //TODO When I demode someone his token need to be invalid
         [HttpPost]
         [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> Demote(string userId)
+        public async Task<IActionResult> Demote(EmployeeDTO dto)
         {
-            if (userId == null)
+            if (dto == null)
             {
-                return BadRequest("User id cannot be null!");
+                return BadRequest("User cannot be null!");
             }
-            var user = await userManager.FindByIdAsync(userId);
+            var user = await userManager.FindByIdAsync(dto.UserId);
 
             if (user == null)
             {
-                return BadRequest($"Cannot find user with {userId} id!");
+                return BadRequest($"Cannot find user with {dto.UserId} id!");
             }
 
             if (!await userManager.IsInRoleAsync(user, "Administrator"))
@@ -151,29 +176,28 @@ namespace HighTech.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Profile(EmployeeDTO dto)
+        public IActionResult EditEmployee(EmployeeDTO dto)
         {
-            //TODO USER EDIT, NO EMPLOYEE OR CLIENT
-            var isUpdated = employeeService.Update(dto.Id, dto.JobTitle);
+            var updatedEmp = employeeService.Update(dto.Id, dto.FirstName, dto.LastName, dto.PhoneNumber);
 
-            if (isUpdated)
+            if (updatedEmp)
             {
-                return Ok();
+                return Json(dto);
             }
 
             return BadRequest();
         }
 
-        public override JsonResult Json(object data)
-        {
-            var settings = new JsonSerializerSettings
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
-            };
+        //public override JsonResult Json(object data)
+        //{
+        //    var settings = new JsonSerializerOptions
+        //    {
+        //        con = new CamelCasePropertyNamesContractResolver()
+        //    };
 
-            return base.Json(data, settings);
-        }
+        //    return base.Json(data, settings);
+        //}
     }
 }

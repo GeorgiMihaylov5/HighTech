@@ -29,7 +29,7 @@ namespace HighTech.Controllers
                     Notes = x.Notes,
                     User = new UserDTO() 
                     { 
-                        Id = x.CustomerId,
+                        UserId = x.CustomerId,
                         FirstName = x.Customer.FirstName,
                         LastName = x.Customer.LastName,
                         Email = x.Customer.Email,
@@ -61,7 +61,7 @@ namespace HighTech.Controllers
                     Notes = x.Notes,
                     User = new UserDTO()
                     {
-                        Id = x.CustomerId,
+                        UserId = x.CustomerId,
                         FirstName = x.Customer.FirstName,
                         LastName = x.Customer.LastName,
                         Email = x.Customer.Email,
@@ -80,7 +80,7 @@ namespace HighTech.Controllers
         [HttpPost]
         public IActionResult Create(OrderDTO dto)
         {
-            var order = orderService.CreateOrder(new DateTime(int.Parse(dto.OrderedOn)), dto.User.Id);
+            var order = orderService.CreateOrder(new DateTime(int.Parse(dto.OrderedOn)), dto.User.UserId);
 
             foreach (var orderedProductDto in dto.OrderedProducts)
             {

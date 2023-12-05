@@ -1,23 +1,20 @@
 <div>
     <ul class="nav nav-tabs align-items-end justify-content-around">
-        <li class="nav-item" (click)="ChangeTab(0)">
+        <li class="nav-item" (click)="ChangeTab(0)" [routerLink]="[{ outlets: { 'control-panel': ['orders'] } }]">
             <a class="nav-link" [ngClass]="{'active': controlPanelTab == 0}">Orders</a>
         </li>
-        <li class="nav-item" (click)="ChangeTab(1)">
+        <li class="nav-item" (click)="ChangeTab(1)" [routerLink]="[{ outlets: { 'control-panel': ['clients'] } }]">
             <a class="nav-link" role="tab" [ngClass]="{'active': controlPanelTab == 1}">Clients</a>
         </li>
-        <li class="nav-item" (click)="ChangeTab(2)">
+        <li class="nav-item" (click)="ChangeTab(2)" [routerLink]="[{ outlets: { 'control-panel': ['employees'] } }]">
             <a class="nav-link"[ngClass]="{'active': controlPanelTab == 2}">Employees</a>
         </li>
-        <li class="nav-item" (click)="ChangeTab(3)">
+        <li class="nav-item" (click)="ChangeTab(3)" [routerLink]="[{ outlets: { 'control-panel': ['table-products'] } }]">
             <a class="nav-link" [class]="{'active': controlPanelTab == 3}">Products</a>
         </li>
     </ul>
     
     <div class="max-width w-100 margin-left">
-        <app-orders [token]="token" *ngIf="controlPanelTab == 0"></app-orders>
-        <app-clients *ngIf="controlPanelTab == 1"></app-clients>
-        <app-employees *ngIf="controlPanelTab == 2"></app-employees>
-        <app-products-table *ngIf="controlPanelTab == 3"></app-products-table>
+        <router-outlet name="control-panel"></router-outlet>
     </div>
 </div>

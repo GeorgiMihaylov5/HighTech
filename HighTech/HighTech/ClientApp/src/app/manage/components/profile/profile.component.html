@@ -1,51 +1,59 @@
-<form (submit)="editProfile(f)" #f="ngForm" ngNativeValidate>
-    <div class="d-lg-inline-block align-top col-12">
-        <div class="d-flex flex-nowrap flex-column child-mb">
-            <div>
+<div class="max-width">
+    <form (submit)="editProfile(f)" #f="ngForm" ngNativeValidate>
+        <div class="d-lg-inline-block align-top col-12">
+            <div class="d-flex flex-nowrap flex-column child-mb">
                 <div>
-                    <input class="form-control" name="id" [(ngModel)]="client.id" hidden />
+                    <div>
+                        <input class="form-control" name="id" [(ngModel)]="value.id" hidden />
+                    </div>
                 </div>
-            </div>
-            <div>
-                <p>Username</p>
                 <div>
-                    <input class="form-control disabled" name="username" [(ngModel)]="client.username" [readOnly]="true" />
+                    <p>Username</p>
+                    <div>
+                        <input class="form-control disabled" name="username" [(ngModel)]="value.username" [readOnly]="true" />
+                    </div>
                 </div>
-            </div>
-            <div>
-                <p>Email</p>
                 <div>
-                    <input class="form-control disabled" name="email"  [(ngModel)]="client.email" [readOnly]="true" />
+                    <p>Email</p>
+                    <div>
+                        <input class="form-control disabled" name="email"  [(ngModel)]="value.email" [readOnly]="true" />
+                    </div>
                 </div>
-            </div>
-            <div>
-                <p>First Name</p>
                 <div>
-                    <input class="form-control" name="firstName"  [(ngModel)]="client.firstName" />
+                    <p>First Name</p>
+                    <div>
+                        <input class="form-control" name="firstName"  [(ngModel)]="value.firstName" />
+                    </div>
                 </div>
-            </div>
-            <div>
-                <p>Last Name</p>
                 <div>
-                    <input class="form-control" name="lastName"  [(ngModel)]="client.lastName" />
+                    <p>Last Name</p>
+                    <div>
+                        <input class="form-control" name="lastName"  [(ngModel)]="value.lastName" />
+                    </div>
                 </div>
-            </div>
-            <div>
-                <p>Phone Number</p>
                 <div>
-                    <input class="form-control" name="phoneNumber"  [(ngModel)]="client.phoneNumber" />
+                    <p>Phone Number</p>
+                    <div>
+                        <input class="form-control" name="phoneNumber"  [(ngModel)]="value.phoneNumber" />
+                    </div>
                 </div>
-            </div>
-            <div>
-                <p>Address</p>
-                <div>
-                    <input class="form-control" name="address"  [(ngModel)]="client.address" />
+                <div *ngIf="isClient(value)">
+                    <p>Address</p>
+                    <div>
+                        <input class="form-control" name="address"  [(ngModel)]="value.address" />
+                    </div>
                 </div>
-            </div>
-            <div class="justify-content-center">
-                <button type="submit" class="btn-radius btn btn-outline-primary btn-lg">Save</button>
-                <span class="pointer underline margin-left" (click)="f.resetForm(originalValue)">Cancel</span>
+                <div *ngIf="isEmployee(value)">
+                    <p>Job Title</p>
+                    <div>
+                        <input class="form-control disabled" name="jobTitle"  [(ngModel)]="value.jobTitle" [readOnly]="true" />
+                    </div>
+                </div>
+                <div class="justify-content-center">
+                    <button type="submit" class="btn-radius btn btn-outline-primary btn-lg">Save</button>
+                    <span class="pointer underline margin-left" (click)="f.resetForm(originalValue)">Cancel</span>
+                </div>
             </div>
         </div>
-    </div>
-</form>
+    </form>
+</div>
