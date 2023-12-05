@@ -2,31 +2,31 @@
     <div>
         <!-- asp-action="Details" asp-controller="Products" asp-route-id="@item.Id" -->
         <a class="link">
-            <img [src]="product.Image" width="200" height="175" (click)="routeToDetail()" class="cursor-pointer">
-            <h5 (click)="routeToDetail()" class="cursor-pointer center-title title-underline">{{ product.Manufacturer }} {{ product.Model }}</h5>
+            <img [src]="product.image" width="200" height="175" (click)="routeToDetail()" class="cursor-pointer">
+            <h5 (click)="routeToDetail()" class="cursor-pointer center-title title-underline">{{ product.manufacturer }} {{ product.model }}</h5>
         </a>
     </div>
-    <div *ngIf="product.Quantity == 0">
+    <div *ngIf="product.quantity == 0">
         <p class="text-danger">Not Available</p>
     </div>
     <div class="text-center" style="font-size: 14px;">
-        <div *ngFor="let field of product.Fields;">
-            <p style="margin-bottom: 10px"> {{ field.FieldName }}</p>
+        <div *ngFor="let field of product.fields;">
+            <p style="margin-bottom: 10px"> {{ field.fieldName }}</p>
         </div>
     </div>
     <div>
         <div style="height: 24px">
-            <div *ngIf="product.Discount > 0">
-                <p class="mb-0 text-left"><s>{{ product.Discount + product.Price }} lv.</s></p>
+            <div *ngIf="product.discount > 0">
+                <p class="mb-0 text-left"><s>{{ product.discount + product.price }} lv.</s></p>
             </div>
         </div>
         <div class="d-flex flex-row justify-content-between align-items-center">
             <div>
-                <div *ngIf="product.Discount > 0">
-                    <span class="font-weight-bold text-danger" style="font-size: 17px">{{ product.Price }} lv.</span>
+                <div *ngIf="product.discount > 0">
+                    <span class="font-weight-bold text-danger" style="font-size: 17px">{{ product.price }} lv.</span>
                 </div>
-                <div *ngIf="product.Discount == 0">
-                    <span class="font-weight-bold" style="font-size: 17px">{{ product.Price }} lv.</span>
+                <div *ngIf="product.discount == 0">
+                    <span class="font-weight-bold" style="font-size: 17px">{{ product.price }} lv.</span>
                 </div>
             </div>
             <div>

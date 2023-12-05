@@ -17,11 +17,14 @@ namespace HighTech.Controllers
 
         public IActionResult Create(CategoryDTO dto)
         {
-            var categoryCreated = categoryService.CreateCategoryField(dto.CategoryId, dto.Field.FieldName);
-
-            if (!categoryCreated)
+            foreach (var field in dto.Fields)
             {
-                return BadRequest();
+                var categoryCreated = categoryService.CreateCategoryField(dto.CategoryId, field.FieldName);
+
+                if (!categoryCreated)
+                {
+                    return BadRequest();
+                }
             }
 
             return Ok();
@@ -31,16 +34,18 @@ namespace HighTech.Controllers
         {
             var categories = categoryService
                 .GetAll()
-                .Select(c => new CategoryDTO()
-                {
-                    CategoryId = c.CategoryId,
-                    Field = new FieldDTO() 
-                    { 
-                        FieldName = c.Field.Id,
-                        TypeCode = c.Field.TypeCode,
-                        Value = null
-                    },
-                });
+                .GroupBy(c => c.CategoryId)
+                .Select(group => new CategoryDTO()
+                    {
+                        CategoryId = group.Key,
+                        Fields = group.Select(c => new FieldDTO()
+                        {
+                            FieldName = c.Field.Id,
+                            TypeCode = c.Field.TypeCode,
+                            Value = null
+                        })
+                    }
+                );
 
             return Json(categories);
         }

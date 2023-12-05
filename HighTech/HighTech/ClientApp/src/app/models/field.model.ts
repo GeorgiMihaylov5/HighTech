@@ -1,7 +1,7 @@
 export interface Field {
-    FieldName: string;
-    TypeCode: TypeCode;
-    Value: string;
+    fieldName: string;
+    typeCode: TypeCode;
+    value: string;
 }
 
 export enum TypeCode {

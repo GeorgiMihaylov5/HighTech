@@ -23,14 +23,14 @@ namespace HighTech.Controllers
             fieldService = _fieldService;
         }
 
-        public override JsonResult Json(object data)
-        {
-            var settings = new JsonSerializerOptions
-            {
-            };
+        //public override JsonResult Json(object data)
+        //{
+        //    var settings = new JsonSerializerOptions
+        //    {
+        //    };
 
-            return base.Json(data, settings);
-        }
+        //    return base.Json(data, settings);
+        //}
 
         public IActionResult Get(string id)
         {

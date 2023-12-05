@@ -21,7 +21,7 @@ export class State {
 
     public removeProduct(id: string): void {
 		const items = this.products$.getValue();
-		const newItems = items.filter(product => product.Id !== id);
+		const newItems = items.filter(product => product.id !== id);
 		this.products$.next(newItems);
 	}
 

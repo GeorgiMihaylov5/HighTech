@@ -22,7 +22,7 @@ export class OverviewComponent implements OnInit {
             return [];
         }
 
-        return [...new Set(this.products.map(p => p.Manufacturer))]
+        return [...new Set(this.products.map(p => p.manufacturer))]
     }
 
     ngOnInit(): void {

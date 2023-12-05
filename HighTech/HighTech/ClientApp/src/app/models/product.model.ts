@@ -1,14 +1,14 @@
 import { Field } from "./field.model";
 
 export interface Product {
-    Id: string;
-    Manufacturer: string;
-    Model: string;
-    Warranty: number;
-    Price: number;
-    Discount: number;
-    Quantity: number;
-    Image: string;
-    CategoryName: string;
-    Fields: Field[];
+    id: string;
+    manufacturer: string;
+    model: string;
+    warranty: number;
+    price: number;
+    discount: number;
+    quantity: number;
+    image: string;
+    categoryName: string;
+    fields: Field[];
 }

@@ -1,6 +1,7 @@
 ﻿using HighTech.Abstraction;
 using HighTech.Data;
 using HighTech.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace HighTech.Services
 {
@@ -32,7 +33,7 @@ namespace HighTech.Services
 
         public ICollection<Category> GetAll()
         {
-            return context.Categories.ToList();
+            return context.Categories.Include(c => c.Field).ToList();
         }
 
         public Category GetCategoryByProduct(string id)

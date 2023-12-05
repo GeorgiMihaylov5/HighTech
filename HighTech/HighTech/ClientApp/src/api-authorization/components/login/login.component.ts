@@ -4,11 +4,9 @@ import { BehaviorSubject } from "rxjs";
 import { AuthorizeService } from "../../services/authorize-facade.service";
 import { ApplicationPaths, QueryParameterNames } from "../../api-authorization.constants";
 import { NgForm } from "@angular/forms";
-import { AppUser } from "../../models/user.model";
 import { LoginRM } from "../../models/login-request.model";
 import { HttpClient } from "@angular/common/http";
 import { ActivatedRoute, Router } from "@angular/router";
-import { IToken } from "../../models/token.model";
 
 @Component({
   selector: 'app-login',

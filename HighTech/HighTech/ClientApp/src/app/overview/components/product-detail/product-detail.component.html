@@ -1,21 +1,21 @@
 <div class="text-center">
     <div class="d-lg-inline-block align-top" style="margin-right: 50px">
-        <img [src]="product.Image" width="400" height="350"/>
+        <img [src]="product.image" width="400" height="350"/>
     </div>
     <div class="d-lg-inline-block align-top">
         <h2 id="productTitle">
-          {{ product.Manufacturer }} - {{ product.Model }}
+          {{ product.manufacturer }} - {{ product.model }}
         </h2>
         <div class="d-lg-inline-block align-top details-item-price">
             <h5>Single price</h5>
             <hr />
-            <span id="pricePerProduct">{{product.Price}}</span>
+            <span id="pricePerProduct">{{product.price}}</span>
             <span> lv.</span>
         </div>
         <div class="d-lg-inline-block align-top details-item-price">
             <h5>Total price</h5>
             <hr />
-            <span id="totalPrice">{{product.Price}}</span>
+            <span id="totalPrice">{{product.price}}</span>
             <span> lv.</span>
         </div>
             <!-- @if(Model.Quantity > 0)
@@ -41,12 +41,12 @@
         <table class="table table-striped">
             <tbody>
                     <!-- var line = item.Split(':'); -->
-                <tr *ngFor="let item of product.Fields">
+                <tr *ngFor="let item of product.fields">
                     <td>
-                        <strong>{{ item.FieldName }}</strong>
+                        <strong>{{ item.fieldName }}</strong>
                     </td>
                     <td>
-                       {{ item.Value }}
+                       {{ item.value }}
                     </td>
                 </tr>
             </tbody>

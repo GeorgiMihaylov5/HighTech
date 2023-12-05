@@ -5,6 +5,6 @@ namespace HighTech.DTOs
     public class CategoryDTO
     {
         public string CategoryId { get; set; }
-        public FieldDTO Field { get; set; }
+        public IEnumerable<FieldDTO> Fields { get; set; }
     }
 }

@@ -13,7 +13,10 @@ export class ControlPanelComponent implements OnInit{
       
   }
   ngOnInit(): void {
-    this.router.navigate([{ outlets: { 'control-panel': ['orders'] } }]);
+    this.router.navigate([
+      'manage',
+      { outlets: { 'manage': ['control-panel', { outlets: { 'control-panel': ['orders'] } }] } }
+    ]);
   }
 
   public ChangeTab(tab: ControlPanelTabType): void {
@@ -25,6 +28,7 @@ export enum ControlPanelTabType {
   Orders = 0,
   Clients = 1,
   Employees = 2,
-  Products = 3
+  Products = 3,
+  Create = 4
 }
 
