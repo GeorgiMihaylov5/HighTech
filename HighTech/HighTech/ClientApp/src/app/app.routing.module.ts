@@ -23,12 +23,12 @@ const routes: Routes = [
   { path: 'detail', component: ProductDetailComponent, resolve: { 'detailFacade': DetailResolver } },
   {
     path: 'manage', component: ManageComponent, children: [
-      { path: 'profile', component: ProfileComponent, outlet: 'manage' },
+      { path: '', component: ProfileComponent, outlet: 'manage' },
       { path: 'orders', component: OrdersComponent, outlet: 'manage' },
       { path: 'change-password', component: ChangePasswordComponent, outlet: 'manage' },
       {
         path: 'control-panel', component: ControlPanelComponent, outlet: 'manage', children: [
-          { path: 'orders', component: OrdersComponent, outlet: 'control-panel' },
+          { path: '', component: OrdersComponent, outlet: 'control-panel' },
           { path: 'clients', component: ClientsComponent, outlet: 'control-panel' },
           { path: 'employees', component: EmployeesComponent, outlet: 'control-panel' },
           { path: 'table-products', component: ProductsTableComponent, outlet: 'control-panel' },

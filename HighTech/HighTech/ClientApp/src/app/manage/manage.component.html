@@ -1,7 +1,7 @@
 <div class="d-flex flex-column flex-lg-row">
     <div class="menu text-center min-width">
-        <div [ngClass]="{'selected-tab': currentTab == 0}" (click)="ChangeTab(0)" [routerLink]="['/manage', { outlets: { 'manage': ['profile'] } }]
-            ">
+        <div [ngClass]="{'selected-tab': currentTab == 0}" (click)="ChangeTab(0)"
+            [routerLink]="['/manage']">
             <span>Profile</span>
         </div>
         <div [ngClass]="{'selected-tab': currentTab == 1}" (click)="ChangeTab(1)"
