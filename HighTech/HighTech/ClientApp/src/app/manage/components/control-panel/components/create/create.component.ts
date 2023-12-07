@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CategoryService } from 'src/app/manage/services/category.service';
+import { ManageServiceFacade } from 'src/app/manage/services/manage-facade.service';
 import { ICategory } from 'src/app/models/category.model';
 import { Field, TypeCode } from 'src/app/models/field.model';
 import { Product } from 'src/app/models/product.model';
@@ -10,8 +11,9 @@ import { Product } from 'src/app/models/product.model';
   styleUrls: ['./create.component.css']
 })
 export class CreateComponent {
-  selectedOption: CreateRadioBtn = CreateRadioBtn.Product;
-  product: Product = {
+  public selectedOption: CreateRadioBtn = CreateRadioBtn.Product;
+
+  public product: Product = {
     id: "",
     manufacturer: "",
     model: "",
@@ -21,30 +23,43 @@ export class CreateComponent {
     quantity: 0,
     image: "",
     categoryName: "",
-    fields: []  // Assuming Fields is an array of Field interface
-  }; // Initialize as an empty object
-  fieldData: Partial<Field> = {}; // Initialize as an empty object
-  categoryData: Partial<ICategory> = {}; // Initialize as an empty object
+    fields: []
+  };
+
+  public field: Field = {
+    fieldName: '',
+    typeCode: TypeCode.String,
+    value: ''
+  };
+
+  public category: ICategory = {
+    categoryId: '',
+    fields: []
+  };
 
   public categories: ICategory[] = [];
+  public fields: Field[] = [];
+  public fieldsCount: number = 1;
+  public typeCodes: { key: number, value: string | TypeCode }[] = this.getTypeCodes();
 
-  constructor(private categoryApi: CategoryService) {
-    categoryApi.getCategories().subscribe(x => {
-      this.categories = x;
+  constructor(private manageService: ManageServiceFacade) {
+    manageService.getCreateData().subscribe((data: [ICategory[], Field[]]) => {
+      this.categories = data[0];
+      this.fields = data[1];
     })
   }
 
-  changeFields() {
+  public changeFields() {
     this.categories.forEach(c => {
-      if(c.categoryId === this.product.categoryName) {
+      if (c.categoryId === this.product.categoryName) {
         this.product.fields = c.fields;
       }
-      
+
       return;
     })
   }
 
-  getFieldType(typeCode: TypeCode): string {
+  public getFieldType(typeCode: TypeCode): string {
     switch (typeCode) {
       case TypeCode.Int16:
       case TypeCode.UInt16:
@@ -65,14 +80,21 @@ export class CreateComponent {
     }
   }
 
+  public removeField() {
+    if (this.fieldsCount > 1) {
+      this.fieldsCount--;
+    }
+  }
+  public addField() {
+    this.fieldsCount++;
+  }
 
 
-  //typeCodes: number[] = Object.keys(TypeCode).filter((k) => !isNaN(Number(TypeCode[k]))).map(Number);
 
-  //constructor(private apiService: ApiService) {}
-
-  save() {
-console.log(this.product)
+  public save() {
+    console.log(this.product)
+    console.log(this.field)
+    console.log(this.category)
 
     // // Check if an option is selected
     // if (this.selectedOption) {
@@ -99,6 +121,15 @@ console.log(this.product)
     // } else {
     //   console.error('Please select an option before saving');
     // }
+  }
+
+
+
+  private getTypeCodes(): { key: number, value: string | TypeCode }[] {
+    return Object.entries(TypeCode)
+      .map(([key, value]) => ({ key, value }))
+      .filter((v) => isNaN(Number(v.value)))
+      .map((v) => ({ key: parseInt(v.key), value: v.value }));
   }
 }
 

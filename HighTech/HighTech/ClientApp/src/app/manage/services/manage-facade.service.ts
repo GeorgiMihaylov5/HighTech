@@ -1,14 +1,16 @@
 import { Injectable } from "@angular/core";
-import { Observable, map, of, switchMap } from "rxjs";
+import { Observable, combineLatest, map, of, switchMap } from "rxjs";
 import { IToken } from "src/api-authorization/models/token.model";
 import { AuthorizeService } from "src/api-authorization/services/authorize-facade.service";
 import { ClientService } from "./client.service";
 import { EmployeeService } from "./employee.service";
 import { IEmployee } from "src/app/models/employee.model";
-import { IProfile } from "src/app/models/profile.model";
 import { IClient } from "src/app/models/client.model";
 import { IChangePassword } from "../../models/change-password.model";
-import { ProductService } from "src/app/services/product.service";
+import { CategoryService } from "./category.service";
+import { FieldService } from "./field.service";
+import { ICategory } from "src/app/models/category.model";
+import { Field } from "src/app/models/field.model";
 
 @Injectable()
 export class ManageServiceFacade {
@@ -16,7 +18,9 @@ export class ManageServiceFacade {
 
     constructor(private authService: AuthorizeService,
         private clientApi: ClientService,
-        private employeeApi: EmployeeService
+        private employeeApi: EmployeeService,
+        private categoryApi: CategoryService,
+        private fieldApi: FieldService
     ) {
         this.token = authService.getTokenData();
     }
@@ -73,5 +77,12 @@ export class ManageServiceFacade {
                 );
             })
         );
+    }
+
+    public getCreateData(): Observable<[ICategory[], Field[]]> {
+        return combineLatest([
+            this.categoryApi.getCategories(),
+            this.fieldApi.getFields()
+        ]);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using HighTech.Abstraction;
+using HighTech.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HighTech.Controllers
@@ -15,6 +16,15 @@ namespace HighTech.Controllers
         {
             this.fieldService = fieldService;
             this.categoryService = categoryService;
+        }
+
+        public IActionResult GetFields()
+        {
+            return Json(fieldService.GetFields().Select(f => new FieldDTO()
+            {
+                FieldName = f.Id,
+                TypeCode = f.TypeCode,
+            }));
         }
 
         public IActionResult Create(string categoryName, string fieldName, TypeCode typeCode)

@@ -15,6 +15,7 @@ import { AppRoutingModule } from "../app.routing.module";
 import { ManageServiceFacade } from "./services/manage-facade.service";
 import { CreateComponent } from "./components/control-panel/components/create/create.component";
 import { CategoryService } from "./services/category.service";
+import { FieldService } from "./services/field.service";
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { CategoryService } from "./services/category.service";
     ClientService,
     EmployeeService,
     CategoryService,
+    FieldService,
     ManageServiceFacade
   ]
 })

@@ -72,6 +72,11 @@ namespace HighTech.Services
             return context.Fields.FirstOrDefault(x => x.Id == id);
         }
 
+        public ICollection<Field> GetFields()
+        {
+            return context.Fields.ToList();
+        }
+
         public ICollection<Field> GetFieldsByCategory(string id)
         {
             return context.Fields
