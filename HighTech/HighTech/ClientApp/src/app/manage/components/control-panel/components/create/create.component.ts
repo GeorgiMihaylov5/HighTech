@@ -39,13 +39,16 @@ export class CreateComponent {
 
   public categories: ICategory[] = [];
   public fields: Field[] = [];
-  public fieldsCount: number = 1;
   public typeCodes: { key: number, value: string | TypeCode }[] = this.getTypeCodes();
 
   constructor(private manageService: ManageServiceFacade) {
     manageService.getCreateData().subscribe((data: [ICategory[], Field[]]) => {
       this.categories = data[0];
       this.fields = data[1];
+
+      if (data[1].length > 0) {
+        this.category.fields.push(data[1][0])
+      }
     })
   }
 
@@ -80,16 +83,17 @@ export class CreateComponent {
     }
   }
 
-  public removeField() {
-    if (this.fieldsCount > 1) {
-      this.fieldsCount--;
+  public removeField(index: number) {
+    if (this.category.fields.length > 0) {
+      this.category.fields.splice(index, 1);
     }
+
   }
   public addField() {
-    this.fieldsCount++;
+    if (this.fields.length > 0) {
+      this.category.fields.push(this.fields[0]);
+    }
   }
-
-
 
   public save() {
     console.log(this.product)

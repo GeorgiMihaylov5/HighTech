@@ -141,14 +141,15 @@
                     <button class="btn btn-primary" (click)="addField()"><i class="bi bi-plus-square text-white"></i></button>
                 </div>
                 <hr>
-                <div class="d-flex justify-content-between" *ngFor="let _ of [].constructor(fieldsCount); let i = index">
+                <div class="d-flex justify-content-between" *ngFor="let c of category.fields; let i = index">
                     <div class="w-75">
                         <select class="form-select" [(ngModel)]="category.fields[i]" required>
-                            <option *ngFor="let field of fields" [value]="field.fieldName">{{ field.fieldName }}
+                            <option *ngFor="let field of fields" [ngValue]="field" [selected]="i === 0">
+                                {{ field.fieldName }}
                             </option>
                         </select>
                     </div>
-                    <button class="btn btn-danger" (click)="removeField()" style="height: 38px;"><i class="bi bi-trash-fill text-white"></i></button>
+                    <button class="btn btn-danger" (click)="removeField(i)" style="height: 38px;"><i class="bi bi-trash-fill text-white"></i></button>
                 </div>
             </div>
         </div>
