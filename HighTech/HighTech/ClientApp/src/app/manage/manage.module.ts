@@ -9,7 +9,7 @@ import { ControlPanelComponent } from "./components/control-panel/control-panel.
 import { OrdersComponent } from "./components/orders/orders.component";
 import { EmployeesComponent } from "./components/control-panel/components/employees/employees.component";
 import { ClientsComponent } from "./components/control-panel/components/clients/clients.component";
-import { ProductsTableComponent } from "./components/control-panel/components/products-table/products-table.component";
+import { TableComponent } from "./components/control-panel/components/table/table.component";
 import { EmployeeService } from "./services/employee.service";
 import { AppRoutingModule } from "../app.routing.module";
 import { ManageServiceFacade } from "./services/manage-facade.service";
@@ -24,7 +24,7 @@ import { FieldService } from "./services/field.service";
     ProfileComponent,
     EmployeesComponent,
     ClientsComponent,
-    ProductsTableComponent,
+    TableComponent,
     CreateComponent,
     ControlPanelComponent,
     ManageComponent,

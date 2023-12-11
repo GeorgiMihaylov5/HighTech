@@ -8,23 +8,21 @@ import { filter } from 'rxjs';
   templateUrl: './manage.component.html',
   styleUrls: ['./manage.component.css']
 })
-export class ManageComponent implements OnInit{
+export class ManageComponent implements OnInit {
   public currentTab: TabType = TabType.Profile;
 
   constructor(public manageService: ManageServiceFacade,
     private router: Router) {
-      
+
   }
 
   ngOnInit(): void {
+    this.setCurrentTab(this.router.url);
+
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
-        const selectedTab = this.getActiveTab(event.url);
-
-        if(selectedTab != null) {
-          this.currentTab = selectedTab;
-        }
+        this.setCurrentTab(event.url);
       });
   }
 
@@ -34,17 +32,25 @@ export class ManageComponent implements OnInit{
 
   private getActiveTab(url: string): TabType {
     console.log(url)
-    if (url === '/manage/(manage:control-panel)') {
+    if (url.includes('/manage/(manage:control-panel')) {
       return TabType.ControlPanel;
     } else if (url === '/manage/(manage:orders)') {
       return TabType.MyOrders;
     } else if (url === '/manage/(manage:change-password)') {
       return TabType.ChangePassword;
-    } else if(url === '/manage') {
+    } else if (url === '/manage') {
       return TabType.Profile;
     }
 
     return null;
+  }
+
+  private setCurrentTab(url: string): void {
+    const selectedTab = this.getActiveTab(url);
+
+    if (selectedTab != null) {
+      this.currentTab = selectedTab;
+    }
   }
 }
 

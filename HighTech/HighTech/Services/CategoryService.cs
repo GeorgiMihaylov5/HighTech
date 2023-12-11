@@ -18,7 +18,7 @@ namespace HighTech.Services
         {
             var cateogry = new Category()
             {
-                CategoryId = categoryId,
+                Id = categoryId,
                 FieldId = fieldId
             };
 
@@ -31,7 +31,7 @@ namespace HighTech.Services
         public Category Get(string categoryId, string fieldId)
         {
             return context.Categories
-                .FirstOrDefault(cf => cf.CategoryId == categoryId && cf.FieldId == fieldId);
+                .FirstOrDefault(cf => cf.Id == categoryId && cf.FieldId == fieldId);
         }
 
         public ICollection<Category> GetAll()
@@ -39,17 +39,17 @@ namespace HighTech.Services
             return context.Categories.Include(c => c.Field).ToList();
         }
 
-        public Category GetCategoryByProduct(string id)
+        public string GetCategoryByProduct(string id)
         {
-            return context.ProductsFields
+            return context.ProductsCategories
                 .Where(pf => pf.ProductId == id)
-                .SelectMany(pf => pf.Field.Categories)
+                .Select(x => x.CategoryId)
                 .FirstOrDefault();
         }
 
         public bool RemoveCategories(string categoryId)
         {
-            var categoryFields = context.Categories.Where(c => c.CategoryId == categoryId).ToList();
+            var categoryFields = context.Categories.Where(c => c.Id == categoryId).ToList();
 
             if (categoryFields is null || categoryFields.Count == 0)
             {

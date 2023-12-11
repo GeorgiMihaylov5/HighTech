@@ -95,13 +95,13 @@ namespace HighTech.Data.Migrations
 
             modelBuilder.Entity("HighTech.Models.Category", b =>
                 {
-                    b.Property<string>("CategoryId")
+                    b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("FieldId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("CategoryId", "FieldId");
+                    b.HasKey("Id", "FieldId");
 
                     b.HasIndex("FieldId");
 
@@ -250,13 +250,16 @@ namespace HighTech.Data.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("HighTech.Models.ProductField", b =>
+            modelBuilder.Entity("HighTech.Models.ProductCategory", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("FieldId")
+                    b.Property<string>("CategoryFieldId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CategoryId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProductId")
@@ -267,11 +270,11 @@ namespace HighTech.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FieldId");
-
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductsFields");
+                    b.HasIndex("CategoryId", "CategoryFieldId");
+
+                    b.ToTable("ProductsCategories");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -464,18 +467,17 @@ namespace HighTech.Data.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("HighTech.Models.ProductField", b =>
+            modelBuilder.Entity("HighTech.Models.ProductCategory", b =>
                 {
-                    b.HasOne("HighTech.Models.Field", "Field")
-                        .WithMany("ProductsFields")
-                        .HasForeignKey("FieldId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("HighTech.Models.Product", "Product")
                         .WithMany("ProductFields")
                         .HasForeignKey("ProductId");
 
-                    b.Navigation("Field");
+                    b.HasOne("HighTech.Models.Category", "Category")
+                        .WithMany("ProductFields")
+                        .HasForeignKey("CategoryId", "CategoryFieldId");
+
+                    b.Navigation("Category");
 
                     b.Navigation("Product");
                 });
@@ -531,11 +533,14 @@ namespace HighTech.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("HighTech.Models.Category", b =>
+                {
+                    b.Navigation("ProductFields");
+                });
+
             modelBuilder.Entity("HighTech.Models.Field", b =>
                 {
                     b.Navigation("Categories");
-
-                    b.Navigation("ProductsFields");
                 });
 
             modelBuilder.Entity("HighTech.Models.Order", b =>

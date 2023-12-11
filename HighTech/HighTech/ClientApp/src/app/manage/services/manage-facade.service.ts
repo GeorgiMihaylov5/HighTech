@@ -13,6 +13,7 @@ import { ICategory } from "src/app/models/category.model";
 import { Field } from "src/app/models/field.model";
 import { Product } from "src/app/models/product.model";
 import { ProductService } from "src/app/services/product.service";
+import { CreateOptions } from "src/app/models/options.model";
 
 @Injectable()
 export class ManageServiceFacade {
@@ -88,6 +89,20 @@ export class ManageServiceFacade {
             this.fieldApi.getFields(),
             this.productApi.getProducts()
         ]);
+    }
+
+    public delete(id: string, selectedOption: CreateOptions): Observable<boolean> {
+        if(selectedOption === CreateOptions.Field) {
+            return this.fieldApi.deleteField(id);
+        }
+        else if(selectedOption === CreateOptions.Category) {
+            return this.categoryApi.deleteCategory(id);
+        }
+        else if(selectedOption === CreateOptions.Product) {
+            return this.productApi.deleteProduct(id);
+        }
+
+        return of(false);
     }
 
     public createField(field: Field): Observable<Field> {

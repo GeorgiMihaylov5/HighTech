@@ -50,5 +50,26 @@ namespace HighTech.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrator")]
+        public IActionResult Delete(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest("Id cannot be a null!");
+            }
+
+            try
+            {
+                var removed = fieldService.RemoveField(id);
+
+                return Json(removed);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

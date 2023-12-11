@@ -25,4 +25,11 @@ export class CategoryService {
                 catchError(this.errorService.handleError.bind(this.errorService))
             );
     }
+
+    public deleteCategory(id: string): Observable<boolean> {
+        return this.http.delete<boolean>((`${this.baseUrl}Categories/Delete/${id}`))
+            .pipe(
+                catchError(this.errorService.handleError.bind(this.errorService))
+            );
+    }
 }

@@ -1,6 +1,6 @@
 ﻿using HighTech.Abstraction;
 using HighTech.DTOs;
-using HighTech.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HighTech.Controllers
@@ -51,7 +51,7 @@ namespace HighTech.Controllers
         {
             var categories = categoryService
                 .GetAll()
-                .GroupBy(c => c.CategoryId)
+                .GroupBy(c => c.Id)
                 .Select(group => new CategoryDTO()
                     {
                         CategoryId = group.Key,
@@ -67,16 +67,25 @@ namespace HighTech.Controllers
             return Json(categories);
         }
 
-        public IActionResult Remove(string id)
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrator")]
+        public IActionResult Delete(string id)
         {
-            if (id is null)
+            if (string.IsNullOrEmpty(id))
             {
-                NotFound();
+                return BadRequest("Id cannot be a null!");
             }
 
-            var removed = categoryService.RemoveCategories(id);
-            //TODO Way to return boolean values
-            return Ok(removed);
+            try
+            {
+                var removed = categoryService.RemoveCategories(id);
+
+                return Json(removed);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

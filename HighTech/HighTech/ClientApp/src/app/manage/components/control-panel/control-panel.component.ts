@@ -11,20 +11,17 @@ import { ManageServiceFacade } from '../../services/manage-facade.service';
 export class ControlPanelComponent implements OnInit {
   @Input() public controlPanelTab: ControlPanelTabType = ControlPanelTabType.Orders;
 
-constructor(private router: Router) {
+  constructor(private router: Router) {
 
-}
+  }
 
   ngOnInit(): void {
+    this.setCurrentTab(this.router.url);
+
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
-        const selectedTab = this.getActiveTab(event.url);
-
-        //TODO FIX ROUTING SELECTED TAB CSS
-        if(selectedTab != null) {
-          this.controlPanelTab = selectedTab;
-        }
+        this.setCurrentTab(event.url);
       });
   }
 
@@ -45,7 +42,15 @@ constructor(private router: Router) {
       return ControlPanelTabType.Orders;
     }
     return null;
-    
+
+  }
+
+  private setCurrentTab(url: string): void {
+    const selectedTab = this.getActiveTab(url);
+
+    if (selectedTab != null) {
+      this.controlPanelTab = selectedTab;
+    }
   }
 }
 

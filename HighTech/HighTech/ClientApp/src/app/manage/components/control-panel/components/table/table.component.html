@@ -48,16 +48,16 @@
                         <td> {{ product.discount }}</td>
                         <td> {{ product.quantity }}</td>
                         <td> {{ product.categoryName }}</td>
-                        <td>
+                        <td class="width-50">
                             <a class="pointer"><i class="bi bi-percent"></i></a>
                         </td>
-                        <td>
+                        <td class="width-50">
                             <a class="pointer"><i class="bi bi-pencil-square text-success"></i></a>
                         </td>
-                        <td>
-                            <a class="pointer"><i class="bi bi-trash-fill text-danger"></i></a>
+                        <td class="width-50">
+                            <a class="pointer"><i class="bi bi-trash-fill text-danger" (click)="deleteObj(product.id, 0)"></i></a>
                         </td>
-                        <td>
+                        <td class="width-50">
                             <a class="pointer"><i class="bi bi-info-circle-fill text-info"></i></a>
                         </td>
                     </tr>
@@ -87,11 +87,11 @@
                     <tr *ngFor="let field of fields">
                         <td> {{ field.fieldName }}</td>
                         <td> {{ field.typeCode }}</td>
-                        <td>
+                        <td class="width-50">
                             <a class="pointer"><i class="bi bi-pencil-square text-success"></i></a>
                         </td>
-                        <td>
-                            <a class="pointer"><i class="bi bi-trash-fill text-danger"></i></a>
+                        <td class="width-50">
+                            <a class="pointer"><i class="bi bi-trash-fill text-danger" (click)="deleteObj(field.fieldName, 1)"></i></a>
                         </td>
                     </tr>
                 </tbody>
@@ -103,7 +103,7 @@
     <!-- Category -->
     <div *ngIf="selectedOption == 2">
         <div class="box" style="margin-top: 25px">
-            <h2 class="text-center">categories - {{ categories?.length }}</h2>
+            <h2 class="text-center">Categories - {{ categories?.length }}</h2>
         </div>
 
         <div class="table-responsive">
@@ -120,11 +120,11 @@
                     <tr *ngFor="let category of categories">
                         <td> {{ category.categoryId }}</td>
                         <td> {{ getFieldsNames(category) }}</td>
-                        <td>
+                        <td class="width-50">
                             <a class="pointer"><i class="bi bi-pencil-square text-success"></i></a>
                         </td>
-                        <td>
-                            <a class="pointer"><i class="bi bi-trash-fill text-danger"></i></a>
+                        <td class="width-50">
+                            <a class="pointer"><i class="bi bi-trash-fill text-danger" (click)="deleteObj(category.categoryId, 2)"></i></a>
                         </td>
                     </tr>
                 </tbody>

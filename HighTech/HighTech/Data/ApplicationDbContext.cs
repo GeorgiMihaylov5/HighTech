@@ -20,22 +20,22 @@ namespace HighTech.Data
         public DbSet<Order> Orders { get; set; } 
         public DbSet<OrderedProduct> OrderedProducts { get; set; } 
         public DbSet<Category> Categories { get; set; } 
-        public DbSet<ProductField> ProductsFields { get; set; } 
+        public DbSet<ProductCategory> ProductsCategories { get; set; } 
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Category>()
-                .HasKey(c => new { c.CategoryId, c.FieldId });
+                .HasKey(c => new { c.Id, c.FieldId });
 
             builder.Entity<Field>()
                 .HasMany(c => c.Categories)
                 .WithOne(cf => cf.Field)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<Field>()
-                .HasMany(c => c.ProductsFields)
-                .WithOne(cf => cf.Field)
-                .OnDelete(DeleteBehavior.Cascade);
+            //builder.Entity<ProductField>()
+            //   .HasOne(pf => pf.Category)
+            //    .WithMany(c => c.ProductFields)
+            //    .HasForeignKey(pf => new { pf.CategoryId, pf.FieldId });
 
             base.OnModelCreating(builder);
         }

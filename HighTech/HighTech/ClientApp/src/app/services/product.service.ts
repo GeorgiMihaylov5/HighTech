@@ -13,15 +13,22 @@ export class ProductService {
 
     }
 
-    getProducts(): Observable<Product[]> {
+    public getProducts(): Observable<Product[]> {
         return this.http.get<Product[]>((`${this.baseUrl}Products/GetAll`))
             .pipe(
                 catchError(this.errorService.handleError.bind(this.errorService))
             );
     }
 
-    createProduct(product: Product): Observable<Product> {
+    public createProduct(product: Product): Observable<Product> {
         return this.http.post<Product>((`${this.baseUrl}Products/Create`), product)
+            .pipe(
+                catchError(this.errorService.handleError.bind(this.errorService))
+            );
+    }
+
+    public deleteProduct(id: string): Observable<boolean> {
+        return this.http.delete<boolean>((`${this.baseUrl}Products/Delete/${id}`))
             .pipe(
                 catchError(this.errorService.handleError.bind(this.errorService))
             );

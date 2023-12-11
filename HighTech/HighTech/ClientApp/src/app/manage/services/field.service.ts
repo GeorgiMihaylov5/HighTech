@@ -25,4 +25,11 @@ export class FieldService {
                 catchError(this.errorService.handleError.bind(this.errorService))
             );
     }
+
+    public deleteField(id: string): Observable<boolean> {
+        return this.http.delete<boolean>((`${this.baseUrl}Fields/Delete/${id}`))
+            .pipe(
+                catchError(this.errorService.handleError.bind(this.errorService))
+            );
+    }
 }

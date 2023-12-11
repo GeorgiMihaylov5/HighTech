@@ -1,6 +1,7 @@
 ﻿using HighTech.Abstraction;
 using HighTech.DTOs;
 using HighTech.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HighTech.Controllers
@@ -45,9 +46,14 @@ namespace HighTech.Controllers
                 return Json(product);
             }
 
-            var category = categoryService.GetCategoryByProduct(product.Id);
+            var categoryId = categoryService.GetCategoryByProduct(product.Id);
 
-            return Json(ConvertToProductDTO(product, category?.CategoryId));
+            if (categoryId is null) 
+            {
+                return BadRequest("Product don't have category!");
+            }
+
+            return Json(ConvertToProductDTO(product, categoryId));
         }
 
         public IActionResult GetAll()
@@ -59,13 +65,21 @@ namespace HighTech.Controllers
                 return Json(Array.Empty<ProductDTO>());
             }
 
-            var category = categoryService.GetCategoryByProduct(products.First().Id);
+
+           
 
             var dtos = new List<ProductDTO>();
 
             foreach (var p in products)
             {
-                dtos.Add(ConvertToProductDTO(p, category?.CategoryId));
+                var categoryId = categoryService.GetCategoryByProduct(p.Id);
+
+                if (categoryId is null)
+                {
+                    return BadRequest("Product don't have category!");
+                }
+
+                dtos.Add(ConvertToProductDTO(p, categoryId));
             }
 
             return Json(dtos);
@@ -93,7 +107,7 @@ namespace HighTech.Controllers
                 {
                     foreach (var field in dto.Fields)
                     {
-                        fieldService.AddProductField(product.Id, field.FieldName, field.Value);
+                        fieldService.AddProductField(product.Id, dto.CategoryName ,field.FieldName, field.Value);
                     }
                 }
                 dto.Id = product.Id;
@@ -123,7 +137,7 @@ namespace HighTech.Controllers
                 return Json(dto);
             }
 
-            var productFields = fieldService.GetProductFields(dto.Id).OrderBy(pf => pf.FieldId).ToList();
+            var productFields = fieldService.GetProductFields(dto.Id).OrderBy(pf => pf.CategoryFieldId).ToList();
             var dtoValues = dto.Fields.OrderBy(pf => pf.FieldName).Select(f => f.Value).ToList();
 
             for (int i = 0; i < productFields.Count; i++)
@@ -137,15 +151,25 @@ namespace HighTech.Controllers
             return Json(dto);
         }
 
-        [HttpDelete]
-        public IActionResult Remove(ProductDTO dto)
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrator")]
+        public IActionResult Delete(string id)
         {
-            if (dto is null || dto.Id is null)
+            if (string.IsNullOrEmpty(id))
             {
-                return BadRequest();
+                return BadRequest("Id cannot be a null!");
             }
 
-            return Json(productService.Remove(dto.Id));
+            try
+            {
+                var removed = productService.Remove(id);
+
+                return Json(removed);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         private ProductDTO ConvertToProductDTO(Product p, string categoryName)
@@ -172,8 +196,8 @@ namespace HighTech.Controllers
                 {
                     dto.Fields.Add(new FieldDTO()
                     {
-                        FieldName = pf.FieldId,
-                        TypeCode = pf.Field.TypeCode,
+                        FieldName = pf.CategoryFieldId,
+                        TypeCode = pf.Category.Field.TypeCode,
                         Value = pf.Value
                     });
                 }

@@ -13,16 +13,17 @@ namespace HighTech.Services
         {
             context = _context;
         }
-        public ProductField AddProductField(string productId, string fieldId, string value)
+        public ProductCategory AddProductField(string productId, string categoryId, string fieldId, string value)
         {
-            var field = new ProductField()
+            var field = new ProductCategory()
             {
                 ProductId = productId,
-                FieldId = fieldId,
+                CategoryFieldId = fieldId,
+                CategoryId = categoryId,
                 Value = value,
             };
 
-            context.ProductsFields.Add(field);
+            context.ProductsCategories.Add(field);
             context.SaveChanges();
 
             return field;
@@ -58,7 +59,7 @@ namespace HighTech.Services
 
         public bool EditProductFieldValue(string pfId, string value)
         {
-            var productField = context.ProductsFields.FirstOrDefault(x => x.Id == pfId);
+            var productField = context.ProductsCategories.FirstOrDefault(x => x.Id == pfId);
 
             if (productField is null)
             {
@@ -80,10 +81,10 @@ namespace HighTech.Services
             return context.Fields.ToList();
         }
 
-        public ICollection<ProductField> GetProductFields(string id)
+        public ICollection<ProductCategory> GetProductFields(string id)
         {
-            return context.ProductsFields
-                .Include(pf => pf.Field)
+            return context.ProductsCategories
+                .Include(pf => pf.Category.Field)
                 .Where(x => x.ProductId == id).ToList();
         }
 
@@ -96,7 +97,7 @@ namespace HighTech.Services
                 return false;
             }
 
-            context.Fields .Remove(field);
+            context.Fields.Remove(field);
             return context.SaveChanges() != 0;
         }
     }
