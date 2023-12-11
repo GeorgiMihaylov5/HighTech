@@ -475,7 +475,8 @@ namespace HighTech.Data.Migrations
 
                     b.HasOne("HighTech.Models.Category", "Category")
                         .WithMany("ProductFields")
-                        .HasForeignKey("CategoryId", "CategoryFieldId");
+                        .HasForeignKey("CategoryId", "CategoryFieldId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Category");
 

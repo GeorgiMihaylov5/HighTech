@@ -48,11 +48,6 @@ namespace HighTech.Controllers
 
             var categoryId = categoryService.GetCategoryByProduct(product.Id);
 
-            if (categoryId is null) 
-            {
-                return BadRequest("Product don't have category!");
-            }
-
             return Json(ConvertToProductDTO(product, categoryId));
         }
 
@@ -73,11 +68,6 @@ namespace HighTech.Controllers
             foreach (var p in products)
             {
                 var categoryId = categoryService.GetCategoryByProduct(p.Id);
-
-                if (categoryId is null)
-                {
-                    return BadRequest("Product don't have category!");
-                }
 
                 dtos.Add(ConvertToProductDTO(p, categoryId));
             }
