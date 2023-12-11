@@ -14,15 +14,18 @@ namespace HighTech.Services
             context = _context;
         }
 
-        public bool CreateCategoryField(string categoryId, string fieldId)
+        public Category CreateCategoryField(string categoryId, string fieldId)
         {
-            context.Categories.Add(new Category()
+            var cateogry = new Category()
             {
                 CategoryId = categoryId,
                 FieldId = fieldId
-            });
+            };
 
-            return context.SaveChanges() != 0;
+            context.Categories.Add(cateogry);
+            context.SaveChanges();
+
+            return cateogry;
         }
 
         public Category Get(string categoryId, string fieldId)

@@ -1,5 +1,6 @@
 ﻿using HighTech.Abstraction;
 using HighTech.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HighTech.Controllers
@@ -9,13 +10,11 @@ namespace HighTech.Controllers
     public class FieldsController : Controller
     {
         private readonly IFieldService fieldService;
-        private readonly ICategoryService categoryService;
 
 
-        public FieldsController(IFieldService fieldService, ICategoryService categoryService)
+        public FieldsController(IFieldService fieldService)
         {
             this.fieldService = fieldService;
-            this.categoryService = categoryService;
         }
 
         public IActionResult GetFields()
@@ -27,17 +26,29 @@ namespace HighTech.Controllers
             }));
         }
 
-        public IActionResult Create(string categoryName, string fieldName, TypeCode typeCode)
+        [HttpPost]
+        [Authorize(Roles = "Administrator")]
+        public IActionResult Create(FieldDTO dto)
         {
-            fieldService.CreateField(fieldName, typeCode);
-            categoryService.CreateCategoryField(categoryName, fieldName);
+            if (string.IsNullOrEmpty(dto.FieldName))
+            {
+                return BadRequest("Field name is required!");
+            }
 
-            return Json(fieldService.GetFieldsByCategory(categoryName));
-        }
+            try
+            {
+                var field = fieldService.CreateField(dto.FieldName, dto.TypeCode);
 
-        public IActionResult GetFieldsByCategory(string categoryName)
-        {
-            return Json(fieldService.GetFieldsByCategory(categoryName));
+                return Json(new FieldDTO()
+                {
+                    FieldName = field.Id,
+                    TypeCode = field.TypeCode
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

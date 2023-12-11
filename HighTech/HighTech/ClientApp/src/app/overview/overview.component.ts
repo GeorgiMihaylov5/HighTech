@@ -30,7 +30,7 @@ export class OverviewComponent implements OnInit {
 
         this.overviewFacade.loadProducts().subscribe((products: Product[]) => {
             this.isLoading = false;
-            this.products = products;
+            this.products = products.filter((p: Product) => p.quantity > 0);
         })
     }
 

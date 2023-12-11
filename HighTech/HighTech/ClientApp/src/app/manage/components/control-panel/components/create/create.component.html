@@ -81,24 +81,9 @@
                 </div>
             </div>
         </div>
-
-        <!-- <div *ngIf="selectedOption === 'field'">
-            <label>Field Name: <input type="text" [(ngModel)]="fieldData.fieldName"></label>
-            <label>Type Code:
-                <select [(ngModel)]="fieldData.typeCode">
-                    <option *ngFor="let code of typeCodes" [value]="code">{{ code }}</option>
-                </select>
-            </label>
-            <label>Value: <input type="text" [(ngModel)]="fieldData.value"></label>
-        </div> -->
-
-        <!-- Category Form -->
-        <!-- <div *ngIf="selectedOption === 'category'">
-            <label>Category ID: <input type="text" [(ngModel)]="categoryData.categoryId"></label>
-        </div> -->
-
     </div>
 
+    
     <!-- Field Form -->
     <div *ngIf="selectedOption == 1">
         <div class="d-flex flex-nowrap flex-column child-mb">
@@ -112,27 +97,21 @@
                 <p>Type Codes</p>
                 <div>
                     <select class="form-select" [(ngModel)]="field.typeCode" required>
-                        <option *ngFor="let typeCode of typeCodes" [value]="typeCode.key">{{ typeCode.value }}</option>
+                        <option *ngFor="let typeCode of typeCodes" [ngValue]="typeCode.key">{{ typeCode.value }}</option>
                     </select>
                 </div>
             </div>
-            <!-- <div>
-                <p>Value</p>
-                <div>
-                    <input class="form-control" name="typeCode" [type]="getFieldType(field.typeCode)" [(ngModel)]="field.value" required>
-                </div>
-            </div> -->
         </div>
-
-
     </div>
+    
+
     <!-- Category Form -->
     <div *ngIf="selectedOption == 2">
         <div class="d-flex flex-nowrap flex-column child-mb">
             <div>
                 <p>Category Name</p>
                 <div>
-                    <input class="form-control" name="fieldName" type="text" [(ngModel)]="category.categoryId" required>
+                    <input class="form-control" name="categoryName" type="text" [(ngModel)]="category.categoryId" required>
                 </div>
             </div>
             <div>
@@ -143,8 +122,8 @@
                 <hr>
                 <div class="d-flex justify-content-between" *ngFor="let c of category.fields; let i = index">
                     <div class="w-75">
-                        <select class="form-select" [(ngModel)]="category.fields[i]" required>
-                            <option *ngFor="let field of fields" [ngValue]="field" [selected]="i === 0">
+                        <select class="form-select" [name]="'Field' + i" [(ngModel)]="category.fields[i].fieldName" required>
+                            <option *ngFor="let field of fields" [value]="field.fieldName">
                                 {{ field.fieldName }}
                             </option>
                         </select>

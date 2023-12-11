@@ -28,15 +28,18 @@ namespace HighTech.Services
             return field;
         }
 
-        public bool CreateField(string id, TypeCode typeCode)
+        public Field CreateField(string id, TypeCode typeCode)
         {
-            context.Fields.Add(new Field()
+            var field = new Field()
             {
                 Id = id,
                 TypeCode = typeCode
-            });
+            };
 
-            return context.SaveChanges() != 0;
+            context.Fields.Add(field);
+            context.SaveChanges();
+
+            return field;
         }
 
         public bool EditField(string id,TypeCode typeCode)
@@ -75,14 +78,6 @@ namespace HighTech.Services
         public ICollection<Field> GetFields()
         {
             return context.Fields.ToList();
-        }
-
-        public ICollection<Field> GetFieldsByCategory(string id)
-        {
-            return context.Fields
-                .Include(x => x.ProductsFields)
-                .Where(f => f.Categories!.Select(x => x.FieldId).Contains(f.Id))
-                .ToList();
         }
 
         public ICollection<ProductField> GetProductFields(string id)

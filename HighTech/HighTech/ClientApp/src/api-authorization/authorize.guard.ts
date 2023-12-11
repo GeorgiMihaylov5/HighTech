@@ -23,7 +23,8 @@ export class AuthorizeGuard implements CanActivate {
         const role = data[1]?.role;
 
         if (this.handleAuthorization(isAuthenticated, state)) {
-          return role === _next.data.role as string;
+          //TODO
+          return role === _next.data.role as string[];
         }
 
         return false;

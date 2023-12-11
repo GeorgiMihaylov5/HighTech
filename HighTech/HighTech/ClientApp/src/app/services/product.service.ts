@@ -10,13 +10,20 @@ export class ProductService {
     constructor(private http: HttpClient,
         private errorService: ErrorService,
         @Inject('BASE_URL') private baseUrl: string) {
-        
+
     }
 
     getProducts(): Observable<Product[]> {
         return this.http.get<Product[]>((`${this.baseUrl}Products/GetAll`))
-        .pipe(
-            catchError(this.errorService.handleError.bind(this.errorService))
-        )
+            .pipe(
+                catchError(this.errorService.handleError.bind(this.errorService))
+            );
+    }
+
+    createProduct(product: Product): Observable<Product> {
+        return this.http.post<Product>((`${this.baseUrl}Products/Create`), product)
+            .pipe(
+                catchError(this.errorService.handleError.bind(this.errorService))
+            );
     }
 }

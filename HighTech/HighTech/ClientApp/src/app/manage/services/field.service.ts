@@ -18,4 +18,11 @@ export class FieldService {
                 catchError(this.errorService.handleError.bind(this.errorService))
             );
     }
+
+    public createField(field: Field): Observable<Field> {
+        return this.http.post<Field>((`${this.baseUrl}Fields/Create`), field)
+            .pipe(
+                catchError(this.errorService.handleError.bind(this.errorService))
+            );
+    }
 }

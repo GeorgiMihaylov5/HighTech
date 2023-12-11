@@ -19,5 +19,10 @@ export class CategoryService {
             );
     }
 
-  
+    public createCategory(category: ICategory): Observable<ICategory> {
+        return this.http.post<ICategory>((`${this.baseUrl}Categories/Create`), category)
+            .pipe(
+                catchError(this.errorService.handleError.bind(this.errorService))
+            );
+    }
 }

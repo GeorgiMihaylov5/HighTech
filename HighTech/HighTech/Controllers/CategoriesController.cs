@@ -1,5 +1,6 @@
 ﻿using HighTech.Abstraction;
 using HighTech.DTOs;
+using HighTech.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HighTech.Controllers
@@ -17,17 +18,33 @@ namespace HighTech.Controllers
 
         public IActionResult Create(CategoryDTO dto)
         {
+            if(string.IsNullOrEmpty(dto.CategoryId))
+            {
+                return BadRequest("Category name is required!");
+            }
+            else if(dto.Fields is null || dto.Fields.Count < 1)
+            {
+                return BadRequest("There must be at least one field!");
+            }
+
             foreach (var field in dto.Fields)
             {
-                var categoryCreated = categoryService.CreateCategoryField(dto.CategoryId, field.FieldName);
-
-                if (!categoryCreated)
+                try
                 {
-                    return BadRequest();
+                    var category = categoryService.CreateCategoryField(dto.CategoryId, field.FieldName);
+
+                    if (category is null)
+                    {
+                        return BadRequest();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(ex.Message);
                 }
             }
 
-            return Ok();
+            return Json(dto);
         }
 
         public IActionResult GetAll()
@@ -43,7 +60,7 @@ namespace HighTech.Controllers
                             FieldName = c.Field.Id,
                             TypeCode = c.Field.TypeCode,
                             Value = null
-                        })
+                        }).ToList()
                     }
                 );
 

@@ -11,6 +11,8 @@ import { CategoryService } from "./category.service";
 import { FieldService } from "./field.service";
 import { ICategory } from "src/app/models/category.model";
 import { Field } from "src/app/models/field.model";
+import { Product } from "src/app/models/product.model";
+import { ProductService } from "src/app/services/product.service";
 
 @Injectable()
 export class ManageServiceFacade {
@@ -20,7 +22,8 @@ export class ManageServiceFacade {
         private clientApi: ClientService,
         private employeeApi: EmployeeService,
         private categoryApi: CategoryService,
-        private fieldApi: FieldService
+        private fieldApi: FieldService,
+        private productApi: ProductService
     ) {
         this.token = authService.getTokenData();
     }
@@ -84,5 +87,17 @@ export class ManageServiceFacade {
             this.categoryApi.getCategories(),
             this.fieldApi.getFields()
         ]);
+    }
+
+    public createField(field: Field): Observable<Field> {
+        return this.fieldApi.createField(field);
+    }
+
+    public createCategory(category: ICategory): Observable<ICategory> {
+        return this.categoryApi.createCategory(category);
+    }
+
+    public createProduct(product: Product): Observable<Product> {
+        return this.productApi.createProduct(product);
     }
 }

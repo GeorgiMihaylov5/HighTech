@@ -2,7 +2,6 @@
 using HighTech.DTOs;
 using HighTech.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 
 namespace HighTech.Controllers
 {
@@ -75,22 +74,35 @@ namespace HighTech.Controllers
         [HttpPost]
         public IActionResult Create(ProductDTO dto)
         {
-            var product = productService.Create(dto.Manufacturer, dto.Model, dto.Warranty,
+            if(dto is null)
+            {
+                return BadRequest("Product is null!");
+            }
+
+            try
+            {
+                var product = productService.Create(dto.Manufacturer, dto.Model, dto.Warranty,
                 dto.Price, dto.Discount, dto.Quantity, dto.Image);
 
-            if (product is null || product.Id is null)
-            {
-                return BadRequest();
-            }
-
-            if (dto.Fields is not null)
-            {
-                foreach (var field in dto.Fields)
+                if (product is null || product.Id is null)
                 {
-                    fieldService.AddProductField(product.Id, field.FieldName, field.Value);
+                    return BadRequest();
                 }
+
+                if (dto.Fields is not null)
+                {
+                    foreach (var field in dto.Fields)
+                    {
+                        fieldService.AddProductField(product.Id, field.FieldName, field.Value);
+                    }
+                }
+                dto.Id = product.Id;
             }
-            dto.Id = product.Id;
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
 
             return Json(dto);
         }
