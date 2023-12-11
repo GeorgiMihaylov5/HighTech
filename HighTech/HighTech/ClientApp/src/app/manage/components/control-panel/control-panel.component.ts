@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
+import { ManageServiceFacade } from '../../services/manage-facade.service';
 
 @Component({
   selector: 'app-control-panel',
@@ -20,6 +21,7 @@ constructor(private router: Router) {
       .subscribe((event: NavigationEnd) => {
         const selectedTab = this.getActiveTab(event.url);
 
+        //TODO FIX ROUTING SELECTED TAB CSS
         if(selectedTab != null) {
           this.controlPanelTab = selectedTab;
         }

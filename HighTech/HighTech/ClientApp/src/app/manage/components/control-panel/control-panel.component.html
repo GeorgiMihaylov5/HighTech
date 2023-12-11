@@ -11,10 +11,10 @@
             <a class="nav-link"[ngClass]="{'active': controlPanelTab == 2}">Employees</a>
         </li>
         <li class="nav-item" (click)="ChangeTab(3)" [routerLink]="[{ outlets: { 'control-panel': ['table-products'] } }]">
-            <a class="nav-link" [class]="{'active': controlPanelTab == 3}">Products</a>
+            <a class="nav-link" [ngClass]="{'active': controlPanelTab == 3}">Products</a>
         </li>
         <li class="nav-item" (click)="ChangeTab(4)" [routerLink]="[{ outlets: { 'control-panel': ['create'] } }]">
-            <a class="nav-link" [class]="{'active': controlPanelTab == 4}">Create</a>
+            <a class="nav-link" [ngClass]="{'active': controlPanelTab == 4}">Create</a>
         </li>
     </ul>
     

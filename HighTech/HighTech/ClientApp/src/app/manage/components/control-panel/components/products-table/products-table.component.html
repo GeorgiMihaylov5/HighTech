@@ -1,76 +1,134 @@
 <div>
-    <div class="box" style="margin-top: 25px">
-        <h2 class="text-center">Products - {{ (products | async)?.length }}</h2>
+    <div class="mb-3 mt-3 text-center">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input pointer" type="radio" name="inlineRadioOptions" id="inlineRadio1" [value]="0"
+                [(ngModel)]="selectedOption">
+            <label class="form-check-label pointer" for="inlineRadio1">Product</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input pointer" type="radio" name="inlineRadioOptions" id="inlineRadio2" [value]="1"
+                [(ngModel)]="selectedOption">
+            <label class="form-check-label pointer" for="inlineRadio2">Field</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input pointer" type="radio" name="inlineRadioOptions" id="inlineRadio3" [value]="2"
+                [(ngModel)]="selectedOption">
+            <label class="form-check-label pointer" for="inlineRadio3">Category</label>
+        </div>
     </div>
 
-    <div class="table-responsive">
-        <table class="table table-hover text-center">
-            <thead>
-                <tr>
-                    <th>Manufacturer</th>
-                    <th>Model</th>
-                    <th>Warranty</th>
-                    <th>Price</th>
-                    <th>Discount</th>
-                    <th>Quantity</th>
-                    <th>CategoryName</th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let product of (products | async)">
-                    <td> {{ product.manufacturer }}</td>
-                    <td> {{ product.model }}</td>
-                    <td> {{ product.warranty }}</td>
-                    <td> {{ product.price }}</td>
-                    <td> {{ product.discount }}</td>
-                    <td> {{ product.quantity }}</td>
-                    <td> {{ product.categoryName }}</td>
-                    <td> 
-                        <a class="pointer"><i class="bi bi-percent"></i></a> </td>
-                    <td>
-                        <a class="pointer"><i class="bi bi-pencil-square text-success"></i></a></td>
-                    <td>
-                        <a class="pointer"><i class="bi bi-trash-fill text-danger"></i></a></td>
-                    <td>
-                        <a class="pointer"><i class="bi bi-info-circle-fill text-info"></i></a>
-                    </td>
+    <div *ngIf="selectedOption == 0">
+        <div class="box" style="margin-top: 25px">
+            <h2 class="text-center">Products - {{ products?.length }}</h2>
+        </div>
 
-
-                    <!-- <td class="align-middle">
-                            <button class="btn btn-outline-dark btn-sm" onclick="addAlert(@Json.Serialize(item).ToString())">See Barcode</button>
-                        </td> -->
-
-                    <!-- <td class="align-middle">
-                            @if (item.Discount == 0)
-                            {
-                                <a asp-action="MakeDiscount" asp-route-id="@item.Id" class="btn btn-outline-success btn-sm">Add Discount</a>
-                            }
-                            else
-                            {
-                                 <form asp-action="RemoveDiscount" asp-controller="Products" method="post">
-                                     <input type="hidden" name="id" value="@item.Id" />
-                                     <button type="submit" class="btn btn-outline-danger btn-sm">Remove Discount</button>
-                                 </form>
-                            }
+        <div class="table-responsive">
+            <table class="table table-hover text-center">
+                <thead>
+                    <tr>
+                        <th>Manufacturer</th>
+                        <th>Model</th>
+                        <th>Warranty</th>
+                        <th>Price</th>
+                        <th>Discount</th>
+                        <th>Quantity</th>
+                        <th>CategoryName</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let product of products">
+                        <td> {{ product.manufacturer }}</td>
+                        <td> {{ product.model }}</td>
+                        <td> {{ product.warranty }}</td>
+                        <td> {{ product.price }}</td>
+                        <td> {{ product.discount }}</td>
+                        <td> {{ product.quantity }}</td>
+                        <td> {{ product.categoryName }}</td>
+                        <td>
+                            <a class="pointer"><i class="bi bi-percent"></i></a>
                         </td>
-                        <td class="align-middle">
-                            <a asp-action="@edit" asp-controller="@controller" asp-route-id="@item.Id"><i class="bi bi-pencil-square text-success"></i></a>
+                        <td>
+                            <a class="pointer"><i class="bi bi-pencil-square text-success"></i></a>
                         </td>
-                        <td class="align-middle" style="padding: 7px">
-                                 <form asp-action="Delete" asp-controller="Products" method="post">
-                                     <input type="hidden" name="id" value="@item.Id" />
-                                     <button type="submit" class="btn text-danger"><i class="bi bi-trash-fill"></i></button>
-                                 </form>
-                             </td>
-                        <td class="align-middle">
-                            <a asp-action="Details" asp-controller="Products" asp-route-id="@item.Id"><i class="fa-solid fa-circle-info text-info"></i></a>
-                        </td> -->
-                </tr>
-            </tbody>
-        </table>
+                        <td>
+                            <a class="pointer"><i class="bi bi-trash-fill text-danger"></i></a>
+                        </td>
+                        <td>
+                            <a class="pointer"><i class="bi bi-info-circle-fill text-info"></i></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <!-- Field -->
+    <div *ngIf="selectedOption == 1">
+        <div class="box" style="margin-top: 25px">
+            <h2 class="text-center">Fields - {{ fields?.length }}</h2>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover text-center">
+                <thead>
+                    <tr>
+                        <th>Field Name</th>
+                        <th>Type Code</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let field of fields">
+                        <td> {{ field.fieldName }}</td>
+                        <td> {{ field.typeCode }}</td>
+                        <td>
+                            <a class="pointer"><i class="bi bi-pencil-square text-success"></i></a>
+                        </td>
+                        <td>
+                            <a class="pointer"><i class="bi bi-trash-fill text-danger"></i></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <!-- Category -->
+    <div *ngIf="selectedOption == 2">
+        <div class="box" style="margin-top: 25px">
+            <h2 class="text-center">categories - {{ categories?.length }}</h2>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover text-center">
+                <thead>
+                    <tr>
+                        <th>Category Name</th>
+                        <th>Fields</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let category of categories">
+                        <td> {{ category.categoryId }}</td>
+                        <td> {{ getFieldsNames(category) }}</td>
+                        <td>
+                            <a class="pointer"><i class="bi bi-pencil-square text-success"></i></a>
+                        </td>
+                        <td>
+                            <a class="pointer"><i class="bi bi-trash-fill text-danger"></i></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

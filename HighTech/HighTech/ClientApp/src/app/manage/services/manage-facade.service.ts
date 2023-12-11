@@ -82,10 +82,11 @@ export class ManageServiceFacade {
         );
     }
 
-    public getCreateData(): Observable<[ICategory[], Field[]]> {
+    public getData(): Observable<[ICategory[], Field[], Product[]]> {
         return combineLatest([
             this.categoryApi.getCategories(),
-            this.fieldApi.getFields()
+            this.fieldApi.getFields(),
+            this.productApi.getProducts()
         ]);
     }
 

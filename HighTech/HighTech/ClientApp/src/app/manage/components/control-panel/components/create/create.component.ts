@@ -3,6 +3,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ManageServiceFacade } from 'src/app/manage/services/manage-facade.service';
 import { ICategory } from 'src/app/models/category.model';
 import { Field, TypeCode } from 'src/app/models/field.model';
+import { CreateOptions } from 'src/app/models/options.model';
 import { Product } from 'src/app/models/product.model';
 
 @Component({
@@ -43,7 +44,7 @@ export class CreateComponent {
 
   constructor(private manageService: ManageServiceFacade,
     private toastr: ToastrService) {
-    manageService.getCreateData().subscribe((data: [ICategory[], Field[]]) => {
+    manageService.getData().subscribe((data: [ICategory[], Field[], Product[]]) => {
       this.categories = data[0];
       this.fields = data[1];
 
@@ -52,6 +53,7 @@ export class CreateComponent {
       }
       if (data[0].length > 0) {
         this.product.categoryName = data[0][1].categoryId;
+        this.changeFields();
       }
     })
   }
@@ -167,10 +169,4 @@ export class CreateComponent {
       .filter((v) => isNaN(Number(v.value)))
       .map((v) => ({ key: parseInt(v.key), value: v.value }));
   }
-}
-
-export enum CreateOptions {
-  Product = 0,
-  Field = 1,
-  Category = 2
 }
