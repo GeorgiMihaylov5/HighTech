@@ -37,6 +37,7 @@
                         <th></th>
                         <th></th>
                         <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -49,16 +50,19 @@
                         <td> {{ product.quantity }}</td>
                         <td> {{ product.categoryName }}</td>
                         <td class="width-50">
-                            <a class="pointer"><i class="bi bi-percent"></i></a>
+                            <a class="pointer" (click)="increaseDiscount(product)" title="Add Discount"><i class="bi bi-percent"></i></a>
                         </td>
                         <td class="width-50">
-                            <a class="pointer" (click)="editObj(product, 0)"><i class="bi bi-pencil-square text-success"></i></a>
+                            <a class="pointer" (click)="removeDiscount(product)" title="Remove Discount"><i class="bi bi-x-circle-fill text-danger"></i></a>
                         </td>
                         <td class="width-50">
-                            <a class="pointer" (click)="deleteObj(product.id, 0)"><i class="bi bi-trash-fill text-danger"></i></a>
+                            <a class="pointer" (click)="editObj(product, 0)" title="Edit product"><i class="bi bi-pencil-square text-success"></i></a>
                         </td>
                         <td class="width-50">
-                            <a class="pointer"><i class="bi bi-info-circle-fill text-info"></i></a>
+                            <a class="pointer" (click)="deleteObj(product.id, 0)" title="Delete product"><i class="bi bi-trash-fill text-danger"></i></a>
+                        </td>
+                        <td class="width-50">
+                            <a class="pointer" (click)="detailProduct(product)" title="Details"><i class="bi bi-info-circle-fill text-info"></i></a>
                         </td>
                     </tr>
                 </tbody>
@@ -88,10 +92,10 @@
                         <td> {{ field.name }}</td>
                         <td> {{ field.typeCode }}</td>
                         <td class="width-50">
-                            <a class="pointer" (click)="editObj(field, 1)"><i class="bi bi-pencil-square text-success"></i></a>
+                            <a class="pointer" (click)="editObj(field, 1)" title="Edit Field"><i class="bi bi-pencil-square text-success"></i></a>
                         </td>
                         <td class="width-50">
-                            <a class="pointer" (click)="deleteObj(field.id, 1)"><i class="bi bi-trash-fill text-danger"></i></a>
+                            <a class="pointer" (click)="deleteObj(field.id, 1)" title="Delete Field"><i class="bi bi-trash-fill text-danger"></i></a>
                         </td>
                     </tr>
                 </tbody>
@@ -121,10 +125,10 @@
                         <td> {{ category.name }}</td>
                         <td> {{ getFieldsNames(category) }}</td>
                         <td class="width-50">
-                            <a class="pointer" (click)="editObj(category, 2)"><i class="bi bi-pencil-square text-success"></i></a>
+                            <a class="pointer" (click)="editObj(category, 2)" title="Edit Category"><i class="bi bi-pencil-square text-success"></i></a>
                         </td>
                         <td class="width-50">
-                            <a class="pointer" (click)="deleteObj(category.id, 2)"><i class="bi bi-trash-fill text-danger"></i></a>
+                            <a class="pointer" (click)="deleteObj(category.id, 2)" title="Delete Category"><i class="bi bi-trash-fill text-danger"></i></a>
                         </td>
                     </tr>
                 </tbody>

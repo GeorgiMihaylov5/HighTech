@@ -178,6 +178,42 @@ namespace HighTech.Controllers
             }
         }
 
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
+        public IActionResult MakeDiscount(DiscountDTO dto)
+        {
+            try
+            {
+                var product = productService.IncreaseDiscount(dto.Id, dto.Percentage);
+
+                if (product is null)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                return Json(ConvertToProductDTO(product, null));
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+       
+        [HttpPost]
+        [Authorize(Roles = "Administrator")]
+        public IActionResult RemoveDiscount(DiscountDTO dto)
+        {
+            try
+            {
+                return Json(ConvertToProductDTO(productService.RemoveDiscount(dto.Id), null));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         private ProductDTO ConvertToProductDTO(Product p, string categoryName)
         {
             var dto = new ProductDTO()

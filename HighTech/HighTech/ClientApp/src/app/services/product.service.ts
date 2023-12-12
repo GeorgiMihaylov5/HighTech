@@ -40,4 +40,22 @@ export class ProductService {
                 catchError(this.errorService.handleError.bind(this.errorService))
             );
     }
+
+    public increaseDiscount(id: string, percentage: number): Observable<Product> {
+        return this.http.post<Product>((`${this.baseUrl}Products/MakeDiscount`), { 
+            id: id, percentage: percentage 
+        })
+            .pipe(
+                catchError(this.errorService.handleError.bind(this.errorService))
+            );
+    }
+
+    public removeDiscount(id: string): Observable<Product> {
+        return this.http.post<Product>((`${this.baseUrl}Products/RemoveDiscount`), { 
+            id: id 
+        })
+            .pipe(
+                catchError(this.errorService.handleError.bind(this.errorService))
+            );
+    }
 }

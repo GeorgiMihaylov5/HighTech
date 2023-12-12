@@ -10,11 +10,7 @@ namespace HighTech.Abstraction
         public Product Create(string manufacturer, string model, int warranty, decimal price, decimal discount, int quantity, string image);
         public Product Edit(string id, string manufacturer, string model, int warranty, decimal price, decimal discount, int quantity, string image);
         public bool Remove(string id);
-        public bool MakeDiscount(string id, int discount);
-        public bool RemoveDiscount(string id);
-
-
-        //TODO
-        // List<Product> Search(string filter, int minPrice, int maxPrice, ICollection<string> manufacturers, ICollection<string> models, IEnumerable<Product> oldProducts);
+        public Product IncreaseDiscount(string id, int percentage);
+        public Product RemoveDiscount(string id);
     }
 }

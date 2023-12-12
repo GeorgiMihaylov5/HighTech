@@ -99,7 +99,7 @@ namespace HighTech.Services
                 return false;
             }
 
-            context.Fields.Remove(field);       
+            context.Fields.Remove(field);
             return context.SaveChanges() != 0;
         }
     }

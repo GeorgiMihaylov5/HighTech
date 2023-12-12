@@ -85,38 +85,51 @@ namespace HighTech.Services
             return context.SaveChanges() != 0;
         }
 
-        public bool MakeDiscount(string id, int discount)
+        public Product IncreaseDiscount(string id, int percentage)
         {
             var product = Get(id);
 
             if (product is null)
             {
-                return false;
+                return null;
             }
 
-            product.Discount = product.Price * discount / 100;
+            if (product.Discount != 0)
+            {
+                product.Price += product.Discount;
+                percentage += (int)(product.Discount * 100 / product.Price);
+            }
+
+            if (percentage > 100)
+            {
+                throw new InvalidDataException("Percentage cannot be highter that 100!");
+            }
+
+            product.Discount = product.Price * percentage / 100;
             product.Price -= product.Discount;
 
             context.Products.Update(product);
+            context.SaveChanges();
 
-            return context.SaveChanges() != 0;
+            return product;
         }
 
-        public bool RemoveDiscount(string id)
+        public Product RemoveDiscount(string id)
         {
             var product = Get(id);
 
             if (product is null)
             {
-                return false;
+                return null;
             }
 
             product.Price += product.Discount;
             product.Discount = 0;
 
             context.Products.Update(product);
+            context.SaveChanges();
 
-            return context.SaveChanges() != 0;
+            return product;
         }
     }
 }

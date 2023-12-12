@@ -132,4 +132,12 @@ export class ManageServiceFacade {
 
         return of(null);
     }
+
+    public increaseDiscount(product: Product): Observable<Product> {
+        return this.productApi.increaseDiscount(product.id, 5);
+    }
+
+    public removeDiscount(product: Product): Observable<Product> {
+        return this.productApi.removeDiscount(product.id);
+    }
 }

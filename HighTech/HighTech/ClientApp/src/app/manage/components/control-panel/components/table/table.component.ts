@@ -81,6 +81,25 @@ export class TableComponent implements OnInit {
     this.router.navigateByUrl('/manage/(manage:control-panel/(control-panel:create))');
   }
 
+  public detailProduct(product: Product) {
+    this.state.selectedProduct = product;
+    this.router.navigate(["/detail"]);
+  }
+
+  increaseDiscount(product: Product) {
+    this.manageService.increaseDiscount(product).subscribe((p: Product) => {
+      product.discount = p.discount;
+      product.price = p.price;
+    });
+  }
+
+  removeDiscount(product: Product) {
+    this.manageService.removeDiscount(product).subscribe((p: Product) => {
+      product.discount = p.discount;
+      product.price = p.price;
+    });
+  }
+
   private splice(arr: any[], id: string, messageObj: string) {
     const indexToRemove = arr.findIndex(obj => obj['id'] === id);
 
