@@ -96,14 +96,22 @@ namespace HighTech.Data.Migrations
             modelBuilder.Entity("HighTech.Models.Category", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("FieldId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id", "FieldId");
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("FieldId");
+
+                    b.HasIndex("Id", "FieldId")
+                        .IsUnique()
+                        .HasFilter("[FieldId] IS NOT NULL");
 
                     b.ToTable("Categories");
                 });
@@ -153,12 +161,20 @@ namespace HighTech.Data.Migrations
             modelBuilder.Entity("HighTech.Models.Field", b =>
                 {
                     b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("TypeCode")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique()
+                        .HasFilter("[Name] IS NOT NULL");
 
                     b.ToTable("Fields");
                 });
@@ -256,9 +272,6 @@ namespace HighTech.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("CategoryFieldId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("CategoryId")
                         .HasColumnType("nvarchar(450)");
 
@@ -270,9 +283,9 @@ namespace HighTech.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("CategoryId");
 
-                    b.HasIndex("CategoryId", "CategoryFieldId");
+                    b.HasIndex("ProductId");
 
                     b.ToTable("ProductsCategories");
                 });
@@ -419,8 +432,7 @@ namespace HighTech.Data.Migrations
                     b.HasOne("HighTech.Models.Field", "Field")
                         .WithMany("Categories")
                         .HasForeignKey("FieldId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Field");
                 });
@@ -469,14 +481,14 @@ namespace HighTech.Data.Migrations
 
             modelBuilder.Entity("HighTech.Models.ProductCategory", b =>
                 {
+                    b.HasOne("HighTech.Models.Category", "Category")
+                        .WithMany("ProductFields")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("HighTech.Models.Product", "Product")
                         .WithMany("ProductFields")
                         .HasForeignKey("ProductId");
-
-                    b.HasOne("HighTech.Models.Category", "Category")
-                        .WithMany("ProductFields")
-                        .HasForeignKey("CategoryId", "CategoryFieldId")
-                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Category");
 

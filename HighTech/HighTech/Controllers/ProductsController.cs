@@ -3,6 +3,7 @@ using HighTech.DTOs;
 using HighTech.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace HighTech.Controllers
 {
@@ -46,9 +47,9 @@ namespace HighTech.Controllers
                 return Json(product);
             }
 
-            var categoryId = categoryService.GetCategoryByProduct(product.Id);
+            var categoryName = categoryService.GetCategoryByProduct(product.Id);
 
-            return Json(ConvertToProductDTO(product, categoryId));
+            return Json(ConvertToProductDTO(product, categoryName));
         }
 
         public IActionResult GetAll()
@@ -60,16 +61,13 @@ namespace HighTech.Controllers
                 return Json(Array.Empty<ProductDTO>());
             }
 
-
-           
-
             var dtos = new List<ProductDTO>();
 
             foreach (var p in products)
             {
-                var categoryId = categoryService.GetCategoryByProduct(p.Id);
+                var categoryName = categoryService.GetCategoryByProduct(p.Id);
 
-                dtos.Add(ConvertToProductDTO(p, categoryId));
+                dtos.Add(ConvertToProductDTO(p, categoryName));
             }
 
             return Json(dtos);
@@ -93,11 +91,14 @@ namespace HighTech.Controllers
                     return BadRequest();
                 }
 
+
                 if (dto.Fields is not null)
                 {
                     foreach (var field in dto.Fields)
                     {
-                        fieldService.AddProductField(product.Id, dto.CategoryName ,field.FieldName, field.Value);
+                        var category = categoryService.Get(dto.CategoryName, field.Id);
+
+                        fieldService.AddProductField(product.Id, category.Id, field.Value);
                     }
                 }
                 dto.Id = product.Id;
@@ -127,18 +128,33 @@ namespace HighTech.Controllers
                 return Json(dto);
             }
 
-            var productFields = fieldService.GetProductFields(dto.Id).OrderBy(pf => pf.CategoryFieldId).ToList();
-            var dtoValues = dto.Fields.OrderBy(pf => pf.FieldName).Select(f => f.Value).ToList();
-
-            for (int i = 0; i < productFields.Count; i++)
+            try
             {
-                if (productFields[i].Value != dtoValues[i])
-                {
-                    fieldService.EditProductFieldValue(productFields[i].Id, dtoValues[i]);
-                }
-            }
+                var productFields = fieldService.GetProductFields(dto.Id).OrderBy(pf => pf.Category.Field.Name).ToList();
+                var dtoFileds = dto.Fields.OrderBy(pf => pf.Name).ToList();
 
-            return Json(dto);
+                for (int i = 0; i < productFields.Count; i++)
+                {
+                    var category = categoryService.Get(dto.CategoryName, dtoFileds[i].Id);
+                    fieldService.EditProductFieldValue(productFields[i].Id, category.Id, dtoFileds[i].Value);
+                }
+
+                var added = dtoFileds.Count - productFields.Count;
+                if (added > 0)
+                {
+                    for (int i = 0; i < added; i++)
+                    {
+                        var category = categoryService.Get(dto.CategoryName, dtoFileds[i].Id);
+                        fieldService.AddProductField(dto.Id, category.Id, dtoFileds[productFields.Count + i].Value);
+                    }
+                }
+
+                return Json(dto);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpDelete("{id}")]
@@ -186,7 +202,8 @@ namespace HighTech.Controllers
                 {
                     dto.Fields.Add(new FieldDTO()
                     {
-                        FieldName = pf.CategoryFieldId,
+                        Id = pf.Category.FieldId,
+                        Name = pf.Category.Field.Name,
                         TypeCode = pf.Category.Field.TypeCode,
                         Value = pf.Value
                     });

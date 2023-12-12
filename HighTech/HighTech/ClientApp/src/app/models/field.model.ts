@@ -1,5 +1,6 @@
 export interface Field {
-    fieldName: string;
+    id: string;
+    name: string;
     typeCode: TypeCode;
     value: string;
 }

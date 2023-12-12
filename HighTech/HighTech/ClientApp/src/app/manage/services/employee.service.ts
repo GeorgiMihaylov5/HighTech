@@ -1,9 +1,9 @@
 import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
 import { Observable, catchError } from "rxjs";
-import { IClient } from "src/app/models/client.model";
+import { Client } from "src/app/manage/models/client.model";
 import { ErrorService } from "src/app/services/error.service";
-import { IEmployee } from "../../models/employee.model";
+import { IEmployee } from "../models/employee.model";
 
 @Injectable()
 export class EmployeeService {

@@ -4,16 +4,16 @@ import { IToken } from "src/api-authorization/models/token.model";
 import { AuthorizeService } from "src/api-authorization/services/authorize-facade.service";
 import { ClientService } from "./client.service";
 import { EmployeeService } from "./employee.service";
-import { IEmployee } from "src/app/models/employee.model";
-import { IClient } from "src/app/models/client.model";
-import { IChangePassword } from "../../models/change-password.model";
+import { IEmployee } from "src/app/manage/models/employee.model";
+import { Client } from "src/app/manage/models/client.model";
+import { IChangePassword } from "../models/change-password.model";
 import { CategoryService } from "./category.service";
 import { FieldService } from "./field.service";
-import { ICategory } from "src/app/models/category.model";
+import { Category } from "src/app/models/category.model";
 import { Field } from "src/app/models/field.model";
 import { Product } from "src/app/models/product.model";
 import { ProductService } from "src/app/services/product.service";
-import { CreateOptions } from "src/app/models/options.model";
+import { CreateOptions } from "src/app/manage/models/options.model";
 
 @Injectable()
 export class ManageServiceFacade {
@@ -29,7 +29,7 @@ export class ManageServiceFacade {
         this.token = authService.getTokenData();
     }
 
-    public getProfileData(): Observable<IClient | IEmployee> {
+    public getProfileData(): Observable<Client | IEmployee> {
         return this.token.pipe(
             switchMap((tokenData: IToken) => {
                 if (tokenData.role.includes('Employee') || tokenData.role.includes('Administrator')) {
@@ -41,7 +41,7 @@ export class ManageServiceFacade {
                 }
                 else {
                     return this.clientApi.getClient(tokenData.nameid).pipe(
-                        map((client): IClient => {
+                        map((client): Client => {
                             return client;
                         })
                     );
@@ -50,7 +50,7 @@ export class ManageServiceFacade {
         );
     }
 
-    public editProfile(value: IClient | IEmployee): Observable<IClient | IEmployee> {
+    public editProfile(value: Client | IEmployee): Observable<Client | IEmployee> {
         if ('jobTitle' in value) {
             return this.employeeApi.editEmployee(value).pipe(
                 map((emp: IEmployee) => {
@@ -60,7 +60,7 @@ export class ManageServiceFacade {
         }
         else {
             return this.clientApi.editClient(value).pipe(
-                map((client: IClient) => {
+                map((client: Client) => {
                     return client;
                 })
             )
@@ -83,7 +83,7 @@ export class ManageServiceFacade {
         );
     }
 
-    public getData(): Observable<[ICategory[], Field[], Product[]]> {
+    public getData(): Observable<[Category[], Field[], Product[]]> {
         return combineLatest([
             this.categoryApi.getCategories(),
             this.fieldApi.getFields(),
@@ -105,15 +105,31 @@ export class ManageServiceFacade {
         return of(false);
     }
 
-    public createField(field: Field): Observable<Field> {
-        return this.fieldApi.createField(field);
+    public createObj(arr: [Field, Category, Product ], selectedOption: CreateOptions): Observable<Field | Category | Product> {
+        if(selectedOption === CreateOptions.Field) {
+            return this.fieldApi.createField(arr[0]);
+        }
+        else if(selectedOption === CreateOptions.Category) {
+            return this.categoryApi.createCategory(arr[1]);
+        }
+        else if(selectedOption === CreateOptions.Product) {
+            return this.productApi.createProduct(arr[2]);
+        }
+
+        return of(null);
     }
 
-    public createCategory(category: ICategory): Observable<ICategory> {
-        return this.categoryApi.createCategory(category);
-    }
+    public editObj(arr: [Field, Category, Product ], selectedOption: CreateOptions): Observable<Field | Category | Product> {
+        if(selectedOption === CreateOptions.Field) {
+            return this.fieldApi.editField(arr[0]);
+        }
+        else if(selectedOption === CreateOptions.Category) {
+            return this.categoryApi.editCategory(arr[1]);
+        }
+        else if(selectedOption === CreateOptions.Product) {
+            return this.productApi.editProduct(arr[2]);
+        }
 
-    public createProduct(product: Product): Observable<Product> {
-        return this.productApi.createProduct(product);
+        return of(null);
     }
 }

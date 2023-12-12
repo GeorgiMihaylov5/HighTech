@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { EmployeeService } from 'src/app/manage/services/employee.service';
-import { IEmployee } from 'src/app/models/employee.model';
+import { IEmployee } from 'src/app/manage/models/employee.model';
 
 @Component({
   selector: 'app-employees',

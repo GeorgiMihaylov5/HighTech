@@ -1,5 +1,5 @@
 <div class="max-width">
-    <div class="mb-3 mt-3 text-center">
+    <div class="mt-3 text-center" *ngIf="!isEdit">
         <div class="form-check form-check-inline">
             <input class="form-check-input pointer" type="radio" name="inlineRadioOptions" id="inlineRadio1" [value]="0"
                 [(ngModel)]="selectedOption">
@@ -17,123 +17,132 @@
         </div>
     </div>
 
-    <!-- Product Form -->
-    <div *ngIf="selectedOption == 0">
-        <div class="d-flex flex-nowrap flex-column child-mb">
-            <div>
-                <p>Manufacturer</p>
+    <div class="mt-3">
+        <!-- Product Form -->
+        <div *ngIf="selectedOption == 0">
+            <div class="d-flex flex-nowrap flex-column child-mb">
                 <div>
-                    <input class="form-control" name="manufacturer" type="text" [(ngModel)]="product.manufacturer"
-                        required>
+                    <p>Manufacturer</p>
+                    <div>
+                        <input class="form-control" name="manufacturer" type="text" [(ngModel)]="product.manufacturer"
+                            required>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <p>Model</p>
                 <div>
-                    <input class="form-control" name="model" type="text" [(ngModel)]="product.model" required>
+                    <p>Model</p>
+                    <div>
+                        <input class="form-control" name="model" type="text" [(ngModel)]="product.model" required>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <p>Warranty</p>
                 <div>
-                    <input class="form-control" name="warranty" type="number" [(ngModel)]="product.warranty" required>
+                    <p>Warranty</p>
+                    <div>
+                        <input class="form-control" name="warranty" type="number" [(ngModel)]="product.warranty"
+                            required>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <p>Price</p>
                 <div>
-                    <input class="form-control" name="price" type="number" [(ngModel)]="product.price" required>
+                    <p>Price</p>
+                    <div>
+                        <input class="form-control" name="price" type="number" [(ngModel)]="product.price" required>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <p>Discount</p>
                 <div>
-                    <input class="form-control" name="discount" type="number" [(ngModel)]="product.discount" required>
+                    <p>Discount</p>
+                    <div>
+                        <input class="form-control" name="discount" type="number" [(ngModel)]="product.discount"
+                            required>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <p>Quantity</p>
                 <div>
-                    <input class="form-control" name="quantity" type="number" [(ngModel)]="product.quantity" required>
+                    <p>Quantity</p>
+                    <div>
+                        <input class="form-control" name="quantity" type="number" [(ngModel)]="product.quantity"
+                            required>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <p>Image</p>
                 <div>
-                    <input class="form-control" name="image" type="text" [(ngModel)]="product.image" required>
+                    <p>Image</p>
+                    <div>
+                        <input class="form-control" name="image" type="text" [(ngModel)]="product.image" required>
+                    </div>
                 </div>
-            </div>
-            <div>
-                <p>Category Name</p>
                 <div>
-                    <select class="form-select" [(ngModel)]="product.categoryName" (change)="changeFields()">
-                        <option *ngFor="let categoy of categories" [ngValue]="categoy.categoryId">{{
-                            categoy.categoryId }}
-                        </option>
-                    </select>
-                </div>
-            </div>
-            <div *ngFor="let field of product.fields">
-                <p>{{ field.fieldName }}</p>
-                <div>
-                    <input class="form-control" [name]="field.fieldName" [type]="getFieldType(field.typeCode)"
-                        [(ngModel)]="field.value" required>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    
-    <!-- Field Form -->
-    <div *ngIf="selectedOption == 1">
-        <div class="d-flex flex-nowrap flex-column child-mb">
-            <div>
-                <p>Field Name</p>
-                <div>
-                    <input class="form-control" name="fieldName" type="text" [(ngModel)]="field.fieldName" required>
-                </div>
-            </div>
-            <div>
-                <p>Type Codes</p>
-                <div>
-                    <select class="form-select" [(ngModel)]="field.typeCode" required>
-                        <option *ngFor="let typeCode of typeCodes" [ngValue]="typeCode.key">{{ typeCode.value }}</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-
-    <!-- Category Form -->
-    <div *ngIf="selectedOption == 2">
-        <div class="d-flex flex-nowrap flex-column child-mb">
-            <div>
-                <p>Category Name</p>
-                <div>
-                    <input class="form-control" name="categoryName" type="text" [(ngModel)]="category.categoryId" required>
-                </div>
-            </div>
-            <div>
-                <div class="d-flex justify-content-between align-items-center">
-                    <p>Fields</p>
-                    <button class="btn btn-primary" (click)="addField()"><i class="bi bi-plus-square text-white"></i></button>
-                </div>
-                <hr>
-                <div class="d-flex justify-content-between" *ngFor="let c of category.fields; let i = index">
-                    <div class="w-75">
-                        <select class="form-select" [name]="'Field' + i" [(ngModel)]="category.fields[i].fieldName" required>
-                            <option *ngFor="let field of fields" [value]="field.fieldName">
-                                {{ field.fieldName }}
+                    <p>Category Name</p>
+                    <div>
+                        <select class="form-select" [(ngModel)]="product.categoryName" (change)="changeFields()">
+                            <option *ngFor="let category of groupedCategories" [ngValue]="category.name">
+                            {{ category.name }}
                             </option>
                         </select>
                     </div>
-                    <button class="btn btn-danger" (click)="removeField(i)" style="height: 38px;"><i class="bi bi-trash-fill text-white"></i></button>
+                </div>
+                <div *ngFor="let field of product.fields">
+                    <p>{{ field.name }}</p>
+                    <div>
+                        <input class="form-control" [name]="field.name" [type]="getFieldType(field)"
+                            [(ngModel)]="field.value" required>
+                    </div>
                 </div>
             </div>
         </div>
 
-    </div>
 
-    <button class="btn btn-outline-primary" (click)="save()">Save</button>
+        <!-- Field Form -->
+        <div *ngIf="selectedOption == 1">
+            <div class="d-flex flex-nowrap flex-column child-mb">
+                <div>
+                    <p>Field Name</p>
+                    <div>
+                        <input class="form-control" name="fieldName" type="text" [(ngModel)]="field.name" required>
+                    </div>
+                </div>
+                <div>
+                    <p>Type Codes</p>
+                    <div>
+                        <select class="form-select" [(ngModel)]="field.typeCode" required>
+                            <option *ngFor="let typeCode of typeCodes" [ngValue]="typeCode.key">{{ typeCode.value }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Category Form -->
+        <div *ngIf="selectedOption == 2">
+            <div class="d-flex flex-nowrap flex-column child-mb">
+                <div>
+                    <p>Category Name</p>
+                    <div>
+                        <input class="form-control" name="categoryName" type="text" [(ngModel)]="category.name"
+                            required>
+                    </div>
+                </div>
+                <div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <p>Fields</p>
+                        <button class="btn btn-primary" (click)="addField()"><i
+                                class="bi bi-plus-square text-white"></i></button>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between" *ngFor="let c of category.fields; let i = index">
+                        <div class="w-75">
+                            <select class="form-select" [name]="'Field' + i" [(ngModel)]="category.fields[i].name"
+                                required>
+                                <option *ngFor="let field of fields" [value]="field.name">
+                                    {{ field.name }}
+                                </option>
+                            </select>
+                        </div>
+                        <button class="btn btn-danger" (click)="removeField(i)" style="height: 38px;"><i
+                                class="bi bi-trash-fill text-white"></i></button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <button class="btn btn-outline-primary" (click)="save()">Save</button>
+    </div>
 </div>

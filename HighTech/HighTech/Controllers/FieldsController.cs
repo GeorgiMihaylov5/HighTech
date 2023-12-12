@@ -21,7 +21,8 @@ namespace HighTech.Controllers
         {
             return Json(fieldService.GetFields().Select(f => new FieldDTO()
             {
-                FieldName = f.Id,
+                Id = f.Id,
+                Name = f.Name,
                 TypeCode = f.TypeCode,
             }));
         }
@@ -30,18 +31,43 @@ namespace HighTech.Controllers
         [Authorize(Roles = "Administrator")]
         public IActionResult Create(FieldDTO dto)
         {
-            if (string.IsNullOrEmpty(dto.FieldName))
+            if (string.IsNullOrEmpty(dto.Name))
             {
                 return BadRequest("Field name is required!");
             }
 
             try
             {
-                var field = fieldService.CreateField(dto.FieldName, dto.TypeCode);
+                var field = fieldService.CreateField(dto.Name, dto.TypeCode);
 
                 return Json(new FieldDTO()
                 {
-                    FieldName = field.Id,
+                    Name = field.Id,
+                    TypeCode = field.TypeCode
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "Administrator")]
+        public IActionResult Edit(FieldDTO dto)
+        {
+            if (string.IsNullOrEmpty(dto.Name))
+            {
+                return BadRequest("Field name is required!");
+            }
+
+            try
+            {
+                var field = fieldService.EditField(dto.Id, dto.Name, dto.TypeCode);
+
+                return Json(new FieldDTO()
+                {
+                    Name = field.Id,
                     TypeCode = field.TypeCode
                 });
             }

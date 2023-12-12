@@ -1,10 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { IClient } from 'src/app/models/client.model';
+import { Client } from 'src/app/manage/models/client.model';
 import { Observable } from 'rxjs';
 import { NgForm } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { IToken } from 'src/api-authorization/models/token.model';
-import { IEmployee } from '../../../models/employee.model';
+import { IEmployee } from '../../models/employee.model';
 import { ManageServiceFacade } from '../../services/manage-facade.service';
 
 @Component({
@@ -15,7 +15,7 @@ import { ManageServiceFacade } from '../../services/manage-facade.service';
 export class ProfileComponent implements OnInit {
   @Input() token: Observable<IToken>;
 
-  public value: IClient | IEmployee = {
+  public value: Client | IEmployee = {
     id: '',
     firstName: '',
     lastName: '',
@@ -27,7 +27,7 @@ export class ProfileComponent implements OnInit {
   };
 
   public isEmp: boolean = false;
-  public originalValue: IClient | IEmployee;
+  public originalValue: Client | IEmployee;
 
   constructor(private manageService: ManageServiceFacade,
     private toastr: ToastrService) { }
@@ -38,11 +38,11 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  isClient(value: IClient | IEmployee): value is IClient {
+  isClient(value: Client | IEmployee): value is Client {
     return typeof value === 'object' && 'address' in value;
   }
 
-  isEmployee(value: IClient | IEmployee): value is IEmployee {
+  isEmployee(value: Client | IEmployee): value is IEmployee {
     return typeof value === 'object' && 'jobTitle' in value;
   }
 

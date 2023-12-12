@@ -13,12 +13,11 @@ namespace HighTech.Services
         {
             context = _context;
         }
-        public ProductCategory AddProductField(string productId, string categoryId, string fieldId, string value)
+        public ProductCategory AddProductField(string productId, string categoryId, string value)
         {
             var field = new ProductCategory()
             {
                 ProductId = productId,
-                CategoryFieldId = fieldId,
                 CategoryId = categoryId,
                 Value = value,
             };
@@ -29,11 +28,11 @@ namespace HighTech.Services
             return field;
         }
 
-        public Field CreateField(string id, TypeCode typeCode)
+        public Field CreateField(string name, TypeCode typeCode)
         {
             var field = new Field()
             {
-                Id = id,
+                Name = name,
                 TypeCode = typeCode
             };
 
@@ -43,21 +42,23 @@ namespace HighTech.Services
             return field;
         }
 
-        public bool EditField(string id,TypeCode typeCode)
+        public Field EditField(string id, string name, TypeCode typeCode)
         {
             var field = context.Fields.FirstOrDefault(x => x.Id == id);
 
             if (field is null)
             {
-                return false;
+                return field;
             }
 
             field.TypeCode = typeCode;
+            field.Name = name;
+            context.SaveChanges();
 
-            return context.SaveChanges() != 0;
+            return field;
         }
 
-        public bool EditProductFieldValue(string pfId, string value)
+        public bool EditProductFieldValue(string pfId, string categoryId, string value)
         {
             var productField = context.ProductsCategories.FirstOrDefault(x => x.Id == pfId);
 
@@ -66,6 +67,7 @@ namespace HighTech.Services
                 return false;
             }
 
+            productField.CategoryId = categoryId;
             productField.Value = value;
 
             return context.SaveChanges() != 0;
@@ -97,7 +99,7 @@ namespace HighTech.Services
                 return false;
             }
 
-            context.Fields.Remove(field);
+            context.Fields.Remove(field);       
             return context.SaveChanges() != 0;
         }
     }

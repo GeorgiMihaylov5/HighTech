@@ -27,6 +27,13 @@ export class ProductService {
             );
     }
 
+    public editProduct(product: Product): Observable<Product> {
+        return this.http.put<Product>((`${this.baseUrl}Products/Edit`), product)
+            .pipe(
+                catchError(this.errorService.handleError.bind(this.errorService))
+            );
+    }
+
     public deleteProduct(id: string): Observable<boolean> {
         return this.http.delete<boolean>((`${this.baseUrl}Products/Delete/${id}`))
             .pipe(

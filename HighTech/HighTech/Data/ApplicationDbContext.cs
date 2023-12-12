@@ -25,7 +25,7 @@ namespace HighTech.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Category>()
-                .HasKey(c => new { c.Id, c.FieldId });
+                .HasIndex(c => new { c.Id, c.FieldId }).IsUnique();
 
             builder.Entity<Field>()
                 .HasMany(c => c.Categories)
@@ -35,7 +35,7 @@ namespace HighTech.Data
             builder.Entity<ProductCategory>()
                 .HasOne(pf => pf.Category)
                 .WithMany(c => c.ProductFields)
-                .HasForeignKey(pf => new { pf.CategoryId, pf.CategoryFieldId })
+                .HasForeignKey(pf => pf.CategoryId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             //builder.Entity<ProductField>()

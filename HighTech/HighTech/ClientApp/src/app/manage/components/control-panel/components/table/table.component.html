@@ -52,10 +52,10 @@
                             <a class="pointer"><i class="bi bi-percent"></i></a>
                         </td>
                         <td class="width-50">
-                            <a class="pointer"><i class="bi bi-pencil-square text-success"></i></a>
+                            <a class="pointer" (click)="editObj(product, 0)"><i class="bi bi-pencil-square text-success"></i></a>
                         </td>
                         <td class="width-50">
-                            <a class="pointer"><i class="bi bi-trash-fill text-danger" (click)="deleteObj(product.id, 0)"></i></a>
+                            <a class="pointer" (click)="deleteObj(product.id, 0)"><i class="bi bi-trash-fill text-danger"></i></a>
                         </td>
                         <td class="width-50">
                             <a class="pointer"><i class="bi bi-info-circle-fill text-info"></i></a>
@@ -85,13 +85,13 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let field of fields">
-                        <td> {{ field.fieldName }}</td>
+                        <td> {{ field.name }}</td>
                         <td> {{ field.typeCode }}</td>
                         <td class="width-50">
-                            <a class="pointer"><i class="bi bi-pencil-square text-success"></i></a>
+                            <a class="pointer" (click)="editObj(field, 1)"><i class="bi bi-pencil-square text-success"></i></a>
                         </td>
                         <td class="width-50">
-                            <a class="pointer"><i class="bi bi-trash-fill text-danger" (click)="deleteObj(field.fieldName, 1)"></i></a>
+                            <a class="pointer" (click)="deleteObj(field.id, 1)"><i class="bi bi-trash-fill text-danger"></i></a>
                         </td>
                     </tr>
                 </tbody>
@@ -103,7 +103,7 @@
     <!-- Category -->
     <div *ngIf="selectedOption == 2">
         <div class="box" style="margin-top: 25px">
-            <h2 class="text-center">Categories - {{ categories?.length }}</h2>
+            <h2 class="text-center">Categories - {{ groupedCategories?.length }}</h2>
         </div>
 
         <div class="table-responsive">
@@ -117,14 +117,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let category of categories">
-                        <td> {{ category.categoryId }}</td>
+                    <tr *ngFor="let category of groupedCategories">
+                        <td> {{ category.name }}</td>
                         <td> {{ getFieldsNames(category) }}</td>
                         <td class="width-50">
-                            <a class="pointer"><i class="bi bi-pencil-square text-success"></i></a>
+                            <a class="pointer" (click)="editObj(category, 2)"><i class="bi bi-pencil-square text-success"></i></a>
                         </td>
                         <td class="width-50">
-                            <a class="pointer"><i class="bi bi-trash-fill text-danger" (click)="deleteObj(category.categoryId, 2)"></i></a>
+                            <a class="pointer" (click)="deleteObj(category.id, 2)"><i class="bi bi-trash-fill text-danger"></i></a>
                         </td>
                     </tr>
                 </tbody>

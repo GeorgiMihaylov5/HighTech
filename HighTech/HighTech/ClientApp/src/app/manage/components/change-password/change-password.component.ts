@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { IChangePassword } from '../../../models/change-password.model';
+import { IChangePassword } from '../../models/change-password.model';
 import { NgForm } from '@angular/forms';
 import { ClientService } from '../../services/client.service';
 import { ToastrService } from 'ngx-toastr';

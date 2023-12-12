@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ClientService } from 'src/app/manage/services/client.service';
-import { IClient } from 'src/app/models/client.model';
+import { Client } from 'src/app/manage/models/client.model';
 
 @Component({
   selector: 'app-clients',
@@ -9,7 +9,7 @@ import { IClient } from 'src/app/models/client.model';
   styleUrls: ['./clients.component.css']
 })
 export class ClientsComponent {
-  public clients: Observable<IClient[]>;
+  public clients: Observable<Client[]>;
 
   constructor(clientApi: ClientService) {
     this.clients = clientApi.getClients();

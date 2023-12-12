@@ -2,7 +2,6 @@
 using HighTech.Data;
 using HighTech.Models;
 using Microsoft.EntityFrameworkCore;
-using static Duende.IdentityServer.Models.IdentityResources;
 
 namespace HighTech.Services
 {
