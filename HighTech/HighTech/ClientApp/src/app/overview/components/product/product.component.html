@@ -1,4 +1,4 @@
-<div class="w-100 h-100 list-group-item rounded text-center d-flex flex-column justify-content-around">
+<div class="w-100 h-100 list-group-item rounded text-center d-flex flex-column justify-content-between">
     <div>
         <!-- asp-action="Details" asp-controller="Products" asp-route-id="@item.Id" -->
         <a class="link">
@@ -10,19 +10,20 @@
         <p class="text-danger">Not Available</p>
     </div>
     <div class="text-center" style="font-size: 14px;">
-        <div *ngFor="let field of product.fields;">
-            <p style="margin-bottom: 10px"> {{ field.name }}</p>
+        <div *ngFor="let field of product.fields.slice(0,3);">
+            <p style="margin-bottom: 10px"> {{ field.name + ': ' + field.value  }}</p>
         </div>
     </div>
     <div>
-        <div style="height: 24px">
-            <div *ngIf="product.discount > 0">
-                <p class="mb-0 text-left"><s>{{ product.discount + product.price }} lv.</s></p>
-            </div>
-        </div>
-        <div class="d-flex flex-row justify-content-between align-items-center">
+      
+        <div class="d-flex flex-row justify-content-between align-items-end">
             <div>
                 <div *ngIf="product.discount > 0">
+                    <div style="height: 24px">
+                        <div *ngIf="product.discount > 0">
+                            <p class="mb-0 text-left"><s>{{ product.discount + product.price }} lv.</s></p>
+                        </div>
+                    </div>
                     <span class="font-weight-bold text-danger" style="font-size: 17px">{{ product.price }} lv.</span>
                 </div>
                 <div *ngIf="product.discount == 0">

@@ -86,14 +86,14 @@ export class TableComponent implements OnInit {
     this.router.navigate(["/detail"]);
   }
 
-  increaseDiscount(product: Product) {
+  public increaseDiscount(product: Product) {
     this.manageService.increaseDiscount(product).subscribe((p: Product) => {
       product.discount = p.discount;
       product.price = p.price;
     });
   }
 
-  removeDiscount(product: Product) {
+  public removeDiscount(product: Product) {
     this.manageService.removeDiscount(product).subscribe((p: Product) => {
       product.discount = p.discount;
       product.price = p.price;

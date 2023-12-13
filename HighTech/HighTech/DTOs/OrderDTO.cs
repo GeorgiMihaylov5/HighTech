@@ -10,6 +10,6 @@ namespace HighTech.DTOs
         public virtual UserDTO User { get; set; }
         public string Status { get; set; }
         public string Notes { get; set; }
-        public virtual ICollection<OrderedProduct> OrderedProducts { get; set; }
+        public virtual ICollection<OrderedProductDTO> OrderedProducts { get; set; }
     }
 }

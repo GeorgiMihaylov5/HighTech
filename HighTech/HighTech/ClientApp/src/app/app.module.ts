@@ -13,6 +13,7 @@ import { AppRoutingModule } from './app.routing.module';
 import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.module';
 import { ErrorService } from './services/error.service';
 import { ManageModule } from './manage/manage.module';
+import { OrderService } from './services/order.service';
 
 
 @NgModule({

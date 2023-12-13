@@ -24,8 +24,7 @@ export class ManageServiceFacade {
         private employeeApi: EmployeeService,
         private categoryApi: CategoryService,
         private fieldApi: FieldService,
-        private productApi: ProductService
-    ) {
+        private productApi: ProductService) {
         this.token = authService.getTokenData();
     }
 

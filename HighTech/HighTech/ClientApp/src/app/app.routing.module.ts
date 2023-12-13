@@ -31,7 +31,7 @@ const routes: Routes = [
           { path: '', component: OrdersComponent, outlet: 'control-panel' },
           { path: 'clients', component: ClientsComponent, outlet: 'control-panel' },
           { path: 'employees', component: EmployeesComponent, outlet: 'control-panel' },
-          { path: 'table-products', component: TableComponent, outlet: 'control-panel' },
+          { path: 'table', component: TableComponent, outlet: 'control-panel' },
           { path: 'create', component: CreateComponent, outlet: 'control-panel' },
         ]
       },

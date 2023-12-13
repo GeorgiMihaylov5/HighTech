@@ -6,26 +6,23 @@
         <h2 id="productTitle">
           {{ product.manufacturer }} - {{ product.model }}
         </h2>
-        <div class="d-lg-inline-block align-top details-item-price">
+        <div class="d-lg-inline-block align-top p-30">
             <h5>Single price</h5>
             <hr />
-            <span id="pricePerProduct">{{product.price}}</span>
+            <span id="pricePerProduct">{{ product.price }}</span>
             <span> lv.</span>
         </div>
-        <div class="d-lg-inline-block align-top details-item-price">
+        <div class="d-lg-inline-block align-top p-30">
             <h5>Total price</h5>
             <hr />
-            <span id="totalPrice">{{product.price}}</span>
+            <span id="totalPrice">{{ product.price }}</span>
             <span> lv.</span>
         </div>
-            <!-- @if(Model.Quantity > 0)
-            {
-                <p>In Stock: @Model.Quantity</p>
-            }
-            else
-            {
-                <p class="text-danger">Not Available</p>
-            } -->
+        <div>
+            <p *ngIf="product.quantity > 0">{{ 'In Stock:   ' + product.quantity }}</p>
+            <p *ngIf="product.quantity == 0" class="text-danger">Not Available</p>
+        </div>
+          
 
         <!-- @await Html.PartialAsync("~/Views/Products/_OrderPartialView.cshtml", new OrderCreateBindingModel
    {

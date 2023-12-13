@@ -31,7 +31,6 @@ export class ManageComponent implements OnInit {
   }
 
   private getActiveTab(url: string): TabType {
-    console.log(url)
     if (url.includes('/manage/(manage:control-panel')) {
       return TabType.ControlPanel;
     } else if (url === '/manage/(manage:orders)') {

@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
-import { ManageServiceFacade } from '../../services/manage-facade.service';
 
 @Component({
   selector: 'app-control-panel',
@@ -34,7 +33,7 @@ export class ControlPanelComponent implements OnInit {
       return ControlPanelTabType.Clients;
     } else if (url === '/manage/(manage:control-panel/(control-panel:employees))') {
       return ControlPanelTabType.Employees;
-    } else if (url === '/manage/(manage:control-panel/(control-panel:table-products))') {
+    } else if (url === '/manage/(manage:control-panel/(control-panel:table))') {
       return ControlPanelTabType.Products;
     } else if (url === '/manage/(manage:control-panel/(control-panel:create))') {
       return ControlPanelTabType.Create;

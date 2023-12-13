@@ -2,7 +2,7 @@ export interface Field {
     id: string;
     name: string;
     typeCode: TypeCode;
-    value: string;
+    value: any;
 }
 
 export enum TypeCode {

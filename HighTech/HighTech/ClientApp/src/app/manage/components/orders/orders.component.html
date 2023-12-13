@@ -1,1 +1,36 @@
-<p>orders works!</p>
+<div class="d-lg-inline-block align-top col-md-8 m-auto">
+    <div *ngIf="orders?.length == 0">
+        <h4>No Orders</h4>
+    </div>
+
+
+    <div *ngIf="orders?.length > 0">
+        <div *ngFor="let order of orders">
+            <div>
+                <h4>
+                   {{ 'Products Count: ' + order.orderedProducts.length }}
+                </h4>
+                <div class="row justify-content-between m-0">
+                    <span>
+                         {{ 'Status: ' + order.status }}
+                    </span>
+                    <span>{{ 'Ordered on: ' + order.orderedOn }}</span>
+                </div>
+            </div>
+            <div>
+                <p>{{ 'User: ' + order.user.Username }}</p>
+            </div>
+            <div class="row justify-content-between m-0">
+                <p class="order-price-p">{{ 'Total Price: ' + getTotalPrice(order) }} </p>
+
+                <div *ngIf="(token | async)?.role.includes('Employee')">
+                    <a class=" btn btn-success" asp-action="Edit" asp-controller="Orders"
+                        asp-route-id="@item.Id">Edit</a>
+                    <a class="order-details-btn btn" asp-action="Details" asp-controller="Orders"
+                        asp-route-id="@item.Id">Details</a>
+                </div>
+            </div>
+        </div>
+        <hr />
+    </div>
+</div>

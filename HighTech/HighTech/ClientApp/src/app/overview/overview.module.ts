@@ -10,6 +10,7 @@ import { DetailFacade } from "./services/detail-facade.service";
 import { DetailGuard } from "./resolvers/detail.resolver";
 import { ProductDetailComponent } from "./components/product-detail/product-detail.component";
 import { AppRoutingModule } from "../app.routing.module";
+import { OrderService } from "../services/order.service";
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { AppRoutingModule } from "../app.routing.module";
   providers: [
     ProductService,
     DetailGuard,
-    DetailFacade
+    DetailFacade,
+    OrderService
   ]
 })
 export class OverviewModule { }

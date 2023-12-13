@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { ManageServiceFacade } from 'src/app/manage/services/manage-facade.service';
 import { Category } from 'src/app/models/category.model';
@@ -90,7 +90,10 @@ export class CreateComponent implements OnInit, OnDestroy {
       switch (this.state.option) {
         case CreateOptions.Product: {
           this.product = this.state.editObj as Product;
-          this.changeFields();
+          this.product.fields.forEach((f: Field) => {
+            f.value = this.castFieldValue(f);
+          })
+
           break;
         }
         case CreateOptions.Field: {
@@ -109,9 +112,9 @@ export class CreateComponent implements OnInit, OnDestroy {
     return this.state.isEdit;
   }
 
-  public changeFields() {
+  public changeFields(): void {
     this.groupedCategories.forEach(c => {
-      if (c.name === this.product.categoryName) {
+      if (c.name === this.product.categoryName && !this.compareArrays(this.product.fields, c.fields)) {
         this.product.fields = c.fields;
       }
 
@@ -120,8 +123,6 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   public getFieldType(field: Field): string {
-console.log(field)
-
     switch (field.typeCode) {
       case TypeCode.Int16:
       case TypeCode.UInt16:
@@ -142,6 +143,42 @@ console.log(field)
     }
   }
 
+  private compareArrays(array1: Field[], array2: Field[]): boolean {
+    if (array1.length !== array2.length) {
+      return false; 
+    }
+  
+    return array1.every((field1) => {
+      return array2.some((field2) => {
+        return (
+          field1.id === field2.id
+        );
+      });
+    });
+  }
+
+
+  private castFieldValue(field: Field) {
+    switch (field.typeCode) {
+      case TypeCode.Int16:
+      case TypeCode.UInt16:
+      case TypeCode.Int32:
+      case TypeCode.UInt32:
+      case TypeCode.Int64:
+      case TypeCode.UInt64:
+      case TypeCode.Single:
+      case TypeCode.Double:
+      case TypeCode.Decimal:
+        return Number(field.value);
+      case TypeCode.DateTime:
+        return field.value as Date;
+      case TypeCode.Boolean:
+        return field.value as boolean;
+      default: 
+      return field.value as string;
+    }
+  }
+
   public removeField(index: number) {
     if (this.category.fields.length > 1) {
       this.category.fields.splice(index, 1);
@@ -149,7 +186,6 @@ console.log(field)
 
   }
 
-  //TODO when is added is duplicated
   public addField() {
     if (this.fields.length > 0) {
       this.category.fields.push({
@@ -176,6 +212,10 @@ console.log(field)
     }
 
     if(this.isEdit) {
+      this.product.fields.forEach(p => {
+        p.value = String(p.value);
+      })
+
       this.manageService.editObj([this.field, this.category, this.product], this.selectedOption).subscribe((data: Field | Category | Product) => {
         switch (this.selectedOption) {
           case CreateOptions.Field: {
@@ -192,7 +232,7 @@ console.log(field)
           }
         }
 
-        this.router.navigateByUrl('/manage/(manage:control-panel/(control-panel:table-products))');
+        this.router.navigateByUrl('/manage/(manage:control-panel/(control-panel:table))');
       });
     }
     else {
@@ -225,6 +265,7 @@ console.log(field)
           }
           case CreateOptions.Product: {
             this.toastr.success('Product was created!');
+
             this.product = {
               id: null,
               manufacturer: null,
@@ -242,6 +283,8 @@ console.log(field)
         }
       });
     }
+
+    this.state.overviewLoaded = false;
   }
 
   private getTypeCodes(): { key: number, value: string | TypeCode }[] {

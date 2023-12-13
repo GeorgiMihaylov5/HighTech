@@ -57,7 +57,7 @@
    <div class="flex-row flex-wrap list-group col-7" *ngIf="!isLoading">
         <app-product *ngFor="let p of products" 
         [product]="p"
-        class="m-2"></app-product>
+        class="m-2 max-size"></app-product>
    </div>
    <div *ngIf="isLoading">
     <h2>Loading...</h2>

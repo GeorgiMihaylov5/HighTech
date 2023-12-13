@@ -6,7 +6,7 @@ namespace HighTech.Abstraction
     public interface IOrderService
     {
         public ICollection<Order> GetOrders();
-        public ICollection<Order> GetMyOrders(string userId);
+        public ICollection<Order> GetMyOrders(string username);
         public Order GetOrder(string id);
         public Order CreateOrder(DateTime orderedOn, string customerId);
         public bool CreateOrderedProduct(string productId, string orderId, decimal price, int count);

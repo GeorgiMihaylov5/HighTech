@@ -72,11 +72,13 @@ namespace HighTech.Services
             return context.SaveChanges() != 0;
         }
 
-        public ICollection<Order> GetMyOrders(string userId)
+        public ICollection<Order> GetMyOrders(string username)
         {
             return context.Orders
+               .Include(o => o.Customer)
                .Include(o => o.OrderedProducts)
-               .Where(o => o.CustomerId == userId)
+               .ThenInclude(d => d.Product)
+               .Where(o => o.Customer.UserName == username)
                .ToList();
         }
 
@@ -90,7 +92,9 @@ namespace HighTech.Services
         public ICollection<Order> GetOrders()
         {
             return context.Orders
+                .Include(o => o.Customer)
                 .Include(o => o.OrderedProducts)
+                .ThenInclude(d => d.Product)
                 .ToList();
         }
     }
