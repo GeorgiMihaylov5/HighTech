@@ -1,9 +1,9 @@
 export interface AppUser {
-    UserId: string;
-    Username: string;
-    Password: string;
-    FirstName: string;
-    LastName: string;
-    PhoneNumber: string;
-    Email: string;
+    userId: string;
+    username: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    email: string;
 }

@@ -1,9 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Product } from '../../../models/product.model';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { OrderedProduct } from 'src/app/models/order.model';
+import { OverviewFacade } from '../../services/overview-facade.service';
 import { State } from 'src/app/core/state.service';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
-import { DetailFacade } from '../../services/detail-facade.service';
+import { Product } from 'src/app/models/product.model';
 
 @Component({
   selector: 'app-product-detail',
@@ -11,13 +10,24 @@ import { DetailFacade } from '../../services/detail-facade.service';
   styleUrls: ['./product-detail.component.css']
 })
 export class ProductDetailComponent implements OnInit {
-  constructor(private detailFacade: DetailFacade) {
+  public orderedCount: number = 1;
+  public product: Product;
+
+  constructor(private overviewService: OverviewFacade,
+    private state: State) {
+     state.selectedProduct$.subscribe((p => this.product = p))
   }
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
   }
 
-  public get product() {
-    return this.detailFacade.product;
+  public makeOrder() {
+    let a: OrderedProduct = {
+      id: null,
+      productId: this.product.id,
+      product: this.product,
+      orderedPrice: this.product.price * this.orderedCount,
+      count: this.orderedCount
+    }
   }
 }

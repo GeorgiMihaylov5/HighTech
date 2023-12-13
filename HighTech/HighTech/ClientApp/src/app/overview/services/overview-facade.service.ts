@@ -74,20 +74,6 @@ export class OverviewFacade {
         );
     }
 
-    public editProduct(product: Product): Observable<boolean> {
-        this.state.selectedProduct = product;
-        const navigationPromise = this.router.navigate(["/edit"]);
-
-        return this.invokeAsyncAction(
-            from(navigationPromise)
-                .pipe(
-                    catchError((error): any => {
-                        console.log('Error')
-                    }))
-        );
-    }
-
-
     private invokeAsyncAction(action: Observable<any>) {
         this.isActionInProgress.next(true);
         return action.pipe(

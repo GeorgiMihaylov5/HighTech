@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { OverviewComponent } from './overview/overview.component';
 import { ProductDetailComponent } from './overview/components/product-detail/product-detail.component';
-import { DetailResolver } from './overview/resolvers/detail.resolver';
 
 import { ManageComponent } from './manage/manage.component';
 import { ProfileComponent } from './manage/components/profile/profile.component';
@@ -20,7 +19,7 @@ import { CreateComponent } from './manage/components/control-panel/components/cr
 const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
   { path: 'products', component: OverviewComponent },
-  { path: 'detail', component: ProductDetailComponent, resolve: { 'detailFacade': DetailResolver } },
+  { path: 'detail', component: ProductDetailComponent },
   {
     path: 'manage', component: ManageComponent, children: [
       { path: '', component: ProfileComponent, outlet: 'manage' },

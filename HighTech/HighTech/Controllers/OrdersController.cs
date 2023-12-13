@@ -110,7 +110,7 @@ namespace HighTech.Controllers
         [HttpPost]
         public IActionResult CreateOrder(OrderDTO dto)
         {
-            var order = orderService.CreateOrder(new DateTime(int.Parse(dto.OrderedOn)), dto.User.UserId);
+            var order = orderService.CreateOrder(new DateTime(long.Parse(dto.OrderedOn)), dto.User.UserId);
 
             foreach (var orderedProductDto in dto.OrderedProducts)
             {

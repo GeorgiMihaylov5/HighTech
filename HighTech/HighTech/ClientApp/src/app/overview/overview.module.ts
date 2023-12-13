@@ -6,11 +6,11 @@ import { CommonModule } from "@angular/common";
 import { HttpClientModule } from "@angular/common/http";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ToastrModule } from "ngx-toastr";
-import { DetailFacade } from "./services/detail-facade.service";
-import { DetailGuard } from "./resolvers/detail.resolver";
 import { ProductDetailComponent } from "./components/product-detail/product-detail.component";
 import { AppRoutingModule } from "../app.routing.module";
 import { OrderService } from "../services/order.service";
+import { FormsModule } from "@angular/forms";
+import { OverviewFacade } from "./services/overview-facade.service";
 
 @NgModule({
   declarations: [
@@ -24,13 +24,12 @@ import { OrderService } from "../services/order.service";
     HttpClientModule,
     BrowserAnimationsModule,
     ToastrModule,
-    
+    FormsModule
   ],
   providers: [
     ProductService,
-    DetailGuard,
-    DetailFacade,
-    OrderService
+    OrderService,
+    OverviewFacade
   ]
 })
 export class OverviewModule { }

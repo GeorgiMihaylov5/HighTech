@@ -1,52 +1,57 @@
 <div class="text-center">
-    <div class="d-lg-inline-block align-top" style="margin-right: 50px">
-        <img [src]="product.image" width="400" height="350"/>
-    </div>
-    <div class="d-lg-inline-block align-top">
-        <h2 id="productTitle">
-          {{ product.manufacturer }} - {{ product.model }}
-        </h2>
-        <div class="d-lg-inline-block align-top p-30">
-            <h5>Single price</h5>
-            <hr />
-            <span id="pricePerProduct">{{ product.price }}</span>
-            <span> lv.</span>
-        </div>
-        <div class="d-lg-inline-block align-top p-30">
-            <h5>Total price</h5>
-            <hr />
-            <span id="totalPrice">{{ product.price }}</span>
-            <span> lv.</span>
+    <div class="d-flex flex-wrap justify-content-center">
+        <div class="d-lg-inline-block align-top" style="margin-right: 50px">
+            <img [src]="product?.image" width="400" height="350" />
         </div>
         <div>
-            <p *ngIf="product.quantity > 0">{{ 'In Stock:   ' + product.quantity }}</p>
-            <p *ngIf="product.quantity == 0" class="text-danger">Not Available</p>
-        </div>
-          
+            <h2 id="productTitle">
+                {{ product?.manufacturer }} - {{ product?.model }}
+            </h2>
+            <div class="d-flex">
+                <div class="d-lg-inline-block align-top p-30">
+                    <h5>Single price</h5>
+                    <hr />
+                    <span id="pricePerProduct">{{ product?.price }}</span>
+                    <span> lv.</span>
+                </div>
+                <div class="d-lg-inline-block align-top p-30">
+                    <h5>Total price</h5>
+                    <hr />
+                    <span id="totalPrice">{{ product?.price * orderedCount }}</span>
+                    <span> lv.</span>
+                </div>
+            </div>
+            <div>
+                <p *ngIf="product?.quantity > 0">{{ 'In Stock: ' + product?.quantity }}</p>
+                <p *ngIf="product?.quantity == 0" class="text-danger">Not Available</p>
+            </div>
 
-        <!-- @await Html.PartialAsync("~/Views/Products/_OrderPartialView.cshtml", new OrderCreateBindingModel
-   {
-       ProductId = Model.Id,
-       Category = Model.Category,
-       Manufacturer = Model.Manufacturer,
-       Model = Model.Model,
-       Price = Model.Price.ToString()
-   }) -->
+            <div class="d-flex align-items-center" style="justify-content: space-evenly">
+                <label class="font-weight-bold text-left mr-1">Quantity:</label>
+                <div class="mr-1">
+                    <input class="form-control text-center m-auto" type="number" [min]="1" [max]="product?.quantity"
+                        [(ngModel)]="orderedCount">
+                </div>
+                <button class="btn btn-danger" (click)="makeOrder()">Order</button>
+            </div>
+        </div>
     </div>
-    <div style="margin-top: 45px">
-        <h2>Technical Details</h2>
-        <table class="table table-striped">
-            <tbody>
+    <div class="d-lg-inline-block align-top w-100">
+        <div style="margin-top: 45px">
+            <h2>Technical Details</h2>
+            <table class="table table-striped">
+                <tbody>
                     <!-- var line = item.Split(':'); -->
-                <tr *ngFor="let item of product.fields">
-                    <td>
-                        <strong>{{ item.name }}</strong>
-                    </td>
-                    <td>
-                       {{ item.value }}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                    <tr *ngFor="let item of product.fields">
+                        <td>
+                            <strong>{{ item.name }}</strong>
+                        </td>
+                        <td>
+                            {{ item.value }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
