@@ -22,34 +22,33 @@
             </div>
             <div class="col-12 p-0 mb-3 w-100">
                 <h4 class="filter-titles">Price</h4>
-                <input type="number" placeholder="Min price" [min]="0" name="minPrice" [(ngModel)]="priceFilterObj.min" (change)="priceFilter()"
+                <input type="number" placeholder="Min price" [min]="0" name="minPrice" [(ngModel)]="priceFilterObj.min" 
                     max="" />
                 <span id="filter-dash">-</span>
-                <input type="number" placeholder="Max price" [min]="0" name="maxPrice" [(ngModel)]="priceFilterObj.max" (change)="priceFilter()"
+                <input type="number" placeholder="Max price" [min]="0" name="maxPrice" [(ngModel)]="priceFilterObj.max"
                     max="" />
             </div>
             <div class="col-12 p-0 mb-3">
                 <h4 class="filter-titles">Manufacturer</h4>
-                <!-- @foreach (var item in ViewBag.Manufacturers) //TODO for and Id
-                    { -->
-                <div class="d-block" *ngFor="let m of Manufactorers">
-                    <input type="checkbox" value="@item" id="@item" name="manufacturers" class="wh-input" />
-                    <label for="@item">{{ m }}</label>
+                <div class="d-block" *ngFor="let m of filterManufactorersObj; let i = index">
+                    <div [hidden]="!m.isVisible">
+                        <input type="checkbox" [id]="m.manufacturer" [name]="m.manufacturer + i" class="wh-input" [(ngModel)]="m.isChecked" />
+                        <label [for]="m.manufacturer">{{ m?.manufacturer }}</label>
+                    </div>
                 </div>
-
             </div>
             <div class="col-12 p-0 mb-3">
                 <h4 class="filter-titles">Model</h4>
-                <!-- @foreach (var item in ViewBag.Models)
-                    { -->
-                <div class="d-block" *ngFor="let p of products">
-                    <input type="checkbox" value="@item" id="@item" name="models" class="wh-input" />
-                    <label for="@item">{{p.model}}</label>
+                <div class="d-block" *ngFor="let m of filterModelsObj; let i = index">
+                    <div [hidden]="!m.isVisible">
+                        <input type="checkbox" [id]="m.model" [name]="m.model + i" class="wh-input" [(ngModel)]="m.isChecked" />
+                        <label [for]="m.model">{{ m.model }}</label>
+                    </div>
                 </div>
             </div>
             <div class="d-block col-12 text-center p-0 mb-3">
                 <hr />
-                <button type="submit" class="btn"><i class="bi bi-search"></i></button>
+                <button type="submit" class="btn" (click)="filter()"><i class="bi bi-search"></i></button>
             </div>
         </form>
     </div>
