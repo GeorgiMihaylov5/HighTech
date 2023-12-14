@@ -1,6 +1,7 @@
 ﻿using HighTech.Abstraction;
 using HighTech.DTOs;
 using HighTech.Models;
+using HighTech.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
@@ -32,6 +33,33 @@ namespace HighTech.Controllers
 
         //    return base.Json(data, settings);
         //}
+        public IActionResult GetMostSellers()
+        {
+            try
+            {
+                var products = productService.GetMostSellers();
+
+                if (products.Count == 0)
+                {
+                    return Json(Array.Empty<ProductDTO>());
+                }
+
+                var dtos = new List<ProductDTO>();
+
+                foreach (var p in products)
+                {
+                    var categoryName = categoryService.GetCategoryByProduct(p.Id);
+
+                    dtos.Add(ConvertToProductDTO(p, categoryName));
+                }
+
+                return Json(dtos);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         public IActionResult Get(string id)
         {

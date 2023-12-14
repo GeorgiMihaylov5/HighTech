@@ -20,6 +20,13 @@ export class ProductService {
             );
     }
 
+    public getMostSellers(): Observable<Product[]> {
+        return this.http.get<Product[]>((`${this.baseUrl}Products/GetMostSellers`))
+            .pipe(
+                catchError(this.errorService.handleError.bind(this.errorService))
+            );
+    }
+
     public createProduct(product: Product): Observable<Product> {
         return this.http.post<Product>((`${this.baseUrl}Products/Create`), product)
             .pipe(

@@ -11,12 +11,14 @@ import { AppRoutingModule } from "../app.routing.module";
 import { OrderService } from "../services/order.service";
 import { FormsModule } from "@angular/forms";
 import { OverviewFacade } from "./services/overview-facade.service";
+import { BasketComponent } from "../nav-menu/basket/basket.component";
 
 @NgModule({
   declarations: [
     OverviewComponent,
     ProductComponent,
-    ProductDetailComponent
+    ProductDetailComponent,
+    BasketComponent
   ],
   imports: [
     AppRoutingModule,

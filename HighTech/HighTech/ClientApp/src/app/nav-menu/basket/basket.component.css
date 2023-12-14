@@ -1,0 +1,15 @@
+.m {
+    margin: 0 25px;
+}
+.center-h {
+    height: 21px;
+    width: 65px;
+    margin: 0;
+}
+.m-between {
+    margin: 0 10px;
+}
+
+.pointer {
+    cursor: pointer;
+}

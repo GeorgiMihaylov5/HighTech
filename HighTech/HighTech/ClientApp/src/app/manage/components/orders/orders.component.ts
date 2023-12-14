@@ -1,11 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, catchError } from 'rxjs';
 import { IToken } from 'src/api-authorization/models/token.model';
-import { Order, OrderedProduct } from 'src/app/models/order.model';
+import { Order, OrderedProduct, Status } from 'src/app/models/order.model';
 import { OrderService } from 'src/app/services/order.service';
 import { AuthorizeService } from 'src/api-authorization/services/authorize-facade.service';
 import * as moment from 'moment';
 import { Router } from '@angular/router';
+import { ErrorService } from 'src/app/services/error.service';
 
 @Component({
   selector: 'app-orders',
@@ -18,7 +19,8 @@ export class OrdersComponent implements OnInit {
 
   constructor(private router: Router,
     private orderApi: OrderService,
-    private authService: AuthorizeService) {
+    private authService: AuthorizeService,
+    private errorService: ErrorService) {
   }
 
   public ngOnInit(): void {
@@ -38,6 +40,35 @@ export class OrdersComponent implements OnInit {
 
     return total;
   }
+
+  public changeStatus(order: Order) {
+    this.orderApi.editStatus(order).subscribe(_ => {
+
+    }, catchError(this.errorService.handleError.bind(this.errorService)));
+  }
+
+  public statusToString(num: number): string {
+    switch (num) {
+      case Status.Pending:
+        return 'Pending';
+      case Status.Approved:
+        return 'Approved';
+      case Status.Rejected:
+        return 'Rejected';
+        case Status.Completed:
+        return 'Completed';
+      default:
+        return 'Unknown';
+    }
+  }
+
+  public getStatuses() {
+    return Object.entries(Status)
+    .map(([key, value]) => ({ key, value }))
+    .filter((v) => isNaN(Number(v.value)))
+    .map((v) => ({ key: parseInt(v.key), value: v.value }));
+  }
+  
 
   private getOrders(url: string) {
     this.token = this.authService.getTokenData();

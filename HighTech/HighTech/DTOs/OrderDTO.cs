@@ -7,8 +7,9 @@ namespace HighTech.DTOs
     {
         public string Id { get; set; }
         public string OrderedOn { get; set; }
+        public string Username { get; set; }
         public virtual UserDTO User { get; set; }
-        public string Status { get; set; }
+        public OrderStatus Status { get; set; }
         public string Notes { get; set; }
         public virtual ICollection<OrderedProductDTO> OrderedProducts { get; set; }
     }

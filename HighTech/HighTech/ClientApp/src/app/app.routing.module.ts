@@ -13,12 +13,14 @@ import { ClientsComponent } from './manage/components/control-panel/components/c
 import { EmployeesComponent } from './manage/components/control-panel/components/employees/employees.component';
 import { TableComponent } from './manage/components/control-panel/components/table/table.component';
 import { CreateComponent } from './manage/components/control-panel/components/create/create.component';
+import { BasketComponent } from './nav-menu/basket/basket.component';
 
 
 
 const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
   { path: 'products', component: OverviewComponent },
+  { path: 'basket', component: BasketComponent },
   { path: 'detail', component: ProductDetailComponent },
   {
     path: 'manage', component: ManageComponent, children: [

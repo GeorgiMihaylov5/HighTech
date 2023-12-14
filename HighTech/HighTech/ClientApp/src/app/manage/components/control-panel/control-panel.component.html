@@ -1,5 +1,4 @@
 <div>
-    <!-- TODO fix double tap -->
     <ul class="nav nav-tabs align-items-end justify-content-around">
         <li class="nav-item" (click)="ChangeTab(0)" [routerLink]="[['/manage', { outlets: { 'manage': ['control-panel'] } }]]">
             <a class="nav-link" [ngClass]="{'active': controlPanelTab == 0}">Orders</a>

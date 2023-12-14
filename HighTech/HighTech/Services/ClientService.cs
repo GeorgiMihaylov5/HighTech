@@ -49,17 +49,6 @@ namespace HighTech.Services
             return context.Clients.Include(c => c.User).ToList();
         }
 
-        //TODO
-        public string GetFullName(string clientId)
-        {
-            throw new NotImplementedException();
-        }
-        //TODO
-        public bool Remove(string clientId)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool Update(string id, string firstName, string lastName, string phone, string address)
         {
             var client = context.Clients.Find(id);

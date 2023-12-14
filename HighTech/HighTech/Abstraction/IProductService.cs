@@ -7,6 +7,7 @@ namespace HighTech.Abstraction
     {
         public ICollection<Product> GetAll();
         public Product Get(string id);
+        public ICollection<Product> GetMostSellers();
         public Product Create(string manufacturer, string model, int warranty, decimal price, decimal discount, int quantity, string image);
         public Product Edit(string id, string manufacturer, string model, int warranty, decimal price, decimal discount, int quantity, string image);
         public bool Remove(string id);

@@ -19,15 +19,16 @@ export class ProductDetailComponent implements OnInit {
   }
 
   public ngOnInit(): void {
+    console.log(this.overviewService.getBasket())
   }
 
   public makeOrder() {
-    let a: OrderedProduct = {
+    this.overviewService.addToBasket({
       id: null,
       productId: this.product.id,
       product: this.product,
       orderedPrice: this.product.price * this.orderedCount,
       count: this.orderedCount
-    }
+    });
   }
 }

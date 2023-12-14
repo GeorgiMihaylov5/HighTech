@@ -25,8 +25,15 @@ export class OrderService {
             );
     }
 
-    public createOrder(order: Order) {
-        return this.http.post((`${this.baseUrl}Orders/CreateOrder`), order)
+    public createOrder(order: Order): Observable<void> {
+        return this.http.post<void>((`${this.baseUrl}Orders/CreateOrder`), order)
+            .pipe(
+                catchError(this.errorService.handleError.bind(this.errorService))
+            );
+    }
+
+    public editStatus(order: Order): Observable<void> {
+        return this.http.put<void>((`${this.baseUrl}Orders/EditStatus`), order)
             .pipe(
                 catchError(this.errorService.handleError.bind(this.errorService))
             );

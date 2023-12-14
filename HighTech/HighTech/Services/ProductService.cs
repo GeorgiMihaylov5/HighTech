@@ -1,4 +1,5 @@
-﻿using HighTech.Abstraction;
+﻿using AutoMapper.Internal;
+using HighTech.Abstraction;
 using HighTech.Data;
 using HighTech.Models;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,26 @@ namespace HighTech.Services
             return context.Products
                 .Where(x => x.IsRemoved != true)
                 .Include(p => p.ProductFields)
+                .ToList();
+        }
+
+        public ICollection<Product> GetMostSellers()
+        {
+            return context.OrderedProducts
+                .GroupBy(x => x.ProductId)
+                .Select(g => new
+                {
+                    ProductId = g.Key,
+                    Count = g.Sum(x => x.Count)
+                })
+                .OrderByDescending(x => x.Count)
+                .Join(context.Products
+                    .Where(x => x.IsRemoved != true)
+                    .Include(p => p.ProductFields),
+                    orderedProduct => orderedProduct.ProductId,
+                    product => product.Id,
+                    (orderedProduct, product) => product)
+                .Take(6)
                 .ToList();
         }
 

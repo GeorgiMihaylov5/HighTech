@@ -12,7 +12,7 @@
                 </h4>
                 <div class="d-flex flex-nowrap justify-content-between">
                     <span>
-                        {{ 'Status: ' + order.status }}
+                        {{ 'Status: ' + statusToString(order.status) }}
                     </span>
                     <span>{{ 'Ordered on: ' + getOrderDate(order) }}</span>
                 </div>
@@ -24,8 +24,11 @@
                 <p class="order-price-p">{{ 'Total Price: ' + getTotalPrice(order) + ' lv'}} </p>
 
                 <div *ngIf="(token | async)?.role.includes('Employee') || (token | async)?.role.includes('Administrator')">
-                    <a class=" btn btn-success">Edit</a>
-                    <a class="btn btn-primary ml">Details</a>
+                    <select class="form-select" [(ngModel)]="order.status" (change)="changeStatus(order)">
+                    <option *ngFor="let s of getStatuses()" [ngValue]="s.key">{{ s.value }}</option>
+                </select>
+                    <!-- <a class=" btn btn-success">Edit</a> -->
+                    <!-- <a class="btn btn-primary ml">Details</a> -->
                 </div>
             </div>
             <hr />

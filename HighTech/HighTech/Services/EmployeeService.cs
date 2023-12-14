@@ -48,17 +48,6 @@ namespace HighTech.Services
             return context.Employees.Include(c => c.User).ToList();
         }
 
-        //TODO
-        public string GetFullName(string employeeId)
-        {
-            throw new NotImplementedException();
-        }
-        //TODO
-        public bool Remove(string employeeId)
-        {
-            throw new NotImplementedException();
-        }
-
         public bool Update(string id, string firstName, string lastName, string phone)
         {
             var employee = context.Employees.Find(id);

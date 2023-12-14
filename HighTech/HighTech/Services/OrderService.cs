@@ -15,12 +15,19 @@ namespace HighTech.Services
             context = _context;
         }
 
-        public Order CreateOrder(DateTime orderedOn, string customerId)
+        public Order CreateOrder(DateTime orderedOn, string username)
         {
+            var user = context.Users.FirstOrDefault(u => u.UserName == username);
+
+            if (user is null)
+            {
+                return null;
+            }
+
             var order = new Order()
             {
                 OrderedOn = orderedOn,
-                CustomerId = customerId,
+                CustomerId = user.Id,
                 Status = OrderStatus.Pending,
             };
 

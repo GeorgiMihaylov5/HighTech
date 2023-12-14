@@ -17,6 +17,7 @@ namespace HighTech.Controllers
             orderService = _orderService;
         }
 
+
         [Authorize(Roles = "Administrator,Employee")]
         public IActionResult GetOrders()
         {
@@ -25,7 +26,7 @@ namespace HighTech.Controllers
                 {
                     Id = x.Id,
                     OrderedOn = x.OrderedOn.Ticks.ToString(),
-                    Status = x.Status.ToString(),
+                    Status = x.Status,
                     Notes = x.Notes,
                     OrderedProducts = x.OrderedProducts.Select(op => new OrderedProductDTO()
                     {
@@ -52,9 +53,9 @@ namespace HighTech.Controllers
                         PhoneNumber = x.Customer.PhoneNumber,
                     }
 
-                }).OrderByDescending(x => x.Status == OrderStatus.Pending.ToString())
-                .ThenByDescending(x => x.Status == OrderStatus.Approved.ToString())
-                .ThenByDescending(x => x.Status == OrderStatus.Completed.ToString()).ToList();
+                }).OrderByDescending(x => x.Status == OrderStatus.Pending)
+                .ThenByDescending(x => x.Status == OrderStatus.Approved)
+                .ThenByDescending(x => x.Status == OrderStatus.Completed).ToList();
 
             return Json(orders);
         }
@@ -72,7 +73,7 @@ namespace HighTech.Controllers
                 {
                     Id = x.Id,
                     OrderedOn = x.OrderedOn.Ticks.ToString(),
-                    Status = x.Status.ToString(),
+                    Status = x.Status,
                     Notes = x.Notes,
                     OrderedProducts = x.OrderedProducts.Select(op => new OrderedProductDTO()
                     {
@@ -99,9 +100,9 @@ namespace HighTech.Controllers
                         PhoneNumber = x.Customer.PhoneNumber,
                     }
 
-                }).OrderByDescending(x => x.Status == OrderStatus.Pending.ToString())
-                .ThenByDescending(x => x.Status == OrderStatus.Approved.ToString())
-                .ThenByDescending(x => x.Status == OrderStatus.Completed.ToString()).ToList();
+                }).OrderByDescending(x => x.Status == OrderStatus.Pending)
+                .ThenByDescending(x => x.Status == OrderStatus.Approved)
+                .ThenByDescending(x => x.Status == OrderStatus.Completed).ToList();
 
             return Json(orders);
         }
@@ -110,14 +111,42 @@ namespace HighTech.Controllers
         [HttpPost]
         public IActionResult CreateOrder(OrderDTO dto)
         {
-            var order = orderService.CreateOrder(new DateTime(long.Parse(dto.OrderedOn)), dto.User.UserId);
-
-            foreach (var orderedProductDto in dto.OrderedProducts)
+            try
             {
-                orderService.CreateOrderedProduct(orderedProductDto.ProductId, order.Id, orderedProductDto.OrderedPrice, orderedProductDto.Count);
-            }
+                var order = orderService.CreateOrder(DateTime.Now, dto.Username);
 
-            return Ok();
+                foreach (var orderedProductDto in dto.OrderedProducts)
+                {
+                    orderService.CreateOrderedProduct(orderedProductDto.ProductId, order.Id, orderedProductDto.OrderedPrice, orderedProductDto.Count);
+                }
+
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Authorize]
+        [HttpPut]
+        public IActionResult EditStatus(OrderDTO dto)
+        {
+            try
+            {
+                var edited = orderService.EditOrder(dto.Id, dto.Status, dto.Notes);
+
+                if (edited)
+                {
+                    return Ok();
+                }
+
+                return BadRequest("Order cannot be edited!");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
