@@ -8,25 +8,25 @@
             <div class="col-12 p-0 mb-3 w-100">
                 <h4 class="filter-titles">Filters</h4>
                 <div class="d-block">
-                    <input type="radio" id="promotions" value="1" name="filter" class="wh-input" />
+                    <input type="radio" id="promotions" value="1" name="filter" class="wh-input" (click)="sortFilter(1)" checked="checked"/>
                     <label for="promotions">Promotions</label>
                 </div>
                 <div class="d-block">
-                    <input type="radio" id="topProducts" value="2" name="filter" class="wh-input" />
-                    <label for="topProducts">Top Products</label>
+                    <input type="radio" id="ascendingPrice" value="2" name="filter" class="wh-input" (click)="sortFilter(2)"/>
+                    <label for="ascendingPrice">Ascending Price</label>
                 </div>
                 <div class="d-block">
-                    <input type="radio" id="ascendingPrice" value="3" name="filter" class="wh-input" />
-                    <label for="ascendingPrice">Ascending Price</label>
+                    <input type="radio" id="descendingPrice" value="3" name="filter" class="wh-input" (click)="sortFilter(3)"/>
+                    <label for="descendingPrice">Descending  Price</label>
                 </div>
             </div>
             <div class="col-12 p-0 mb-3 w-100">
                 <h4 class="filter-titles">Price</h4>
-                <input type="number" placeholder="Min price" min="0" name="minPrice"
+                <input type="number" placeholder="Min price" [min]="0" name="minPrice" [(ngModel)]="priceFilterObj.min" (change)="priceFilter()"
                     max="" />
                 <span id="filter-dash">-</span>
-                <input type="number" placeholder="Max price" name="maxPrice"
-                    max="" onchange="minInput()" />
+                <input type="number" placeholder="Max price" [min]="0" name="maxPrice" [(ngModel)]="priceFilterObj.max" (change)="priceFilter()"
+                    max="" />
             </div>
             <div class="col-12 p-0 mb-3">
                 <h4 class="filter-titles">Manufacturer</h4>
@@ -55,7 +55,7 @@
     </div>
 
    <div class="flex-row flex-wrap list-group col-7" *ngIf="!isLoading">
-        <app-product *ngFor="let p of products" 
+        <app-product *ngFor="let p of filteredProducts" 
         [product]="p"
         class="m-2 max-size"></app-product>
    </div>
