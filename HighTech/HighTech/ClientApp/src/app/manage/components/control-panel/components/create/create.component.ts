@@ -7,6 +7,7 @@ import { CreateOptions } from 'src/app/manage/models/options.model';
 import { Product } from 'src/app/models/product.model';
 import { State } from 'src/app/core/state.service';
 import { Router } from '@angular/router';
+import { IEmployee } from 'src/app/manage/models/employee.model';
 
 @Component({
   selector: 'app-create',
@@ -40,6 +41,18 @@ export class CreateComponent implements OnInit, OnDestroy {
     id: null,
     name: null,
     fields: []
+  };
+
+  public employee: IEmployee = {
+    id: null,
+    userId: null,
+    username: null,
+    email: null,
+    firstName: null,
+    isAdmin: false,
+    lastName: null,
+    phoneNumber: null,
+    jobTitle: null,
   };
 
   public categories: Category[] = [];
@@ -198,10 +211,6 @@ export class CreateComponent implements OnInit, OnDestroy {
   }
 
   public save() {
-    console.log(this.product)
-    console.log(this.field)
-    console.log(this.category)
-
     //Filling with right typeCode
     if (this.selectedOption === CreateOptions.Category) {
       this.category.fields.forEach(f => {
@@ -236,7 +245,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       });
     }
     else {
-      this.manageService.createObj([this.field, this.category, this.product], this.selectedOption).subscribe((data: Field | Category | Product) => {
+      this.manageService.createObj([this.field, this.category, this.product, this.employee], this.selectedOption).subscribe((data: Field | Category | Product | IEmployee) => {
         switch (this.selectedOption) {
           case CreateOptions.Field: {
             this.toastr.success('Field was created!');
@@ -277,6 +286,22 @@ export class CreateComponent implements OnInit, OnDestroy {
               image: null,
               categoryName: null,
               fields: []
+            };
+            break;
+          }
+          case CreateOptions.Employee: {
+            this.toastr.success('Employee was created!');
+
+            this.employee = {
+              id: null,
+              userId: null,
+              username: null,
+              email: null,
+              firstName: null,
+              isAdmin: false,
+              lastName: null,
+              phoneNumber: null,
+              jobTitle: null,
             };
             break;
           }

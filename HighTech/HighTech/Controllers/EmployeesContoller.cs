@@ -86,7 +86,7 @@ namespace HighTech.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> Create(EmployeeDTO dto)
+        public async Task<IActionResult> CreateEmployee(EmployeeDTO dto)
         {
             var employee = await userManager.FindByNameAsync(dto.Username);
 
@@ -178,7 +178,7 @@ namespace HighTech.Controllers
         }
 
         [Authorize(Roles = "Administrator,Employee")]
-        [HttpPost]
+        [HttpPut]
         public IActionResult EditEmployee(EmployeeDTO dto)
         {
             var updatedEmp = employeeService.Update(dto.Id, dto.FirstName, dto.LastName, dto.PhoneNumber);

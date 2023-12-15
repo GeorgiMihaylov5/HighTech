@@ -28,8 +28,15 @@ export class EmployeeService {
             );
     }
 
+    public createEmployee(employee: IEmployee): Observable<IEmployee> {
+        return this.http.post<IEmployee>((`${this.baseUrl}Employees/CreateEmployee`), employee)
+            .pipe(
+                catchError(this.errorService.handleError.bind(this.errorService))
+            );
+    }
+
     public editEmployee(employee: IEmployee): Observable<IEmployee> {
-        return this.http.post<IEmployee>((`${this.baseUrl}Employees/EditEmployee`), employee)
+        return this.http.put<IEmployee>((`${this.baseUrl}Employees/EditEmployee`), employee)
             .pipe(
                 catchError(this.errorService.handleError.bind(this.errorService))
             );

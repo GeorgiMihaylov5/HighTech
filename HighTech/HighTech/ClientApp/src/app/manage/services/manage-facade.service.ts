@@ -125,7 +125,7 @@ export class ManageServiceFacade {
         return of(false);
     }
 
-    public createObj(arr: [Field, Category, Product ], selectedOption: CreateOptions): Observable<Field | Category | Product> {
+    public createObj(arr: [Field, Category, Product, IEmployee ], selectedOption: CreateOptions): Observable<Field | Category | Product | IEmployee> {
         if(selectedOption === CreateOptions.Field) {
             return this.fieldApi.createField(arr[0]);
         }
@@ -134,6 +134,9 @@ export class ManageServiceFacade {
         }
         else if(selectedOption === CreateOptions.Product) {
             return this.productApi.createProduct(arr[2]);
+        }
+        else if(selectedOption === CreateOptions.Employee) {
+            return this.employeeApi.createEmployee(arr[3]);
         }
 
         return of(null);

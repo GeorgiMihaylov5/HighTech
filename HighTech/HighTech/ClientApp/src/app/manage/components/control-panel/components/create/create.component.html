@@ -15,6 +15,11 @@
                 [(ngModel)]="selectedOption">
             <label class="form-check-label pointer" for="inlineRadio3">Category</label>
         </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input pointer" type="radio" name="inlineRadioOptions" id="inlineRadio4" [value]="3"
+                [(ngModel)]="selectedOption">
+            <label class="form-check-label pointer" for="inlineRadio4">Employee</label>
+        </div>
     </div>
 
     <div class="mt-3">
@@ -141,8 +146,46 @@
                     </div>
                 </div>
             </div>
-
         </div>
+
+
+        <!-- Employee Form -->
+        <div *ngIf="selectedOption == 3">
+            <div class="d-flex flex-nowrap flex-column child-mb">
+                <div>
+                    <p>First Name</p>
+                    <div>
+                        <input class="form-control" name="categoryName" type="text" [(ngModel)]="employee.firstName">
+                    </div>
+                </div>
+                <div>
+                    <p>Last Name</p>
+                    <div>
+                        <input class="form-control" name="categoryName" type="text" [(ngModel)]="employee.lastName">
+                    </div>
+                </div>
+                <div>
+                    <p>Job title</p>
+                    <div>
+                        <input class="form-control" name="categoryName" type="text" [(ngModel)]="employee.jobTitle">
+                    </div>
+                </div>
+                <div>
+                    <p>Email</p>
+                    <div>
+                        <input class="form-control" name="categoryName" type="email" [(ngModel)]="employee.email">
+                    </div>
+                </div>
+                <div>
+                    <p>Username</p>
+                    <div>
+                        <input class="form-control" name="categoryName" type="text" [(ngModel)]="employee.username">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <button class="btn btn-outline-primary" (click)="save()">Save</button>
     </div>
 </div>
