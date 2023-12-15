@@ -14,7 +14,10 @@ import { EmployeesComponent } from './manage/components/control-panel/components
 import { TableComponent } from './manage/components/control-panel/components/table/table.component';
 import { CreateComponent } from './manage/components/control-panel/components/create/create.component';
 import { BasketComponent } from './nav-menu/basket/basket.component';
+import { AuthorizeGuard } from 'src/api-authorization/authorize.guard';
 
+const adminRights = { role: ["Administrator"] };
+const employeeRights = { role: ["Administrator", "Employee"] };
 
 
 const routes: Routes = [
@@ -23,24 +26,21 @@ const routes: Routes = [
   { path: 'basket', component: BasketComponent },
   { path: 'detail', component: ProductDetailComponent },
   {
-    path: 'manage', component: ManageComponent, children: [
-      { path: '', component: ProfileComponent, outlet: 'manage' },
-      { path: 'orders', component: OrdersComponent, outlet: 'manage' },
-      { path: 'change-password', component: ChangePasswordComponent, outlet: 'manage' },
+    path: 'manage', component: ManageComponent, canActivate: [AuthorizeGuard], children: [
+      { path: '', component: ProfileComponent, canActivate: [AuthorizeGuard], outlet: 'manage' },
+      { path: 'orders', component: OrdersComponent, canActivate: [AuthorizeGuard], outlet: 'manage' },
+      { path: 'change-password', component: ChangePasswordComponent, canActivate: [AuthorizeGuard], outlet: 'manage' },
       {
-        path: 'control-panel', component: ControlPanelComponent, outlet: 'manage', children: [
-          { path: '', component: OrdersComponent, outlet: 'control-panel' },
-          { path: 'clients', component: ClientsComponent, outlet: 'control-panel' },
-          { path: 'employees', component: EmployeesComponent, outlet: 'control-panel' },
-          { path: 'table', component: TableComponent, outlet: 'control-panel' },
-          { path: 'create', component: CreateComponent, outlet: 'control-panel' },
+        path: 'control-panel', component: ControlPanelComponent, outlet: 'manage', canActivate: [AuthorizeGuard], data: employeeRights, children: [
+          { path: '', component: OrdersComponent, canActivate: [AuthorizeGuard], data: employeeRights, outlet: 'control-panel' },
+          { path: 'clients', component: ClientsComponent, canActivate: [AuthorizeGuard], data: employeeRights, outlet: 'control-panel' },
+          { path: 'employees', component: EmployeesComponent, canActivate: [AuthorizeGuard], data: adminRights, outlet: 'control-panel' },
+          { path: 'table', component: TableComponent, canActivate: [AuthorizeGuard], data: adminRights, outlet: 'control-panel' },
+          { path: 'create', component: CreateComponent, canActivate: [AuthorizeGuard], data: adminRights, outlet: 'control-panel' },
         ]
       },
     ]
   }
-
-  // { path: 'fetch-data', component: FetchDataComponent, canActivate: [AuthorizeGuard], data: { role: "Administrator"} }, 
-  // { path: 'authenticate', component: AuthNavComponent}
 ]
 
 @NgModule({

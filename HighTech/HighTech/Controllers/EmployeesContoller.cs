@@ -56,7 +56,7 @@ namespace HighTech.Controllers
             return Json(employeesDTO);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Administrator,Employee")]
         public IActionResult GetByUsername(string username)
         {
             if (username is null)
@@ -85,6 +85,7 @@ namespace HighTech.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Create(EmployeeDTO dto)
         {
             var employee = await userManager.FindByNameAsync(dto.Username);
@@ -176,7 +177,7 @@ namespace HighTech.Controllers
             return Ok();
         }
 
-        [Authorize]
+        [Authorize(Roles = "Administrator,Employee")]
         [HttpPost]
         public IActionResult EditEmployee(EmployeeDTO dto)
         {
@@ -190,14 +191,34 @@ namespace HighTech.Controllers
             return BadRequest();
         }
 
-        //public override JsonResult Json(object data)
-        //{
-        //    var settings = new JsonSerializerOptions
-        //    {
-        //        con = new CamelCasePropertyNamesContractResolver()
-        //    };
+        public async Task<IActionResult> CheckUserRole(AuthUser token)
+        {
+            if (token is null)
+            {
+                return BadRequest("Token is null");
+            }
 
-        //    return base.Json(data, settings);
-        //}
+            if (token.Role.Contains("Client"))
+            {
+                return Json(true);
+            }
+
+            var roles = await userManager.GetRolesAsync(employeeService.GetEmployeeByUsername(token.Nameid).User);
+
+            if (roles.Count != token.Role.Count)
+            {
+                return Json(false);
+            }
+
+            foreach (var tokenRole in token.Role)
+            {
+                if (!roles.Contains(tokenRole))
+                {
+                    return Json(false);
+                }
+            }
+
+            return Json(true);
+        }
     }
 }

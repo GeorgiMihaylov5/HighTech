@@ -87,6 +87,7 @@ export class AuthorizeService {
     try {
       if (this.removeAccessToken()) {
         this.authorizationChange.emit();
+        //window.location.reload();
         return this.success(state)
       }
 

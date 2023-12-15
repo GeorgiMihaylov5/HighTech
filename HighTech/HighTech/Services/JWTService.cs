@@ -3,6 +3,7 @@ using HighTech.Models;
 using HighTech.Options;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -33,6 +34,7 @@ namespace HighTech.Services
                 new Claim(ClaimTypes.Surname, user.LastName!),
                 new Claim(ClaimTypes.NameIdentifier, user.UserName!),
             };
+
 
             if (roles is not null)
             {

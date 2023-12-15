@@ -3,6 +3,6 @@ export interface IToken {
     family_name: string;
     jwt: string;
     exp: number;
-    role: string[];
+    role: string[] | string;
     nameid: string;
 }

@@ -28,7 +28,7 @@ namespace HighTech.Controllers
             jwtService = _jwtService;
         }
 
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Employee,Administrator")]
         public IActionResult GetAll()
         {
             var clients = service.GetClients().Select(client => new ClientDTO()
@@ -149,6 +149,7 @@ namespace HighTech.Controllers
             return BadRequest(result.Errors);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> ChangePassword(ChangePasswordDTO dto)
         {
@@ -174,27 +175,14 @@ namespace HighTech.Controllers
             return Ok();
         }
 
-        private UserDTO CreateUserDTO(AppUser user)
-        {
-            return new UserDTO
-            {
-                UserId = user.Id,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                PhoneNumber = user.PhoneNumber,
-                Username = user.UserName,
-            };
-        }
-
         private AuthUser CreateAuthUserDTO(AppUser user, IList<string> roles)
         {
             return new AuthUser
             {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
+                Given_name = user.FirstName,
+                Family_name = user.LastName,
                 Role = roles,
+                Nameid = user.UserName,
                 Jwt = jwtService.CreateJWT(user, roles),
                 Exp = new DateTime().AddDays(jwtService.ExpiresDays).Ticks
             };

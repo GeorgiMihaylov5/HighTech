@@ -4,6 +4,7 @@ import { Observable, catchError } from "rxjs";
 import { Client } from "src/app/manage/models/client.model";
 import { ErrorService } from "src/app/services/error.service";
 import { IEmployee } from "../models/employee.model";
+import { IToken } from "src/api-authorization/models/token.model";
 
 @Injectable()
 export class EmployeeService {
@@ -43,6 +44,20 @@ export class EmployeeService {
 
     public demote(employee: IEmployee): Observable<IEmployee> {
         return this.http.post<IEmployee>((`${this.baseUrl}Employees/Demote`), employee)
+            .pipe(
+                catchError(this.errorService.handleError.bind(this.errorService))
+            );
+    }
+
+    public checkUserRole(token: IToken): Observable<boolean> {
+        if (typeof token.role === 'string') {
+            token.role = [token.role];
+        }
+        else if (Array.isArray(token.role)) {
+            token.role = [...token.role];
+        }
+
+        return this.http.post<boolean>(`${this.baseUrl}Employees/CheckUserRole`, token)
             .pipe(
                 catchError(this.errorService.handleError.bind(this.errorService))
             );

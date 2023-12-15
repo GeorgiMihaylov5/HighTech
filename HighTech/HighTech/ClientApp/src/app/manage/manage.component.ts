@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ManageServiceFacade } from './services/manage-facade.service';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
+import { IToken } from 'src/api-authorization/models/token.model';
 
 @Component({
   selector: 'app-manage',
@@ -10,6 +11,7 @@ import { filter } from 'rxjs';
 })
 export class ManageComponent implements OnInit {
   public currentTab: TabType = TabType.Profile;
+  public showControlPanel: boolean = false;
 
   constructor(public manageService: ManageServiceFacade,
     private router: Router) {
@@ -17,6 +19,8 @@ export class ManageComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.manageService.checkUserRole().subscribe()
+
     this.setCurrentTab(this.router.url);
 
     this.router.events
@@ -24,6 +28,12 @@ export class ManageComponent implements OnInit {
       .subscribe((event: NavigationEnd) => {
         this.setCurrentTab(event.url);
       });
+
+    this.manageService.token.subscribe((token: IToken) => {
+      if (token.role.includes('Administrator') || token.role.includes('Employee')) {
+        this.showControlPanel = true;
+      }
+    });
   }
 
   public ChangeTab(tab: TabType): void {

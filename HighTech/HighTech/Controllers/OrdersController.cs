@@ -128,7 +128,7 @@ namespace HighTech.Controllers
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "Administrator,Employee")]
         [HttpPut]
         public IActionResult EditStatus(OrderDTO dto)
         {

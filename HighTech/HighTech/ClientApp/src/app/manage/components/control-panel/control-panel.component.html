@@ -6,13 +6,13 @@
         <li class="nav-item" (click)="ChangeTab(1)" [routerLink]="[{ outlets: { 'control-panel': ['clients'] } }]">
             <a class="nav-link" role="tab" [ngClass]="{'active': controlPanelTab == 1}">Clients</a>
         </li>
-        <li class="nav-item" (click)="ChangeTab(2)" [routerLink]="[{ outlets: { 'control-panel': ['employees'] } }]">
+        <li class="nav-item" (click)="ChangeTab(2)" [routerLink]="[{ outlets: { 'control-panel': ['employees'] } }]" *ngIf="showTab">
             <a class="nav-link"[ngClass]="{'active': controlPanelTab == 2}">Employees</a>
         </li>
-        <li class="nav-item" (click)="ChangeTab(3)" [routerLink]="[{ outlets: { 'control-panel': ['table'] } }]">
+        <li class="nav-item" (click)="ChangeTab(3)" [routerLink]="[{ outlets: { 'control-panel': ['table'] } }]" *ngIf="showTab">
             <a class="nav-link" [ngClass]="{'active': controlPanelTab == 3}">All</a>
         </li>
-        <li class="nav-item" (click)="ChangeTab(4)" [routerLink]="[{ outlets: { 'control-panel': ['create'] } }]">
+        <li class="nav-item" (click)="ChangeTab(4)" [routerLink]="[{ outlets: { 'control-panel': ['create'] } }]" *ngIf="showTab">
             <a class="nav-link" [ngClass]="{'active': controlPanelTab == 4}">Create</a>
         </li>
     </ul>

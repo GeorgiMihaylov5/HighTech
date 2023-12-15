@@ -1,5 +1,5 @@
-import { Injectable } from "@angular/core";
-import { Observable, combineLatest, map, of, switchMap } from "rxjs";
+import { Injectable, OnInit } from "@angular/core";
+import { Observable, combineLatest, map, of, switchMap, tap } from "rxjs";
 import { IToken } from "src/api-authorization/models/token.model";
 import { AuthorizeService } from "src/api-authorization/services/authorize-facade.service";
 import { ClientService } from "./client.service";
@@ -14,6 +14,7 @@ import { Field } from "src/app/models/field.model";
 import { Product } from "src/app/models/product.model";
 import { ProductService } from "src/app/services/product.service";
 import { CreateOptions } from "src/app/manage/models/options.model";
+import { NavigationExtras, Router } from "@angular/router";
 
 @Injectable()
 export class ManageServiceFacade {
@@ -24,8 +25,28 @@ export class ManageServiceFacade {
         private employeeApi: EmployeeService,
         private categoryApi: CategoryService,
         private fieldApi: FieldService,
-        private productApi: ProductService) {
+        private productApi: ProductService,
+        private router: Router) {
         this.token = authService.getTokenData();
+    }
+
+    public checkUserRole(): Observable<boolean> {
+        return this.authService.getTokenData().pipe(
+            switchMap((token: IToken) => {
+                return this.employeeApi.checkUserRole(token).pipe(
+                    tap((isValid: boolean) => {
+                        if(!isValid) {
+                            const route = '/authentication/logout';
+                            const state = { local: true };
+                            const navigationExtras: NavigationExtras = {
+                              state: { ...state },
+                            };
+                        
+                            this.router.navigate([route], navigationExtras);
+                        }
+                    })
+                );
+            }));
     }
 
     public getProfileData(): Observable<Client | IEmployee> {

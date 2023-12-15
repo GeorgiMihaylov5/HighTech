@@ -25,14 +25,6 @@ namespace HighTech.Controllers
             fieldService = _fieldService;
         }
 
-        //public override JsonResult Json(object data)
-        //{
-        //    var settings = new JsonSerializerOptions
-        //    {
-        //    };
-
-        //    return base.Json(data, settings);
-        //}
         public IActionResult GetMostSellers()
         {
             try
@@ -101,6 +93,7 @@ namespace HighTech.Controllers
             return Json(dtos);
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpPost]
         public IActionResult Create(ProductDTO dto)
         {
@@ -140,6 +133,7 @@ namespace HighTech.Controllers
             return Json(dto);
         }
 
+        [Authorize(Roles = "Administrator")]
         [HttpPut]
         public IActionResult Edit(ProductDTO dto)
         {
@@ -207,7 +201,6 @@ namespace HighTech.Controllers
         }
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrator")]
         public IActionResult MakeDiscount(DiscountDTO dto)
         {

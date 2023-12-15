@@ -1,6 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
+import { ManageServiceFacade } from '../../services/manage-facade.service';
+import { IToken } from 'src/api-authorization/models/token.model';
 
 @Component({
   selector: 'app-control-panel',
@@ -9,9 +11,15 @@ import { filter } from 'rxjs';
 })
 export class ControlPanelComponent implements OnInit {
   @Input() public controlPanelTab: ControlPanelTabType = ControlPanelTabType.Orders;
+  public showTab: boolean = false;
 
-  constructor(private router: Router) {
-
+  constructor(private router: Router,
+    private manageService: ManageServiceFacade) {
+      manageService.token.subscribe((token: IToken) => {
+        if(token.role.includes('Administrator')) {
+          this.showTab = true;
+        }
+      })
   }
 
   ngOnInit(): void {

@@ -28,9 +28,4 @@ export class UserService {
         catchError(this.errorService.handleError.bind(this.errorService))
       );
   }
-
-  public getUser() {
-    //TODO
-  }
-
 }

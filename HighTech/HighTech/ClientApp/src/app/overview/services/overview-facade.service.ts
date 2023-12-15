@@ -63,15 +63,15 @@ export class OverviewFacade {
     public addToBasket(orderProduct: OrderedProduct): void {
         const orders = this.getBasket();
         if (orders != null && orders.length > 0) {
-            localStorage.setItem('basket', JSON.stringify([orderProduct, ...orders]));
+            sessionStorage.setItem('basket', JSON.stringify([orderProduct, ...orders]));
         }
         else {
-            localStorage.setItem('basket', JSON.stringify([orderProduct]));
+            sessionStorage.setItem('basket', JSON.stringify([orderProduct]));
         }
     }
 
     public getBasket(): OrderedProduct[] {
-        const json = localStorage.getItem('basket');
+        const json = sessionStorage.getItem('basket');
 
         if (json === undefined) {
             return [];
@@ -92,14 +92,14 @@ export class OverviewFacade {
         }
         else if (orders.length > 1) {
             orders.splice(index, 1);
-            localStorage.setItem('basket', JSON.stringify(orders));
+            sessionStorage.setItem('basket', JSON.stringify(orders));
         }
 
         return orders;
     }
 
     public cleanBasket(): OrderedProduct[] {
-        localStorage.removeItem('basket');
+        sessionStorage.removeItem('basket');
 
         return null;
     }

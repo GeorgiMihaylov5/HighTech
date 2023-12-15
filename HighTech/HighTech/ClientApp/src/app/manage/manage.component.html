@@ -13,7 +13,7 @@
             <span>Change Password</span>
         </div>
         <div [ngClass]="{'selected-tab': currentTab == 3}" (click)="ChangeTab(3)"
-            *ngIf="(manageService.token | async).role.includes('Administrator')"
+            *ngIf="showControlPanel"
             [routerLink]="['/manage', { outlets: { 'manage': ['control-panel'] } }]">
             <span>Control Panel</span>
         </div>

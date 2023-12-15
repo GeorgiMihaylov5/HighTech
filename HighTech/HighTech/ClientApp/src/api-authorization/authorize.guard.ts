@@ -15,23 +15,36 @@ export class AuthorizeGuard implements CanActivate {
     _next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
     return combineLatest([
-        this.authorize.isAuthenticated(),
-        this.authorize.getTokenData()
-      ])
+      this.authorize.isAuthenticated(),
+      this.authorize.getTokenData()
+    ])
       .pipe(map(data => {
-        const isAuthenticated = data[0];
-        const role = data[1]?.role;
+        const isAuthenticated: boolean = data[0];
+        const roles: string[] | string = data[1]?.role;
 
         if (this.handleAuthorization(isAuthenticated, state)) {
-          //TODO
-          return role === _next.data.role as string[];
+          const validRoles: string[] = _next.data.role;
+
+          if (!validRoles) {
+            return true;
+          }
+
+          if (typeof roles === 'string') {
+            return validRoles.includes(roles)
+          }
+          else if (Array.isArray(roles)) {
+            for (let validRole of validRoles) {
+              if (roles.includes(validRole)) {
+                return true;
+              }
+            }
+          }
         }
 
         return false;
       })
       )
   }
-
 
   private handleAuthorization(isAuthenticated: boolean, state: RouterStateSnapshot) {
     if (!isAuthenticated) {
