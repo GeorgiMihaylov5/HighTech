@@ -53,6 +53,9 @@ export class BasketComponent {
 
     this.overviewService.createOrder(order).subscribe(_ => {
       this.clean();
+
+      this.toastr.success('The order was successful!');
+      
     });
   }
 
@@ -67,6 +70,7 @@ export class BasketComponent {
   }
 
   public calculateTotalPrice(): void {
+    console.log(this.orders)
     this.totalPrice = 0;
 
     if(this.orders != null && this.orders.length > 0) {

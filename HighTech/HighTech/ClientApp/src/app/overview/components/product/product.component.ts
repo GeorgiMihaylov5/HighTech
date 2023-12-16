@@ -20,4 +20,8 @@ export class ProductComponent implements OnInit{
   public routeToDetail() {
     this.facade.detailProduct(this.product);
   }
+
+  public get description() {
+    return this.product.fields.sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0).slice(0,3);
+  }
 }

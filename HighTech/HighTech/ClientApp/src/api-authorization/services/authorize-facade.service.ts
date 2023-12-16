@@ -77,7 +77,7 @@ export class AuthorizeService {
   public removeAccessToken(): boolean {
     if (this.getAccessToken()) {
       localStorage.removeItem('token');
-
+      //localStorage.setItem('token', '')
       return true;
     }
     return false;
@@ -117,7 +117,6 @@ export class AuthorizeService {
   public register(state: any, user: RegisterRM): Observable<IAuthenticationResult> {
     try{
       if(user.Password !== user.ConfirmPassword) {
-        //TODO
         this.toastrService.error('Passwords dont match!')
         throw Error();
       }

@@ -19,7 +19,7 @@ export class ProductDetailComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    console.log(this.overviewService.getBasket())
+   
   }
 
   public makeOrder() {
@@ -27,7 +27,7 @@ export class ProductDetailComponent implements OnInit {
       id: null,
       productId: this.product.id,
       product: this.product,
-      orderedPrice: this.product.price * this.orderedCount,
+      orderedPrice: this.product.price,
       count: this.orderedCount
     });
   }

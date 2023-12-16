@@ -21,7 +21,7 @@
                 <p>{{ 'User: ' + order.user.username }}</p>
             </div>
             <div class="d-flex justify-content-between">
-                <p class="order-price-p">{{ 'Total Price: ' + getTotalPrice(order) + ' lv'}} </p>
+                <p class="order-price-p">{{ 'Total Price: ' + getTotalPrice(order) + ' BGN'}} </p>
 
                 <div *ngIf="(token | async)?.role.includes('Employee') || (token | async)?.role.includes('Administrator')">
                     <select class="form-select" [(ngModel)]="order.status" (change)="changeStatus(order)">

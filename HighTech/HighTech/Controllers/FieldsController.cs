@@ -42,7 +42,8 @@ namespace HighTech.Controllers
 
                 return Json(new FieldDTO()
                 {
-                    Name = field.Id,
+                    Id = field.Id,
+                    Name = field.Name,
                     TypeCode = field.TypeCode
                 });
             }

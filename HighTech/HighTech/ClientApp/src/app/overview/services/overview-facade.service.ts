@@ -1,4 +1,4 @@
-import { BehaviorSubject, Observable, catchError, from, tap } from "rxjs";
+import { BehaviorSubject, Observable, catchError, from, map, tap } from "rxjs";
 import { ProductService } from "../../services/product.service";
 import { Product } from "../../models/product.model";
 import { Injectable } from "@angular/core";
@@ -57,7 +57,18 @@ export class OverviewFacade {
     }
 
     public createOrder(order: Order): Observable<void> {
-        return this.orderApi.createOrder(order);
+        return this.orderApi.createOrder(order).pipe(
+            tap(_ => {
+                return this.state.getProduct$().pipe(
+                    tap((products: Product[]) => {
+                        order.orderedProducts.forEach((orderedProduct: OrderedProduct) => {
+                            products.find(p => p.id === orderedProduct.id).quantity -= orderedProduct.count;
+                        });
+
+                        this.state.setProducts$(products);
+                    }))
+            })
+        );
     }
 
     public addToBasket(orderProduct: OrderedProduct): void {

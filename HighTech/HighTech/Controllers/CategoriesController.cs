@@ -113,7 +113,7 @@ namespace HighTech.Controllers
             return Json(categories);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{name}")]
         [Authorize(Roles = "Administrator")]
         public IActionResult Delete(string name)
         {

@@ -113,7 +113,7 @@ namespace HighTech.Controllers
         {
             try
             {
-                var order = orderService.CreateOrder(DateTime.Now, dto.Username);
+                var order = orderService.CreateOrder(DateTime.UtcNow, dto.Username);
 
                 foreach (var orderedProductDto in dto.OrderedProducts)
                 {

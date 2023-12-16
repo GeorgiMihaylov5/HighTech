@@ -18,7 +18,7 @@ import { NavigationExtras, Router } from "@angular/router";
 
 @Injectable()
 export class ManageServiceFacade {
-    public token: Observable<IToken>;
+    //public token: Observable<IToken>;
 
     constructor(private authService: AuthorizeService,
         private clientApi: ClientService,
@@ -27,7 +27,11 @@ export class ManageServiceFacade {
         private fieldApi: FieldService,
         private productApi: ProductService,
         private router: Router) {
-        this.token = authService.getTokenData();
+        
+    }
+
+    public get token(): Observable<IToken> {
+        return this.authService.getTokenData();
     }
 
     public checkUserRole(): Observable<boolean> {

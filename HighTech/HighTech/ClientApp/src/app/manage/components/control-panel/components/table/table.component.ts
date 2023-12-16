@@ -61,13 +61,13 @@ export class TableComponent implements OnInit {
     this.manageService.delete(id, selectedOption).subscribe((isRemoved: boolean) => {
       if (isRemoved) {
         if (selectedOption === CreateOptions.Field) {
-          this.splice(this.fields, id, 'field');
+          this.splice(this.fields, id, 'id', 'field');
         }
         else if (selectedOption === CreateOptions.Category) {
-          this.splice(this.categories, id, 'category');
+          this.splice(this.categories, id, 'name', 'category');
         }
         else if (selectedOption === CreateOptions.Product) {
-          this.splice(this.products, id, 'product');
+          this.splice(this.products, id, 'id', 'product');
         }
       }
     });
@@ -100,8 +100,8 @@ export class TableComponent implements OnInit {
     });
   }
 
-  private splice(arr: any[], id: string, messageObj: string) {
-    const indexToRemove = arr.findIndex(obj => obj['id'] === id);
+  private splice(arr: any[], id: string, prop: string, messageObj: string) {
+    const indexToRemove = arr.findIndex(obj => obj[prop] === id);
 
     if (indexToRemove !== -1) {
       arr.splice(indexToRemove, 1);

@@ -151,7 +151,6 @@ namespace HighTech.Controllers
             return Ok();
         }
 
-        //TODO When I demode someone his token need to be invalid
         [HttpPost]
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Demote(EmployeeDTO dto)

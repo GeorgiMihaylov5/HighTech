@@ -28,14 +28,25 @@ export class OrdersComponent implements OnInit {
   }
 
   public getOrderDate(order: Order): string {
-    return moment(new Date(order.orderedOn)).format('LLL');
+    const epochTicks = 621355968000000000;
+    const ticksPerMillisecond = 10000;
+    const maxDateMilliseconds = 8640000000000000;
+
+    var ticksSinceEpoch = parseInt(order.orderedOn) - epochTicks;
+    var millisecondsSinceEpoch = ticksSinceEpoch / ticksPerMillisecond;
+
+    if (millisecondsSinceEpoch > maxDateMilliseconds) {
+      return "+WHOAWH-OA-ISTOO:FA:RA.WAYZ";
+    }
+
+    return moment(millisecondsSinceEpoch).format('LLL');
   }
 
   public getTotalPrice(order: Order) {
     let total = 0;
 
     order.orderedProducts.forEach((o: OrderedProduct) => {
-      total += o.orderedPrice;
+      total += o.orderedPrice * o.count;
     })
 
     return total;
@@ -55,7 +66,7 @@ export class OrdersComponent implements OnInit {
         return 'Approved';
       case Status.Rejected:
         return 'Rejected';
-        case Status.Completed:
+      case Status.Completed:
         return 'Completed';
       default:
         return 'Unknown';
@@ -64,11 +75,11 @@ export class OrdersComponent implements OnInit {
 
   public getStatuses() {
     return Object.entries(Status)
-    .map(([key, value]) => ({ key, value }))
-    .filter((v) => isNaN(Number(v.value)))
-    .map((v) => ({ key: parseInt(v.key), value: v.value }));
+      .map(([key, value]) => ({ key, value }))
+      .filter((v) => isNaN(Number(v.value)))
+      .map((v) => ({ key: parseInt(v.key), value: v.value }));
   }
-  
+
 
   private getOrders(url: string) {
     this.token = this.authService.getTokenData();

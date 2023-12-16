@@ -39,6 +39,14 @@ namespace HighTech.Services
 
         public bool CreateOrderedProduct(string productId, string orderId, decimal price, int count)
         {
+            var product = context.Products.FirstOrDefault(x => x.Id == productId);
+
+            if (product is null || product.Quantity < count)
+            {
+                return false;
+            }
+            product.Quantity -= count;
+
             context.OrderedProducts.Add(new OrderedProduct()
             {
                 ProductId = productId,

@@ -33,8 +33,8 @@ export class CategoryService {
             );
     }
 
-    public deleteCategory(id: string): Observable<boolean> {
-        return this.http.delete<boolean>((`${this.baseUrl}Categories/Delete/${id}`))
+    public deleteCategory(name: string): Observable<boolean> {
+        return this.http.delete<boolean>((`${this.baseUrl}Categories/Delete/${name}`))
             .pipe(
                 catchError(this.errorService.handleError.bind(this.errorService))
             );
