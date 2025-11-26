@@ -3,7 +3,7 @@
 	"version": 1,
 	"newProjectRoot": "projects",
 	"projects": {
-		"HighTech": {
+		"HighTechUI": {
 			"projectType": "application",
 			"schematics": {
 				"@schematics/angular:application": {
@@ -62,14 +62,17 @@
 				"serve": {
 					"builder": "@angular-devkit/build-angular:dev-server",
 					"options": {
-						"proxyConfig": "proxy.conf.js"
+						"proxyConfig": "proxy.conf.js",
+						"ssl": true,
+						"sslCert": "C:/Users/Georgi Mihaylov/AppData/Roaming/ASP.NET/https/hightechui.pem",
+						"sslKey": "C:/Users/Georgi Mihaylov/AppData/Roaming/ASP.NET/https/hightechui.key"
 					},
 					"configurations": {
 						"production": {
-							"buildTarget": "HighTech:build:production"
+							"buildTarget": "HighTechUI:build:production"
 						},
 						"development": {
-							"buildTarget": "HighTech:build:development"
+							"buildTarget": "HighTechUI:build:development"
 						}
 					},
 					"defaultConfiguration": "development"

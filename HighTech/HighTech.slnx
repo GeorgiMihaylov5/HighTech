@@ -1,7 +1,0 @@
-<Solution>
-  <Project Path="ClientApp/ClientApp.esproj">
-    <Build />
-    <Deploy />
-  </Project>
-  <Project Path="HighTech/HighTech.csproj" />
-</Solution>

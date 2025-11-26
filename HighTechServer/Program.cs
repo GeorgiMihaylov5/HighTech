@@ -50,17 +50,17 @@ builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<IOrderService, OrderService>();
 
 // Add CORS
-builder.Services.AddCors(options =>
-{
-	options.AddPolicy("AllowAngularApp", policy =>
-	{
-		policy.WithOrigins("http://localhost:4200")
-			.AllowAnyHeader()
-			.AllowAnyMethod()
-			.AllowCredentials()
-			.SetPreflightMaxAge(TimeSpan.FromHours(1));
-	});
-});
+//builder.Services.AddCors(options =>
+//{
+//	options.AddPolicy("AllowAngularApp", policy =>
+//	{
+//		policy.WithOrigins("http://localhost:4200")
+//			.AllowAnyHeader()
+//			.AllowAnyMethod()
+//			.AllowCredentials()
+//			.SetPreflightMaxAge(TimeSpan.FromHours(1));
+//	});
+//});
 
 builder.Services.Configure<JWTServiceOption>(options =>
 {
@@ -100,7 +100,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-app.UseCors("AllowAngularApp");
+//app.UseCors("AllowAngularApp");
 
 app.UseAuthentication();
 app.UseAuthorization();
