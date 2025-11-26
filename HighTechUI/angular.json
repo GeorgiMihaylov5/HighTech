@@ -62,10 +62,7 @@
 				"serve": {
 					"builder": "@angular-devkit/build-angular:dev-server",
 					"options": {
-						"proxyConfig": "proxy.conf.js",
-						"ssl": true,
-						"sslCert": "C:/Users/Georgi Mihaylov/AppData/Roaming/ASP.NET/https/hightechui.pem",
-						"sslKey": "C:/Users/Georgi Mihaylov/AppData/Roaming/ASP.NET/https/hightechui.key"
+						"proxyConfig": "proxy.conf.js"
 					},
 					"configurations": {
 						"production": {

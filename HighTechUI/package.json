@@ -4,7 +4,7 @@
 	"scripts": {
 		"ng": "ng",
 		"prestart": "node aspnetcore-https",
-		"start": "ng serve --proxy-config proxy.conf.js",
+		"start": "ng serve --ssl --ssl-cert \"%APPDATA%\\ASP.NET\\https\\%npm_package_name%.pem\" --ssl-key \"%APPDATA%\\ASP.NET\\https\\%npm_package_name%.key\" --host=127.0.0.1 --proxy-config proxy.conf.js",
 		"build": "ng build",
 		"build:ssr": "ng run HighTech:server:dev",
 		"watch": "ng build --watch --configuration development",
