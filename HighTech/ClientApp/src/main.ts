@@ -5,16 +5,16 @@ import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 
 export function getBaseUrl() {
-  return document.getElementsByTagName('base')[0].href;
+	return "https://localhost:7140/";
 }
 
 const providers = [
-  { provide: 'BASE_URL', useFactory: getBaseUrl }
+	{ provide: 'BASE_URL', useFactory: getBaseUrl }
 ];
 
 if (environment.production) {
-  enableProdMode();
+	enableProdMode();
 }
 
 platformBrowserDynamic(providers).bootstrapModule(AppModule)
-  .catch(err => console.log(err));
+	.catch(err => console.log(err));

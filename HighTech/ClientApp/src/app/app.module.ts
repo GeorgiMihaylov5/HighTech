@@ -14,7 +14,6 @@ import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.
 import { ErrorService } from './services/error.service';
 import { ManageModule } from './manage/manage.module';
 import { OrderService } from './services/order.service';
-import { provideClientHydration } from '@angular/platform-browser';
 
 
 @NgModule({
@@ -40,8 +39,7 @@ import { provideClientHydration } from '@angular/platform-browser';
 			useClass: AuthorizeInterceptor,
 			multi: true
 		},
-		ErrorService,
-		provideClientHydration()
+		ErrorService
 	],
 	bootstrap: [AppComponent]
 })
