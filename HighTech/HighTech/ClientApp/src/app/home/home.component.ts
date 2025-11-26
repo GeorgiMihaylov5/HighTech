@@ -3,19 +3,20 @@ import { OverviewFacade } from '../overview/services/overview-facade.service';
 import { Product } from '../models/product.model';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+	selector: 'app-home',
+	templateUrl: './home.component.html',
+	styleUrls: ['./home.component.css'],
+	standalone: false
 })
 export class HomeComponent {
-  public products: Product[];
-  constructor(private overviewFacade: OverviewFacade) {
-    overviewFacade.getMostSellers().subscribe((products: Product[]) => {
-      this.products = products;
-    });
-  }
+	public products: Product[];
+	constructor(private overviewFacade: OverviewFacade) {
+		overviewFacade.getMostSellers().subscribe((products: Product[]) => {
+			this.products = products;
+		});
+	}
 
-  public routeToDetail(product: Product) {
-    this.overviewFacade.detailProduct(product);
-  }
+	public routeToDetail(product: Product) {
+		this.overviewFacade.detailProduct(product);
+	}
 }

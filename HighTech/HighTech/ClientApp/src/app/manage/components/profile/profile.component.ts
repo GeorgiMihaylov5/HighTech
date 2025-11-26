@@ -8,50 +8,51 @@ import { IEmployee } from '../../models/employee.model';
 import { ManageServiceFacade } from '../../services/manage-facade.service';
 
 @Component({
-  selector: 'app-profile',
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+	selector: 'app-profile',
+	templateUrl: './profile.component.html',
+	styleUrls: ['./profile.component.css'],
+	standalone: false
 })
 export class ProfileComponent implements OnInit {
-  @Input() token: Observable<IToken>;
+	@Input() token: Observable<IToken>;
 
-  public value: Client | IEmployee = {
-    id: '',
-    firstName: '',
-    lastName: '',
-    username: '',
-    address: '',
-    phoneNumber: '',
-    email: '',
-    jobTitle: ''
-  };
+	public value: Client | IEmployee = {
+		id: '',
+		firstName: '',
+		lastName: '',
+		username: '',
+		address: '',
+		phoneNumber: '',
+		email: '',
+		jobTitle: ''
+	};
 
-  public isEmp: boolean = false;
-  public originalValue: Client | IEmployee;
+	public isEmp: boolean = false;
+	public originalValue: Client | IEmployee;
 
-  constructor(private manageService: ManageServiceFacade,
-    private toastr: ToastrService) { }
-  ngOnInit(): void {
-    this.manageService.getProfileData().subscribe(data => {
-      this.value = data;
-      this.originalValue = { ...data };
-    });
-  }
+	constructor(private manageService: ManageServiceFacade,
+		private toastr: ToastrService) { }
+	ngOnInit(): void {
+		this.manageService.getProfileData().subscribe(data => {
+			this.value = data;
+			this.originalValue = { ...data };
+		});
+	}
 
-  isClient(value: Client | IEmployee): value is Client {
-    return typeof value === 'object' && 'address' in value;
-  }
+	isClient(value: Client | IEmployee): value is Client {
+		return typeof value === 'object' && 'address' in value;
+	}
 
-  isEmployee(value: Client | IEmployee): value is IEmployee {
-    return typeof value === 'object' && 'jobTitle' in value;
-  }
+	isEmployee(value: Client | IEmployee): value is IEmployee {
+		return typeof value === 'object' && 'jobTitle' in value;
+	}
 
-  editProfile(form: NgForm) {
-   this.manageService.editProfile(form.value).subscribe(data => {
-    this.value = data;
-    this.originalValue = { ...data };
-    this.toastr.success('You successfully update your profile!');
-   })
-  }
+	editProfile(form: NgForm) {
+		this.manageService.editProfile(form.value).subscribe(data => {
+			this.value = data;
+			this.originalValue = { ...data };
+			this.toastr.success('You successfully update your profile!');
+		})
+	}
 
 }

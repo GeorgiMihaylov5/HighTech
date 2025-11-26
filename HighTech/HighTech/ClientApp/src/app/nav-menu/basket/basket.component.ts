@@ -8,75 +8,76 @@ import { Order, OrderedProduct } from 'src/app/models/order.model';
 import { OverviewFacade } from 'src/app/overview/services/overview-facade.service';
 
 @Component({
-  selector: 'app-basket',
-  templateUrl: './basket.component.html',
-  styleUrls: ['./basket.component.css']
+	selector: 'app-basket',
+	templateUrl: './basket.component.html',
+	styleUrls: ['./basket.component.css'],
+	standalone: false
 })
 export class BasketComponent {
-  public orders: OrderedProduct[];
-  public token: IToken;
-  public totalPrice: number = 0;
+	public orders: OrderedProduct[];
+	public token: IToken;
+	public totalPrice: number = 0;
 
-  constructor(private overviewService: OverviewFacade,
-    private router: Router,
-    private toastr: ToastrService,
-    private authService: AuthorizeService) {
-    this.orders = overviewService.getBasket();
-    this.calculateTotalPrice();
+	constructor(private overviewService: OverviewFacade,
+		private router: Router,
+		private toastr: ToastrService,
+		private authService: AuthorizeService) {
+		this.orders = overviewService.getBasket();
+		this.calculateTotalPrice();
 
-    authService.getTokenData().subscribe((t: IToken) => {
-      this.token = t;
-    });
-  }
-  
-  public createOrder() {
-    if(this.token == null) {
-      this.router.navigateByUrl('authentication/login');
+		authService.getTokenData().subscribe((t: IToken) => {
+			this.token = t;
+		});
+	}
 
-      return;
-    }
+	public createOrder() {
+		if (this.token == null) {
+			this.router.navigateByUrl('authentication/login');
 
-    if(this.orders ==  null || this.orders?.length === 0) {
-      this.toastr.info('The shopping cart is empy!');
-      return;
-    }
+			return;
+		}
 
-    const order: Order ={
-      id: null,
-      orderedOn: new Date().getTime().toString(),
-      user: null,
-      username: this.token.nameid,
-      status: 0,
-      notes: null,
-      orderedProducts: this.orders
-    };
+		if (this.orders == null || this.orders?.length === 0) {
+			this.toastr.info('The shopping cart is empy!');
+			return;
+		}
 
-    this.overviewService.createOrder(order).subscribe(_ => {
-      this.clean();
+		const order: Order = {
+			id: null,
+			orderedOn: new Date().getTime().toString(),
+			user: null,
+			username: this.token.nameid,
+			status: 0,
+			notes: null,
+			orderedProducts: this.orders
+		};
 
-      this.toastr.success('The order was successful!');
-      
-    });
-  }
+		this.overviewService.createOrder(order).subscribe(_ => {
+			this.clean();
 
-  public clean() {
-    this.orders = this.overviewService.cleanBasket();
-    this.calculateTotalPrice();
-  }
+			this.toastr.success('The order was successful!');
 
-  public removeFromBasket(index: number) {
-    this.orders = this.overviewService.removeFromBasket(index);
-    this.calculateTotalPrice();
-  }
+		});
+	}
 
-  public calculateTotalPrice(): void {
-    console.log(this.orders)
-    this.totalPrice = 0;
+	public clean() {
+		this.orders = this.overviewService.cleanBasket();
+		this.calculateTotalPrice();
+	}
 
-    if(this.orders != null && this.orders.length > 0) {
-      this.orders.forEach((o: OrderedProduct) => {
-        this.totalPrice += o.product.price * o.count;
-      });
-    }
-  }
+	public removeFromBasket(index: number) {
+		this.orders = this.overviewService.removeFromBasket(index);
+		this.calculateTotalPrice();
+	}
+
+	public calculateTotalPrice(): void {
+		console.log(this.orders)
+		this.totalPrice = 0;
+
+		if (this.orders != null && this.orders.length > 0) {
+			this.orders.forEach((o: OrderedProduct) => {
+				this.totalPrice += o.product.price * o.count;
+			});
+		}
+	}
 }

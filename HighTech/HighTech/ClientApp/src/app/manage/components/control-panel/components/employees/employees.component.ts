@@ -3,28 +3,29 @@ import { EmployeeService } from 'src/app/manage/services/employee.service';
 import { IEmployee } from 'src/app/manage/models/employee.model';
 
 @Component({
-  selector: 'app-employees',
-  templateUrl: './employees.component.html',
-  styleUrls: ['./employees.component.css']
+	selector: 'app-employees',
+	templateUrl: './employees.component.html',
+	styleUrls: ['./employees.component.css'],
+	standalone: false
 })
 export class EmployeesComponent {
-  public employees: IEmployee[];
+	public employees: IEmployee[];
 
-  constructor(private employeeApi: EmployeeService) {
-    employeeApi.getEmployees().subscribe(emps => {
-      this.employees = emps.filter(e => e.username != 'admin');
-    })
-  }
+	constructor(private employeeApi: EmployeeService) {
+		employeeApi.getEmployees().subscribe(emps => {
+			this.employees = emps.filter(e => e.username != 'admin');
+		})
+	}
 
-  public promote(employee: IEmployee): void  {
-    this.employeeApi.promote(employee).subscribe(_ => {
-      employee.isAdmin = true;
-    })
-  }
+	public promote(employee: IEmployee): void {
+		this.employeeApi.promote(employee).subscribe(_ => {
+			employee.isAdmin = true;
+		})
+	}
 
-  public demote(employee: IEmployee): void  {
-    this.employeeApi.demote(employee).subscribe(_ => {
-      employee.isAdmin = false;
-    })
-  }
+	public demote(employee: IEmployee): void {
+		this.employeeApi.demote(employee).subscribe(_ => {
+			employee.isAdmin = false;
+		})
+	}
 }

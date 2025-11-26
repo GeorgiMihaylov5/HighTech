@@ -9,49 +9,50 @@ import { HttpClient } from "@angular/common/http";
 import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+	selector: 'app-login',
+	templateUrl: './login.component.html',
+	styleUrls: ['./login.component.css'],
+	standalone: false
 })
 export class LoginComponent {
-  @Input() user: LoginRM;
-  public message = new BehaviorSubject<string | null>(null);
+	@Input() user: LoginRM;
+	public message = new BehaviorSubject<string | null>(null);
 
-  constructor(private http: HttpClient,
-    private router: Router,
-    private route: ActivatedRoute,
-    @Inject('BASE_URL') private baseUrl: string,
-    private authService: AuthorizeService) {
+	constructor(private http: HttpClient,
+		private router: Router,
+		private route: ActivatedRoute,
+		@Inject('BASE_URL') private baseUrl: string,
+		private authService: AuthorizeService) {
 
-  }
+	}
 
-  public async login(form: NgForm): Promise<void> {
-    const returnUrl = ''
-    const state: INavigationState = { returnUrl };
+	public async login(form: NgForm): Promise<void> {
+		const returnUrl = ''
+		const state: INavigationState = { returnUrl };
 
-    this.authService.login(state, form.value).subscribe(async result => {
-      this.message.next(null);
-      switch (result.status) {
-        case AuthenticationResultStatus.Redirect:
-          break;
-        case AuthenticationResultStatus.Success:
-          await this.navigateToReturnUrl(returnUrl);
-          break;
-        case AuthenticationResultStatus.Fail:
-          await this.router.navigate(ApplicationPaths.LoginFailedPathComponents, {
-            queryParams: { [QueryParameterNames.Message]: result.message }
-          });
-          break;
-        default:
-          throw new Error(`Invalid status result ${(result as any).status}.`);
-      }
-    });
-  }
+		this.authService.login(state, form.value).subscribe(async result => {
+			this.message.next(null);
+			switch (result.status) {
+				case AuthenticationResultStatus.Redirect:
+					break;
+				case AuthenticationResultStatus.Success:
+					await this.navigateToReturnUrl(returnUrl);
+					break;
+				case AuthenticationResultStatus.Fail:
+					await this.router.navigate(ApplicationPaths.LoginFailedPathComponents, {
+						queryParams: { [QueryParameterNames.Message]: result.message }
+					});
+					break;
+				default:
+					throw new Error(`Invalid status result ${(result as any).status}.`);
+			}
+		});
+	}
 
-  private async navigateToReturnUrl(returnUrl: string) {
+	private async navigateToReturnUrl(returnUrl: string) {
 
-    await this.router.navigateByUrl(returnUrl, {
-      replaceUrl: true
-    });
-  }
+		await this.router.navigateByUrl(returnUrl, {
+			replaceUrl: true
+		});
+	}
 }

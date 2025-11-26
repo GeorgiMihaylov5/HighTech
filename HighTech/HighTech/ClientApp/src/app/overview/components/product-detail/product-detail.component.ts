@@ -5,30 +5,31 @@ import { State } from 'src/app/core/state.service';
 import { Product } from 'src/app/models/product.model';
 
 @Component({
-  selector: 'app-product-detail',
-  templateUrl: './product-detail.component.html',
-  styleUrls: ['./product-detail.component.css']
+	selector: 'app-product-detail',
+	templateUrl: './product-detail.component.html',
+	styleUrls: ['./product-detail.component.css'],
+	standalone: false
 })
 export class ProductDetailComponent implements OnInit {
-  public orderedCount: number = 1;
-  public product: Product;
+	public orderedCount: number = 1;
+	public product: Product;
 
-  constructor(private overviewService: OverviewFacade,
-    private state: State) {
-     state.selectedProduct$.subscribe((p => this.product = p))
-  }
+	constructor(private overviewService: OverviewFacade,
+		private state: State) {
+		state.selectedProduct$.subscribe((p => this.product = p))
+	}
 
-  public ngOnInit(): void {
-   
-  }
+	public ngOnInit(): void {
 
-  public makeOrder() {
-    this.overviewService.addToBasket({
-      id: null,
-      productId: this.product.id,
-      product: this.product,
-      orderedPrice: this.product.price,
-      count: this.orderedCount
-    });
-  }
+	}
+
+	public makeOrder() {
+		this.overviewService.addToBasket({
+			id: null,
+			productId: this.product.id,
+			product: this.product,
+			orderedPrice: this.product.price,
+			count: this.orderedCount
+		});
+	}
 }

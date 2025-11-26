@@ -10,84 +10,85 @@ import { AuthenticationResultStatus } from '../../models/navigation-state.model'
 // This is the starting point for the logout process, which is usually initiated when a
 // user clicks on the logout button on the LoginMenu component.
 @Component({
-  selector: 'app-logout',
-  templateUrl: './logout.component.html',
-  styleUrls: ['./logout.component.css']
+	selector: 'app-logout',
+	templateUrl: './logout.component.html',
+	styleUrls: ['./logout.component.css'],
+	standalone: false
 })
 export class LogoutComponent implements OnInit {
-  public message = new BehaviorSubject<string | null>(null);
+	public message = new BehaviorSubject<string | null>(null);
 
-  constructor(
-    private authorizeService: AuthorizeService,
-    private activatedRoute: ActivatedRoute,
-    private router: Router) { }
+	constructor(
+		private authorizeService: AuthorizeService,
+		private activatedRoute: ActivatedRoute,
+		private router: Router) { }
 
-  async ngOnInit() {
-    const action = this.activatedRoute.snapshot.url[1];
-    switch (action.path) {
-     case LogoutActions.Logout:
-       if (!!window.history.state.local) {
-         await this.logout(this.getReturnUrl());
-       } else {
-         this.message.next('The logout was not initiated from within the page.');
-       }
-       break;
-     case LogoutActions.LoggedOut:
-       this.message.next('You successfully logged out!');
-       break;
-     default:
-       throw new Error(`Invalid action '${action}'`);
-    }
-  }
+	async ngOnInit() {
+		const action = this.activatedRoute.snapshot.url[1];
+		switch (action.path) {
+			case LogoutActions.Logout:
+				if (!!window.history.state.local) {
+					await this.logout(this.getReturnUrl());
+				} else {
+					this.message.next('The logout was not initiated from within the page.');
+				}
+				break;
+			case LogoutActions.LoggedOut:
+				this.message.next('You successfully logged out!');
+				break;
+			default:
+				throw new Error(`Invalid action '${action}'`);
+		}
+	}
 
-  private async logout(returnUrl: string): Promise<void> {
-    const state: INavigationState = { returnUrl };
+	private async logout(returnUrl: string): Promise<void> {
+		const state: INavigationState = { returnUrl };
 
-    const isauthenticated = await this.authorizeService.isAuthenticated().pipe(
-      take(1)
-    ).toPromise();
-    if (isauthenticated) {
-      const result = await this.authorizeService.logout(state);
-      switch (result.status) {
-        case AuthenticationResultStatus.Redirect:
-          break;
-        case AuthenticationResultStatus.Success:
-          await this.navigateToReturnUrl(returnUrl);
-          break;
-        case AuthenticationResultStatus.Fail:
-          this.message.next(result.message);
-          break;
-        default:
-          throw new Error('Invalid authentication result status.');
-      }
-    } else {
-      this.message.next('You successfully logged out!');
-    }
-  }
+		const isauthenticated = await this.authorizeService.isAuthenticated().pipe(
+			take(1)
+		).toPromise();
+		if (isauthenticated) {
+			const result = await this.authorizeService.logout(state);
+			switch (result.status) {
+				case AuthenticationResultStatus.Redirect:
+					break;
+				case AuthenticationResultStatus.Success:
+					await this.navigateToReturnUrl(returnUrl);
+					break;
+				case AuthenticationResultStatus.Fail:
+					this.message.next(result.message);
+					break;
+				default:
+					throw new Error('Invalid authentication result status.');
+			}
+		} else {
+			this.message.next('You successfully logged out!');
+		}
+	}
 
 
-  private async navigateToReturnUrl(returnUrl: string) {
-    await this.router.navigateByUrl(returnUrl, {
-      replaceUrl: true
-    });
-  }
+	private async navigateToReturnUrl(returnUrl: string) {
+		await this.router.navigateByUrl(returnUrl, {
+			replaceUrl: true
+		});
+	}
 
-  private getReturnUrl(state?: INavigationState): string {
-    const fromQuery = (this.activatedRoute.snapshot.queryParams as INavigationState).returnUrl;
-    // If the url is coming from the query string, check that is either
-    // a relative url or an absolute url
-    if (fromQuery &&
-      !(fromQuery.startsWith(`${window.location.origin}/`) ||
-        /\/[^\/].*/.test(fromQuery))) {
-      // This is an extra check to prevent open redirects.
-      throw new Error('Invalid return url. The return url needs to have the same origin as the current page.');
-    }
-    return (state && state.returnUrl) ||
-      fromQuery ||
-      ApplicationPaths.LoggedOut;
-  }
+	private getReturnUrl(state?: INavigationState): string {
+		const fromQuery = (this.activatedRoute.snapshot.queryParams as INavigationState).returnUrl;
+		// If the url is coming from the query string, check that is either
+		// a relative url or an absolute url
+		if (fromQuery &&
+			!(fromQuery.startsWith(`${window.location.origin}/`) ||
+				/\/[^\/].*/.test(fromQuery))) {
+			// This is an extra check to prevent open redirects.
+			throw new Error('Invalid return url. The return url needs to have the same origin as the current page.');
+		}
+		return (state && state.returnUrl) ||
+			fromQuery ||
+			ApplicationPaths.LoggedOut;
+	}
 }
 
 interface INavigationState {
-  [ReturnUrlType]: string;
+	[ReturnUrlType]: string;
 }

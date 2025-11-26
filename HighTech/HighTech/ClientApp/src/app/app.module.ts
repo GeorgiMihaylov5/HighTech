@@ -14,33 +14,35 @@ import { ApiAuthorizationModule } from 'src/api-authorization/api-authorization.
 import { ErrorService } from './services/error.service';
 import { ManageModule } from './manage/manage.module';
 import { OrderService } from './services/order.service';
+import { provideClientHydration } from '@angular/platform-browser';
 
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    NavMenuComponent,
-    HomeComponent,
-  ],
-  imports: [
-    HttpClientModule,
-    AppRoutingModule,
-    OverviewModule,
-    ManageModule,
-    CommonModule,
-    BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
-    ApiAuthorizationModule,
-    
-  ],
-  providers: [
-    State,
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthorizeInterceptor,
-      multi: true
-    },
-    ErrorService
-  ],
-  bootstrap: [AppComponent]
+	declarations: [
+		AppComponent,
+		NavMenuComponent,
+		HomeComponent,
+	],
+	imports: [
+		BrowserModule,
+		HttpClientModule,
+		AppRoutingModule,
+		OverviewModule,
+		ManageModule,
+		CommonModule,
+		ApiAuthorizationModule,
+
+	],
+	providers: [
+		State,
+		{
+			provide: HTTP_INTERCEPTORS,
+			useClass: AuthorizeInterceptor,
+			multi: true
+		},
+		ErrorService,
+		provideClientHydration()
+	],
+	bootstrap: [AppComponent]
 })
 export class AppModule { }

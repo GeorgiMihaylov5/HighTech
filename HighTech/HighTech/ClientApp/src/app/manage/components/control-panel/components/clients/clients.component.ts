@@ -4,14 +4,15 @@ import { ClientService } from 'src/app/manage/services/client.service';
 import { Client } from 'src/app/manage/models/client.model';
 
 @Component({
-  selector: 'app-clients',
-  templateUrl: './clients.component.html',
-  styleUrls: ['./clients.component.css']
+	selector: 'app-clients',
+	templateUrl: './clients.component.html',
+	styleUrls: ['./clients.component.css'],
+	standalone: false
 })
 export class ClientsComponent {
-  public clients: Observable<Client[]>;
+	public clients: Observable<Client[]>;
 
-  constructor(clientApi: ClientService) {
-    this.clients = clientApi.getClients();
-  }
+	constructor(clientApi: ClientService) {
+		this.clients = clientApi.getClients();
+	}
 }
