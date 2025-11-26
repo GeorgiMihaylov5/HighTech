@@ -6,7 +6,7 @@ using HighTech.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using PernikComputers.Infrastructure;
+using HighTech.Infrastructure;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);

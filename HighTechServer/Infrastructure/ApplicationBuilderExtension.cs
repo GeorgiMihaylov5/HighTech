@@ -2,7 +2,7 @@
 using HighTech.Models;
 using Microsoft.AspNetCore.Identity;
 
-namespace PernikComputers.Infrastructure
+namespace HighTech.Infrastructure
 {
     public static class ApplicationBuilderExtension
     {
