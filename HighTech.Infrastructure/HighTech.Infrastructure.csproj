@@ -1,10 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <Nullable>warnings</Nullable>
-    <IsPackable>false</IsPackable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,11 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HighTechUI\HighTechUI.esproj">
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="..\HighTech.Core\HighTech.Core.csproj" />
-    <ProjectReference Include="..\HighTech.Infrastructure\HighTech.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>

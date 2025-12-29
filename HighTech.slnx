@@ -1,4 +1,6 @@
 <Solution>
+  <Project Path="HighTech.Core/HighTech.Core.csproj" Id="d67a4d5a-7480-4d88-bbd1-00805d6c0e79" />
+  <Project Path="HighTech.Infrastructure/HighTech.Infrastructure.csproj" Id="e4e8843f-bf38-4bb7-91e3-1bf6cfc9e0b6" />
   <Project Path="HighTechServer/HighTechServer.csproj" />
   <Project Path="HighTechUI/HighTechUI.esproj">
     <Build />

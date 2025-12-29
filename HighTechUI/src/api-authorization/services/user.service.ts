@@ -8,24 +8,24 @@ import { ToastrService } from "ngx-toastr";
 import { ErrorService } from "src/app/services/error.service";
 
 @Injectable({
-  providedIn: "root"
+	providedIn: "root"
 })
 export class UserService {
-  constructor(private http: HttpClient,
-    @Inject('BASE_URL') private baseUrl: string,
-    private errorService: ErrorService) { }
+	constructor(private http: HttpClient,
+		@Inject('BASE_URL') private baseUrl: string,
+		private errorService: ErrorService) { }
 
-  public login(user: LoginRM): Observable<IToken> {
-    return this.http.post<IToken>(`${this.baseUrl}clients/login`, user)
-      .pipe(
-        catchError(this.errorService.handleError.bind(this.errorService))
-      );;
-  }
+	public login(user: LoginRM): Observable<IToken> {
+		return this.http.post<IToken>(`${this.baseUrl}Clients/Login`, user)
+			.pipe(
+				catchError(this.errorService.handleError.bind(this.errorService))
+			);;
+	}
 
-  public register(user: RegisterRM): Observable<IToken> {
-    return this.http.post<IToken>(`${this.baseUrl}clients/register`, user)
-      .pipe(
-        catchError(this.errorService.handleError.bind(this.errorService))
-      );
-  }
+	public register(user: RegisterRM): Observable<IToken> {
+		return this.http.post<IToken>(`${this.baseUrl}clients/register`, user)
+			.pipe(
+				catchError(this.errorService.handleError.bind(this.errorService))
+			);
+	}
 }

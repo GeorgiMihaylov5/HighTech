@@ -1,6 +1,6 @@
-﻿using HighTech.Abstraction;
+﻿using HighTech.Core.Entities;
+using HighTech.Core.Services.Abstraction;
 using HighTech.DTOs;
-using HighTech.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -8,185 +8,186 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HighTech.Controllers
 {
-    [ApiController]
-    [Route("[controller]/[action]")]
-    public class ClientsController : Controller
-    {
-        private readonly UserManager<AppUser> userManager;
-        private readonly SignInManager<AppUser> signInManager;
-        private readonly IClientService service;
-        private readonly IJWTService jwtService;
+	[ApiController]
+	[Route("[controller]/[action]")]
+	public class ClientsController : Controller
+	{
+		private readonly UserManager<AppUser> userManager;
+		private readonly SignInManager<AppUser> signInManager;
+		private readonly IClientService service;
+		private readonly IJWTService jwtService;
 
-        public ClientsController(SignInManager<AppUser> _signInManager,
-            UserManager<AppUser> _userManager,
-            IJWTService _jwtService, 
-            IClientService _clientService)
-        {
-            signInManager = _signInManager;
-            userManager = _userManager;
-            service = _clientService;
-            jwtService = _jwtService;
-        }
+		public ClientsController(SignInManager<AppUser> _signInManager,
+			UserManager<AppUser> _userManager,
+			IJWTService _jwtService,
+			IClientService _clientService)
+		{
+			signInManager = _signInManager;
+			userManager = _userManager;
+			service = _clientService;
+			jwtService = _jwtService;
+		}
 
-        [Authorize(Roles = "Employee,Administrator")]
-        public IActionResult GetAll()
-        {
-            var clients = service.GetClients().Select(client => new ClientDTO()
-            {
-                Id = client.Id,
-                UserId = client.UserId,
-                Username = client.User.UserName,
-                Email = client.User.Email,
-                FirstName = client.User.FirstName,
-                LastName = client.User.LastName,
-                Address = client.Address,
-                PhoneNumber = client.User.PhoneNumber
-            });
+		[Authorize(Roles = "Employee,Administrator")]
+		public IActionResult GetAll()
+		{
+			var clients = service.GetClients().Select(client => new ClientDTO()
+			{
+				Id = client.Id,
+				UserId = client.UserId,
+				Username = client.User.UserName,
+				Email = client.User.Email,
+				FirstName = client.User.FirstName,
+				LastName = client.User.LastName,
+				Address = client.Address,
+				PhoneNumber = client.User.PhoneNumber
+			});
 
-            return Json(clients);
-        }
+			return Json(clients);
+		}
 
-        [Authorize]
-        [HttpPost]
-        public IActionResult EditClient(ClientDTO dto)
-        {
-            var updatedClient = service.Update(dto.Id, dto.FirstName, dto.LastName, dto.PhoneNumber, dto.Address);
+		[Authorize]
+		[HttpPost]
+		public IActionResult EditClient(ClientDTO dto)
+		{
+			var updatedClient = service.Update(dto.Id, dto.FirstName, dto.LastName, dto.PhoneNumber, dto.Address);
 
-            if(updatedClient)
-            {
-                return Json(dto);
-            }
+			if (updatedClient)
+			{
+				return Json(dto);
+			}
 
-            return BadRequest();
-        }
+			return BadRequest();
+		}
 
-        [Authorize]
-        public IActionResult GetByUsername(string username)
-        {
-            if (username is null)
-            {
-                return BadRequest($"There is not a user with {username} username.");
-            }
+		[Authorize]
+		public IActionResult GetByUsername(string username)
+		{
+			if (username is null)
+			{
+				return BadRequest($"There is not a user with {username} username.");
+			}
 
-            var client = service.GetClientByUsername(username);
+			var client = service.GetClientByUsername(username);
 
-            if (client is null)
-            {
-                return Json(null);
-            }
+			if (client is null)
+			{
+				return Json(null);
+			}
 
-            return Json(new ClientDTO()
-            {
-                Id = client.Id,
-                UserId = client.UserId,
-                Username = client.User.UserName,
-                Email = client.User.Email,
-                FirstName = client.User.FirstName,
-                LastName = client.User.LastName,
-                Address = client.Address,
-                PhoneNumber = client.User.PhoneNumber
-            });
-        }
+			return Json(new ClientDTO()
+			{
+				Id = client.Id,
+				UserId = client.UserId,
+				Username = client.User.UserName,
+				Email = client.User.Email,
+				FirstName = client.User.FirstName,
+				LastName = client.User.LastName,
+				Address = client.Address,
+				PhoneNumber = client.User.PhoneNumber
+			});
+		}
 
-        [HttpPost]
-        public async Task<ActionResult<ClientDTO>> Login(LoginDTO loginModel)
-        {
-            var user = await userManager.FindByNameAsync(loginModel.Username);
-            if (user is null)
-            {
-                return Unauthorized("Invalid username or password!");
-            }
+		[HttpPost]
+		public async Task<ActionResult<ClientDTO>> Login(LoginDTO loginModel)
+		{
+			var user = await userManager.FindByNameAsync(loginModel.Username);
+			if (user is null)
+			{
+				return Unauthorized("Invalid username or password!");
+			}
 
-            var result = await signInManager.PasswordSignInAsync(user, loginModel.Password, false, false);
+			var result = await signInManager.PasswordSignInAsync(user, loginModel.Password, false, false);
 
-            if (!result.Succeeded)
-            {
-                return Unauthorized("Invalid username or password!");
-            }
-            var userRoles = await userManager.GetRolesAsync(user);
+			if (!result.Succeeded)
+			{
+				return Unauthorized("Invalid username or password!");
+			}
+			var userRoles = await userManager.GetRolesAsync(user);
 
-            return Json(CreateAuthUserDTO(user, userRoles));
-        }
+			return Json(CreateAuthUserDTO(user, userRoles));
+		}
 
-        [HttpPost]
-        public async Task<IActionResult> Register(RegisterDTO registerModel)
-        {
-            if (await userManager.Users.AnyAsync(u => u.Email == registerModel.Email!.ToLower()))
-            {
-                return BadRequest($"An existing account is using {registerModel.Email}. Please try with another email!");
-            };
+		[HttpPost]
+		public async Task<IActionResult> Register(RegisterDTO registerModel)
+		{
+			if (await userManager.Users.AnyAsync(u => u.Email == registerModel.Email!.ToLower()))
+			{
+				return BadRequest($"An existing account is using {registerModel.Email}. Please try with another email!");
+			}
+			;
 
-            if(registerModel.Password != registerModel.ConfirmPassword)
-            {
-                return BadRequest("Paswords don't match!");
-            }
+			if (registerModel.Password != registerModel.ConfirmPassword)
+			{
+				return BadRequest("Paswords don't match!");
+			}
 
-            var user = new AppUser
-            {
-               FirstName = registerModel.FirstName,
-               LastName = registerModel.LastName,
-               Email = registerModel.Email,
-               UserName = registerModel.Username
-            };
+			var user = new AppUser
+			{
+				FirstName = registerModel.FirstName,
+				LastName = registerModel.LastName,
+				Email = registerModel.Email,
+				UserName = registerModel.Username
+			};
 
-            var result = await userManager.CreateAsync(user, registerModel.Password);
+			var result = await userManager.CreateAsync(user, registerModel.Password);
 
-            if (result.Succeeded)
-            {
-                var cleint = service.CreateClient(registerModel.Address, user.Id);
+			if (result.Succeeded)
+			{
+				var cleint = service.CreateClient(registerModel.Address, user.Id);
 
-                if (cleint is not null)
-                {
-                    await userManager.AddToRoleAsync(user, "Client");
-                    await signInManager.SignInAsync(user, isPersistent: false);
+				if (cleint is not null)
+				{
+					await userManager.AddToRoleAsync(user, "Client");
+					await signInManager.SignInAsync(user, isPersistent: false);
 
-                    var userRoles = await userManager.GetRolesAsync(user);
-                    
-                    return Json(CreateAuthUserDTO(user, userRoles));
-                }
-            }
+					var userRoles = await userManager.GetRolesAsync(user);
 
-            return BadRequest(result.Errors);
-        }
+					return Json(CreateAuthUserDTO(user, userRoles));
+				}
+			}
 
-        [Authorize]
-        [HttpPost]
-        public async Task<IActionResult> ChangePassword(ChangePasswordDTO dto)
-        {
-            var user = await userManager.FindByNameAsync(dto.Username);
-            if (user == null)
-            {
-                return NotFound($"Unable to load user with username '{dto.Username}'.");
-            }
+			return BadRequest(result.Errors);
+		}
 
-            if (dto.NewPassword == dto.OldPassword)
-            {
-                return BadRequest("Passwords doesn't match");
-            }
+		[Authorize]
+		[HttpPost]
+		public async Task<IActionResult> ChangePassword(ChangePasswordDTO dto)
+		{
+			var user = await userManager.FindByNameAsync(dto.Username);
+			if (user == null)
+			{
+				return NotFound($"Unable to load user with username '{dto.Username}'.");
+			}
 
-            var changePasswordResult = await userManager
-                .ChangePasswordAsync(user, dto.OldPassword, dto.NewPassword);
+			if (dto.NewPassword == dto.OldPassword)
+			{
+				return BadRequest("Passwords doesn't match");
+			}
 
-            if (!changePasswordResult.Succeeded)
-            {
-                return BadRequest(changePasswordResult.Errors);
-            }
+			var changePasswordResult = await userManager
+				.ChangePasswordAsync(user, dto.OldPassword, dto.NewPassword);
 
-            return Ok();
-        }
+			if (!changePasswordResult.Succeeded)
+			{
+				return BadRequest(changePasswordResult.Errors);
+			}
 
-        private AuthUser CreateAuthUserDTO(AppUser user, IList<string> roles)
-        {
-            return new AuthUser
-            {
-                Given_name = user.FirstName,
-                Family_name = user.LastName,
-                Role = roles,
-                Nameid = user.UserName,
-                Jwt = jwtService.CreateJWT(user, roles),
-                Exp = new DateTime().AddDays(jwtService.ExpiresDays).Ticks
-            };
-        }
+			return Ok();
+		}
 
-    }
+		private AuthUser CreateAuthUserDTO(AppUser user, IList<string> roles)
+		{
+			return new AuthUser
+			{
+				Given_name = user.FirstName,
+				Family_name = user.LastName,
+				Role = roles,
+				Nameid = user.UserName,
+				Jwt = jwtService.CreateJWT(user, roles),
+				Exp = new DateTime().AddDays(jwtService.ExpiresDays).Ticks
+			};
+		}
+
+	}
 }

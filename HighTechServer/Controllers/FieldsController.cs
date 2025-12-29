@@ -1,102 +1,102 @@
-﻿using HighTech.Abstraction;
+﻿using HighTech.Core.Services.Abstraction;
 using HighTech.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HighTech.Controllers
 {
-    [ApiController]
-    [Route("[controller]/[action]")]
-    public class FieldsController : Controller
-    {
-        private readonly IFieldService fieldService;
+	[ApiController]
+	[Route("[controller]/[action]")]
+	public class FieldsController : Controller
+	{
+		private readonly IFieldService fieldService;
 
 
-        public FieldsController(IFieldService fieldService)
-        {
-            this.fieldService = fieldService;
-        }
+		public FieldsController(IFieldService fieldService)
+		{
+			this.fieldService = fieldService;
+		}
 
-        public IActionResult GetFields()
-        {
-            return Json(fieldService.GetFields().Select(f => new FieldDTO()
-            {
-                Id = f.Id,
-                Name = f.Name,
-                TypeCode = f.TypeCode,
-            }));
-        }
+		public IActionResult GetFields()
+		{
+			return Json(fieldService.GetFields().Select(f => new FieldDTO()
+			{
+				Id = f.Id,
+				Name = f.Name,
+				TypeCode = f.TypeCode,
+			}));
+		}
 
-        [HttpPost]
-        [Authorize(Roles = "Administrator")]
-        public IActionResult Create(FieldDTO dto)
-        {
-            if (string.IsNullOrEmpty(dto.Name))
-            {
-                return BadRequest("Field name is required!");
-            }
+		[HttpPost]
+		[Authorize(Roles = "Administrator")]
+		public IActionResult Create(FieldDTO dto)
+		{
+			if (string.IsNullOrEmpty(dto.Name))
+			{
+				return BadRequest("Field name is required!");
+			}
 
-            try
-            {
-                var field = fieldService.CreateField(dto.Name, dto.TypeCode);
+			try
+			{
+				var field = fieldService.CreateField(dto.Name, dto.TypeCode);
 
-                return Json(new FieldDTO()
-                {
-                    Id = field.Id,
-                    Name = field.Name,
-                    TypeCode = field.TypeCode
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+				return Json(new FieldDTO()
+				{
+					Id = field.Id,
+					Name = field.Name,
+					TypeCode = field.TypeCode
+				});
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
 
-        [HttpPut]
-        [Authorize(Roles = "Administrator")]
-        public IActionResult Edit(FieldDTO dto)
-        {
-            if (string.IsNullOrEmpty(dto.Name))
-            {
-                return BadRequest("Field name is required!");
-            }
+		[HttpPut]
+		[Authorize(Roles = "Administrator")]
+		public IActionResult Edit(FieldDTO dto)
+		{
+			if (string.IsNullOrEmpty(dto.Name))
+			{
+				return BadRequest("Field name is required!");
+			}
 
-            try
-            {
-                var field = fieldService.EditField(dto.Id, dto.Name, dto.TypeCode);
+			try
+			{
+				var field = fieldService.EditField(dto.Id, dto.Name, dto.TypeCode);
 
-                return Json(new FieldDTO()
-                {
-                    Name = field.Id,
-                    TypeCode = field.TypeCode
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+				return Json(new FieldDTO()
+				{
+					Name = field.Id,
+					TypeCode = field.TypeCode
+				});
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
 
-        [HttpDelete("{id}")]
-        [Authorize(Roles = "Administrator")]
-        public IActionResult Delete(string id)
-        {
-            if (string.IsNullOrEmpty(id))
-            {
-                return BadRequest("Id cannot be a null!");
-            }
+		[HttpDelete("{id}")]
+		[Authorize(Roles = "Administrator")]
+		public IActionResult Delete(string id)
+		{
+			if (string.IsNullOrEmpty(id))
+			{
+				return BadRequest("Id cannot be a null!");
+			}
 
-            try
-            {
-                var removed = fieldService.RemoveField(id);
+			try
+			{
+				var removed = fieldService.RemoveField(id);
 
-                return Json(removed);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-    }
+				return Json(removed);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
+	}
 }
