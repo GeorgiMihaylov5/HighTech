@@ -16,7 +16,9 @@ namespace HighTech.Infrastructure.Repositories
 		public Product? Get(string id)
 		{
 			return context.Products.Where(x => x.IsRemoved != true)
-				.Include(p => p.ProductFields)
+				.Include(p => p.Category)
+				.Include(p => p.ProductFieldValues!)
+					.ThenInclude(pf => pf.Field)
 				.FirstOrDefault(x => x.Id == id);
 		}
 
@@ -24,7 +26,19 @@ namespace HighTech.Infrastructure.Repositories
 		{
 			return context.Products
 				.Where(x => x.IsRemoved != true)
-				.Include(p => p.ProductFields)
+				.Include(p => p.Category)
+				.Include(p => p.ProductFieldValues!)
+					.ThenInclude(pf => pf.Field)
+				.ToList();
+		}
+
+		public ICollection<Product> GetByCategory(string categoryId)
+		{
+			return context.Products
+				.Where(x => x.IsRemoved != true && x.CategoryID == categoryId)
+				.Include(p => p.Category)
+				.Include(p => p.ProductFieldValues!)
+					.ThenInclude(pf => pf.Field)
 				.ToList();
 		}
 
@@ -40,7 +54,9 @@ namespace HighTech.Infrastructure.Repositories
 				.OrderByDescending(x => x.Count)
 				.Join(context.Products
 					.Where(x => x.IsRemoved != true)
-					.Include(p => p.ProductFields),
+					.Include(p => p.Category)
+					.Include(p => p.ProductFieldValues!)
+						.ThenInclude(pf => pf.Field),
 					orderedProduct => orderedProduct.ProductId,
 					product => product.Id,
 					(orderedProduct, product) => product)
@@ -48,7 +64,7 @@ namespace HighTech.Infrastructure.Repositories
 				.ToList();
 		}
 
-		public Product Create(string manufacturer, string model, int warranty, decimal price, decimal discount, int quantity, string image)
+		public Product Create(string manufacturer, string model, int warranty, decimal price, decimal discount, int quantity, string image, string categoryId)
 		{
 			var product = new Product()
 			{
@@ -59,6 +75,7 @@ namespace HighTech.Infrastructure.Repositories
 				Discount = discount,
 				Quantity = quantity,
 				Image = image,
+				CategoryID = categoryId,
 				IsRemoved = false
 			};
 
@@ -68,7 +85,7 @@ namespace HighTech.Infrastructure.Repositories
 			return product;
 		}
 
-		public Product Edit(string id, string manufacturer, string model, int warranty, decimal price, decimal discount, int quantity, string image)
+		public Product? Edit(string id, string manufacturer, string model, int warranty, decimal price, decimal discount, int quantity, string image, string categoryId)
 		{
 			var product = Get(id);
 
@@ -84,6 +101,7 @@ namespace HighTech.Infrastructure.Repositories
 			product.Discount = discount;
 			product.Quantity = quantity;
 			product.Image = image;
+			product.CategoryID = categoryId;
 
 			context.Update(product);
 			context.SaveChanges();
@@ -106,7 +124,7 @@ namespace HighTech.Infrastructure.Repositories
 			return context.SaveChanges() != 0;
 		}
 
-		public Product IncreaseDiscount(string id, int percentage)
+		public Product? IncreaseDiscount(string id, int percentage)
 		{
 			var product = Get(id);
 
@@ -115,18 +133,17 @@ namespace HighTech.Infrastructure.Repositories
 				return null;
 			}
 
+			// Calculate new discount amount (logic moved to service)
+			decimal currentPrice = product.Price + product.Discount;
+			decimal totalDiscountPercent = percentage;
+
 			if (product.Discount != 0)
 			{
 				product.Price += product.Discount;
-				percentage += (int)(product.Discount * 100 / product.Price);
+				totalDiscountPercent += (int)(product.Discount * 100 / product.Price);
 			}
 
-			if (percentage > 100)
-			{
-				throw new InvalidDataException("Percentage cannot be higher than 100!");
-			}
-
-			product.Discount = product.Price * percentage / 100;
+			product.Discount = product.Price * totalDiscountPercent / 100;
 			product.Price -= product.Discount;
 
 			context.Products.Update(product);
@@ -135,7 +152,7 @@ namespace HighTech.Infrastructure.Repositories
 			return product;
 		}
 
-		public Product RemoveDiscount(string id)
+		public Product? RemoveDiscount(string id)
 		{
 			var product = Get(id);
 

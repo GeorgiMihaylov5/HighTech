@@ -27,6 +27,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 		discount: 0,
 		quantity: 0,
 		image: null,
+		categoryId: null,
 		categoryName: null,
 		fields: []
 	};
@@ -130,6 +131,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 		this.groupedCategories.forEach(c => {
 			if (c.name === this.product.categoryName && !this.compareArrays(this.product.fields, c.fields)) {
 				this.product.fields = c.fields;
+				this.product.categoryId = c.id;
 			}
 
 			return;
@@ -285,6 +287,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 							discount: 0,
 							quantity: 0,
 							image: null,
+							categoryId: null,
 							categoryName: null,
 							fields: []
 						};

@@ -20,7 +20,7 @@ namespace HighTech.Infrastructure.Repositories
 
 			if (user is null)
 			{
-				throw new InvalidOperationException($"User with username '{username}' does not exist.");
+				return null;
 			}
 
 			var order = new Order()
@@ -42,22 +42,12 @@ namespace HighTech.Infrastructure.Repositories
 
 			if (product is null)
 			{
-				throw new InvalidOperationException($"Product with ID '{productId}' does not exist.");
+				return false;
 			}
 
-			if (product.Quantity < count)
-			{
-				throw new InvalidOperationException($"Insufficient quantity for product '{productId}'. Available: {product.Quantity}, Requested: {count}");
-			}
-
-			// Validate order exists
-			var orderExists = context.Orders.Any(o => o.Id == orderId);
-			if (!orderExists)
-			{
-				throw new InvalidOperationException($"Order with ID '{orderId}' does not exist.");
-			}
-
+			// Reduce inventory
 			product.Quantity -= count;
+			context.Products.Update(product);
 
 			context.OrderedProducts.Add(new OrderedProduct()
 			{
@@ -121,6 +111,7 @@ namespace HighTech.Infrastructure.Repositories
 		public ICollection<Order> GetOrders()
 		{
 			return context.Orders
+				.Include(o => o.Customer)
 				.Include(o => o.OrderedProducts)
 				.ThenInclude(d => d.Product)
 				.ToList();

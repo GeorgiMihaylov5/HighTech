@@ -20,7 +20,8 @@ namespace HighTech.Infrastructure
 		public DbSet<Order> Orders { get; set; }
 		public DbSet<OrderedProduct> OrderedProducts { get; set; }
 		public DbSet<Category> Categories { get; set; }
-		public DbSet<ProductCategory> ProductsCategories { get; set; }
+		public DbSet<CategoryField> CategoryFields { get; set; }
+		public DbSet<ProductFieldValue> ProductFieldValues { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
@@ -33,7 +34,8 @@ namespace HighTech.Infrastructure
 			builder.ApplyConfiguration(new OrderConfiguration());
 			builder.ApplyConfiguration(new OrderedProductConfiguration());
 			builder.ApplyConfiguration(new ProductConfiguration());
-			builder.ApplyConfiguration(new ProductCategoryConfiguration());
+			builder.ApplyConfiguration(new CategoryFieldConfiguration());
+			builder.ApplyConfiguration(new ProductFieldValueConfiguration());
 		}
 	}
 }

@@ -12,11 +12,17 @@ namespace HighTech.Infrastructure.Configurations
 			builder.Property(f => f.Id).ValueGeneratedOnAdd();
 
 			builder.Property(f => f.Name).IsRequired();
+			builder.Property(f => f.TypeCode).IsRequired();
 			builder.HasIndex(f => f.Name).IsUnique();
 
-			builder.HasMany(f => f.Categories)
-				.WithOne(c => c.Field)
-				.HasForeignKey(c => c.FieldId)
+			builder.HasMany(f => f.CategoryFields)
+				.WithOne(cf => cf.Field)
+				.HasForeignKey(cf => cf.FieldId)
+				.OnDelete(DeleteBehavior.Cascade);
+
+			builder.HasMany(f => f.ProductFieldValues)
+				.WithOne(pf => pf.Field)
+				.HasForeignKey(pf => pf.FieldID)
 				.OnDelete(DeleteBehavior.Cascade);
 		}
 	}

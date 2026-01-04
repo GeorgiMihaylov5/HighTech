@@ -13,19 +13,11 @@ namespace HighTech.Infrastructure.Repositories
 			context = _context;
 		}
 
-		public Category CreateCategoryField(string name, string fieldId)
+		public Category Create(string name)
 		{
-			// Validate field exists
-			var fieldExists = context.Fields.Any(f => f.Id == fieldId);
-			if (!fieldExists)
-			{
-				throw new InvalidOperationException($"Field with ID '{fieldId}' does not exist.");
-			}
-
 			var category = new Category()
 			{
-				Name = name,
-				FieldId = fieldId
+				Name = name
 			};
 
 			context.Categories.Add(category);
@@ -34,58 +26,55 @@ namespace HighTech.Infrastructure.Repositories
 			return category;
 		}
 
-		public ICollection<Category> EditCategoryName(string id, string name)
+		public Category? Edit(string id, string name)
 		{
-			var originalName = context.Categories.FirstOrDefault(c => c.Id == id)?.Name;
+			var category = context.Categories.FirstOrDefault(c => c.Id == id);
 
-			if (originalName is null)
+			if (category is null)
 			{
 				return null;
 			}
 
-			var categories = GetAllByName(originalName);
-
-			if (categories is null)
-			{
-				return null;
-			}
-
-			foreach (var c in categories)
-			{
-				c.Name = name;
-			}
-
-			context.Categories.UpdateRange(categories);
+			category.Name = name;
+			context.Categories.Update(category);
 			context.SaveChanges();
 
-			return categories;
+			return category;
 		}
 
-		public Category Get(string name, string fieldId)
+		public Category? Get(string id)
 		{
 			return context.Categories
-				.Include(c => c.Field)
-				.FirstOrDefault(cf => cf.Name == name && cf.FieldId == fieldId);
+				.Include(c => c.CategoryFields!)
+					.ThenInclude(cf => cf.Field)
+				.FirstOrDefault(c => c.Id == id);
+		}
+
+		public Category? GetByName(string name)
+		{
+			return context.Categories
+				.Include(c => c.CategoryFields!)
+					.ThenInclude(cf => cf.Field)
+				.FirstOrDefault(c => c.Name == name);
 		}
 
 		public ICollection<Category> GetAll()
 		{
-			return context.Categories.Include(c => c.Field).ToList();
+			return context.Categories
+				.Include(c => c.CategoryFields!)
+					.ThenInclude(cf => cf.Field)
+				.ToList();
 		}
 
-		public ICollection<Category> GetAllByName(string name)
+		public string? GetCategoryByProduct(string productId)
 		{
-			return context.Categories.Include(c => c.Field).Where(x => x.Name == name).ToList();
+			return context.Products
+				.Where(p => p.Id == productId)
+				.Select(p => p.Category!.Name)
+				.FirstOrDefault();
 		}
 
-		public string? GetCategoryByProduct(string id)
-		{
-			return context.ProductsCategories
-				.Where(pf => pf.ProductId == id)
-				.FirstOrDefault()?.Category?.Name;
-		}
-
-		public bool RemoveCategory(string id)
+		public bool Remove(string id)
 		{
 			var category = context.Categories.FirstOrDefault(c => c.Id == id);
 
@@ -98,29 +87,51 @@ namespace HighTech.Infrastructure.Repositories
 			return context.SaveChanges() != 0;
 		}
 
-		public bool RemoveCategoryByName(string name)
+		// CategoryField operations
+		public ICollection<CategoryField> GetCategoryFields(string categoryId)
 		{
-			var categoryFields = context.Categories.Where(c => c.Name == name).ToList();
-
-			if (!categoryFields.Any())
-			{
-				return false;
-			}
-
-			context.RemoveRange(categoryFields);
-			return context.SaveChanges() != 0;
+			return context.CategoryFields
+				.Include(cf => cf.Field)
+				.Where(cf => cf.CategoryId == categoryId)
+				.ToList();
 		}
 
-		public bool RemoveCategoryField(string name, string fieldId)
+		public CategoryField? AddFieldToCategory(string categoryId, string fieldId)
 		{
-			var categoryField = context.Categories.FirstOrDefault(c => c.Name == name && c.FieldId == fieldId);
+			// Check if already exists
+			var exists = context.CategoryFields.Any(cf => cf.CategoryId == categoryId && cf.FieldId == fieldId);
+			if (exists)
+			{
+				return context.CategoryFields
+					.Include(cf => cf.Field)
+					.FirstOrDefault(cf => cf.CategoryId == categoryId && cf.FieldId == fieldId);
+			}
+
+			var categoryField = new CategoryField()
+			{
+				CategoryId = categoryId,
+				FieldId = fieldId
+			};
+
+			context.CategoryFields.Add(categoryField);
+			context.SaveChanges();
+
+			return context.CategoryFields
+				.Include(cf => cf.Field)
+				.FirstOrDefault(cf => cf.CategoryId == categoryId && cf.FieldId == fieldId);
+		}
+
+		public bool RemoveFieldFromCategory(string categoryId, string fieldId)
+		{
+			var categoryField = context.CategoryFields
+				.FirstOrDefault(cf => cf.CategoryId == categoryId && cf.FieldId == fieldId);
 
 			if (categoryField is null)
 			{
 				return false;
 			}
 
-			context.Remove(categoryField);
+			context.CategoryFields.Remove(categoryField);
 			return context.SaveChanges() != 0;
 		}
 	}

@@ -18,10 +18,17 @@ namespace HighTech.Infrastructure.Configurations
 			builder.Property(p => p.Discount).HasColumnType("decimal(18,2)");
 			builder.Property(p => p.Quantity).IsRequired();
 			builder.Property(p => p.IsRemoved).IsRequired();
+			builder.Property(p => p.CategoryID).IsRequired();
 
-			builder.HasMany(p => p.ProductFields)
+			builder.HasOne(p => p.Category)
+				.WithMany(c => c.Products)
+				.HasForeignKey(p => p.CategoryID)
+				.OnDelete(DeleteBehavior.Restrict);
+
+			builder.HasMany(p => p.ProductFieldValues)
 				.WithOne(pf => pf.Product)
-				.HasForeignKey(pf => pf.ProductId);
+				.HasForeignKey(pf => pf.ProductID)
+				.OnDelete(DeleteBehavior.Cascade);
 		}
 	}
 }

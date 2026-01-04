@@ -22,7 +22,7 @@ builder.Services.AddAuthentication(options =>
 		options.TokenValidationParameters = new TokenValidationParameters
 		{
 			ValidateIssuerSigningKey = true,
-			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
+			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"] ?? "")),
 			ValidIssuer = builder.Configuration["JWT:Issuer"],
 			ValidateIssuer = true,
 			ValidateAudience = true,
@@ -35,7 +35,6 @@ builder.Services.AddTransient<IEmployeeService, EmployeeService>();
 builder.Services.AddTransient<IJWTService, JWTService>();
 builder.Services.AddTransient<IProductService, ProductService>();
 builder.Services.AddTransient<IFieldService, FieldService>();
-builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<IOrderService, OrderService>();
 
@@ -56,7 +55,7 @@ builder.Services.Configure<JWTServiceOption>(options =>
 {
 	options.JwtKey = builder.Configuration["JWT:Key"];
 	options.Issuer = builder.Configuration["JWT:Issuer"];
-	options.ExpiresDays = int.Parse(builder.Configuration["JWT:ExpiresDays"]);
+	options.ExpiresDays = int.Parse(builder.Configuration["JWT:ExpiresDays"] ?? "7");
 });
 
 builder.Services.Configure<IdentityOptions>(option =>

@@ -3,6 +3,7 @@ using HighTech.Core.Services.Abstraction;
 using HighTech.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace HighTech.Controllers
 {
@@ -25,107 +26,205 @@ namespace HighTech.Controllers
 			{
 				return BadRequest("Category name is required!");
 			}
-			else if (dto.Fields is null || dto.Fields.Count < 1)
-			{
-				return BadRequest("There must be at least one field!");
-			}
 
-			foreach (var field in dto.Fields)
+			try
 			{
-				try
+				var category = categoryService.Create(dto.Name);
+
+				if (category is null)
 				{
-					var category = categoryService.CreateCategoryField(dto.Name, field.Id);
+					return BadRequest();
+				}
 
-					if (category is null)
+				// Add fields to the category if provided
+				if (dto.Fields is not null && dto.Fields.Count > 0)
+				{
+					foreach (var field in dto.Fields)
 					{
-						return BadRequest();
+						categoryService.AddFieldToCategory(category.Id!, field.Id);
 					}
 				}
-				catch (Exception ex)
-				{
-					return BadRequest(ex.Message);
-				}
-			}
 
-			return Json(dto);
+				dto.Id = category.Id;
+				return Json(dto);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
 		}
 
 		[HttpPut]
 		[Authorize(Roles = "Administrator")]
 		public IActionResult Edit(CategoryDTO dto)
 		{
+			if (string.IsNullOrEmpty(dto.Id))
+			{
+				return BadRequest("Category ID is required!");
+			}
+
 			if (string.IsNullOrEmpty(dto.Name))
 			{
 				return BadRequest("Category name is required!");
 			}
-			else if (dto.Fields is null || dto.Fields.Count < 1)
+
+			try
 			{
-				return BadRequest("There must be at least one field!");
-			}
+				var category = categoryService.Edit(dto.Id, dto.Name);
 
-			var category = categoryService.EditCategoryName(dto.Id, dto.Name);
+				if (category is null)
+				{
+					return NotFound($"Category with ID '{dto.Id}' not found.");
+				}
 
-			//skip the foreach, if fields are not changed
-			var oldNames = category.Select(x => x.Field.Name).ToArray();
-			var names = dto.Fields.Select(x => x.Name).ToArray();
+				// Update fields if provided
+				if (dto.Fields is not null)
+				{
+					// Get current fields
+					var currentFields = categoryService.GetCategoryFields(dto.Id);
+					var currentFieldIds = currentFields.Select(cf => cf.FieldId).ToHashSet();
+					var newFieldIds = dto.Fields.Select(f => f.Id).ToHashSet();
 
-			if (oldNames.OrderBy(x => x).SequenceEqual(names.OrderBy(x => x)))
-			{
+					// Remove fields that are no longer in the list
+					var fieldsToRemove = currentFieldIds.Except(newFieldIds);
+					foreach (var fieldId in fieldsToRemove)
+					{
+						categoryService.RemoveFieldFromCategory(dto.Id, fieldId);
+					}
+
+					// Add new fields
+					var fieldsToAdd = newFieldIds.Except(currentFieldIds);
+					foreach (var fieldId in fieldsToAdd)
+					{
+						categoryService.AddFieldToCategory(dto.Id, fieldId);
+					}
+				}
+
 				return Json(dto);
 			}
-
-			var removed = categoryService.RemoveCategoryByName(dto.Name);
-
-			foreach (var field in dto.Fields)
+			catch (Exception ex)
 			{
-				try
-				{
-					categoryService.CreateCategoryField(dto.Name, field.Id);
-				}
-				catch (Exception ex)
-				{
-					return BadRequest(ex.Message);
-				}
+				return BadRequest(ex.Message);
 			}
-
-			return Json(dto);
 		}
 
 		public IActionResult GetAll()
 		{
-			var categories = categoryService
-				.GetAll()
-				.GroupBy(c => new { c.Id, c.Name })
-				.Select(group => new CategoryDTO()
-				{
-					Id = group.Key.Id,
-					Name = group.Key.Name,
-					Fields = group.Select(c => new FieldDTO()
-					{
-						Id = c.Field.Id,
-						Name = c.Field.Name,
-						TypeCode = c.Field.TypeCode,
-						Value = null
-					}).ToList()
-				}
-				);
+			try
+			{
+				var categories = categoryService.GetAll();
 
-			return Json(categories);
+				var dtos = categories.Select(c => new CategoryDTO()
+				{
+					Id = c.Id,
+					Name = c.Name,
+					Fields = c.CategoryFields?.Select(cf => new FieldDTO()
+					{
+						Id = cf.Field!.Id,
+						Name = cf.Field.Name,
+						TypeCode = cf.Field.TypeCode,
+						Value = null
+					}).ToList() ?? new List<FieldDTO>()
+				}).ToList();
+
+				return Json(dtos);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
 		}
 
-		[HttpDelete("{name}")]
-		[Authorize(Roles = "Administrator")]
-		public IActionResult Delete(string name)
+		[HttpGet("{id}")]
+		public IActionResult Get(string id)
 		{
-			if (string.IsNullOrEmpty(name))
+			if (string.IsNullOrEmpty(id))
 			{
-				return BadRequest("Id cannot be a null!");
+				return BadRequest("Category ID is required!");
 			}
 
 			try
 			{
-				var removed = categoryService.RemoveCategoryByName(name);
+				var category = categoryService.Get(id);
 
+				if (category is null)
+				{
+					return NotFound($"Category with ID '{id}' not found.");
+				}
+
+				var dto = new CategoryDTO()
+				{
+					Id = category.Id,
+					Name = category.Name,
+					Fields = category.CategoryFields?.Select(cf => new FieldDTO()
+					{
+						Id = cf.Field!.Id,
+						Name = cf.Field.Name,
+						TypeCode = cf.Field.TypeCode,
+						Value = null
+					}).ToList() ?? new List<FieldDTO>()
+				};
+
+				return Json(dto);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
+
+		[HttpDelete("{id}")]
+		[Authorize(Roles = "Administrator")]
+		public IActionResult Delete(string id)
+		{
+			if (string.IsNullOrEmpty(id))
+			{
+				return BadRequest("ID cannot be null!");
+			}
+
+			try
+			{
+				var removed = categoryService.Remove(id);
+				return Json(removed);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
+
+		[HttpPost]
+		[Authorize(Roles = "Administrator")]
+		public IActionResult AddField(string categoryId, string fieldId)
+		{
+			if (string.IsNullOrEmpty(categoryId))
+			{
+				return BadRequest("Category ID is required!");
+			}
+
+			try
+			{
+				var categoryField = categoryService.AddFieldToCategory(categoryId, fieldId);
+				return Json(categoryField);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
+
+		[HttpDelete]
+		[Authorize(Roles = "Administrator")]
+		public IActionResult RemoveField(string categoryId, string fieldId)
+		{
+			if (string.IsNullOrEmpty(categoryId))
+			{
+				return BadRequest("Category ID is required!");
+			}
+
+			try
+			{
+				var removed = categoryService.RemoveFieldFromCategory(categoryId, fieldId);
 				return Json(removed);
 			}
 			catch (Exception ex)

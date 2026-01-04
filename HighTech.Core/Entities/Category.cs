@@ -4,8 +4,7 @@ namespace HighTech.Core.Entities
 	{
 		public string? Id { get; set; }
 		public string? Name { get; set; }
-		public string? FieldId { get; set; }
-		public Field? Field { get; set; }
-		public ICollection<ProductCategory>? ProductFields { get; set; }
-	}
+		public ICollection<Product>? Products { get; set; }
+        public ICollection<CategoryField>? CategoryFields { get; set; }
+    }
 }

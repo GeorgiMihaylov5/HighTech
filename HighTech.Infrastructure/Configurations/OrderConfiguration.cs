@@ -15,9 +15,6 @@ namespace HighTech.Infrastructure.Configurations
 			builder.Property(o => o.CustomerId).IsRequired();
 			builder.Property(o => o.Status).IsRequired();
 
-			// Ignore the navigation property since we're mapping to Infrastructure.Identity.AppUser
-			builder.Ignore(o => o.Customer);
-
 			builder.HasMany(o => o.OrderedProducts)
 				.WithOne(op => op.Order)
 				.HasForeignKey(op => op.OrderId);

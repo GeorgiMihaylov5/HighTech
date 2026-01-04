@@ -11,7 +11,6 @@ namespace HighTech.Controllers
 	{
 		private readonly IFieldService fieldService;
 
-
 		public FieldsController(IFieldService fieldService)
 		{
 			this.fieldService = fieldService;
@@ -19,12 +18,43 @@ namespace HighTech.Controllers
 
 		public IActionResult GetFields()
 		{
-			return Json(fieldService.GetFields().Select(f => new FieldDTO()
+			try
 			{
-				Id = f.Id,
-				Name = f.Name,
-				TypeCode = f.TypeCode,
-			}));
+				return Json(fieldService.GetFields().Select(f => new FieldDTO()
+				{
+					Id = f.Id,
+					Name = f.Name,
+					TypeCode = f.TypeCode,
+				}));
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
+
+		[HttpGet("{categoryId}")]
+		public IActionResult GetFieldsByCategory(string categoryId)
+		{
+			if (string.IsNullOrEmpty(categoryId))
+			{
+				return BadRequest("Category ID is required!");
+			}
+
+			try
+			{
+				var fields = fieldService.GetFieldsByCategory(categoryId);
+				return Json(fields.Select(f => new FieldDTO()
+				{
+					Id = f.Id,
+					Name = f.Name,
+					TypeCode = f.TypeCode,
+				}));
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
 		}
 
 		[HttpPost]
@@ -57,6 +87,11 @@ namespace HighTech.Controllers
 		[Authorize(Roles = "Administrator")]
 		public IActionResult Edit(FieldDTO dto)
 		{
+			if (string.IsNullOrEmpty(dto.Id))
+			{
+				return BadRequest("Field ID is required!");
+			}
+
 			if (string.IsNullOrEmpty(dto.Name))
 			{
 				return BadRequest("Field name is required!");
@@ -66,9 +101,15 @@ namespace HighTech.Controllers
 			{
 				var field = fieldService.EditField(dto.Id, dto.Name, dto.TypeCode);
 
+				if (field is null)
+				{
+					return NotFound($"Field with ID '{dto.Id}' not found.");
+				}
+
 				return Json(new FieldDTO()
 				{
-					Name = field.Id,
+					Id = field.Id,
+					Name = field.Name,
 					TypeCode = field.TypeCode
 				});
 			}
@@ -84,13 +125,12 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrEmpty(id))
 			{
-				return BadRequest("Id cannot be a null!");
+				return BadRequest("ID cannot be null!");
 			}
 
 			try
 			{
 				var removed = fieldService.RemoveField(id);
-
 				return Json(removed);
 			}
 			catch (Exception ex)

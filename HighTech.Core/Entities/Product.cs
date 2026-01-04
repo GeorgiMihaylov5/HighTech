@@ -11,6 +11,8 @@ namespace HighTech.Core.Entities
 		public int Quantity { get; set; }
 		public bool IsRemoved { get; set; }
 		public string? Image { get; set; }
-		public ICollection<ProductCategory>? ProductFields { get; set; }
+		public string? CategoryID { get; set; }
+		public Category? Category { get; set; }
+		public ICollection<ProductFieldValue>? ProductFieldValues { get; set; }
 	}
 }

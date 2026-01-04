@@ -9,8 +9,11 @@ namespace HighTech.Core.Repositories
 		public Field CreateField(string name, TypeCode typeCode);
 		public Field? EditField(string id, string name, TypeCode typeCode);
 		public bool RemoveField(string id);
-		public ICollection<ProductCategory> GetProductFields(string id);
-		public ProductCategory? AddProductField(string productId, string categoryId, string value); //Removed fieldId
-		public bool EditProductFieldValue(string pfId, string categoryId, string value);
+
+		// ProductFieldValue operations
+		public ICollection<ProductFieldValue> GetProductFieldValues(string productId);
+		public ProductFieldValue? AddProductFieldValue(string productId, string fieldId, string value);
+		public bool EditProductFieldValue(string productId, string fieldId, string value);
+		public bool RemoveProductFieldValue(string productId, string fieldId);
 	}
 }

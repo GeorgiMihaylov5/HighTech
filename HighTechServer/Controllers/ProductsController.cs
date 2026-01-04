@@ -14,15 +14,11 @@ namespace HighTech.Controllers
 	{
 		private readonly IProductService productService;
 		private readonly ICategoryService categoryService;
-		private readonly IFieldService fieldService;
 
-		public ProductsController(IProductService _productService,
-			ICategoryService _categoryService,
-			IFieldService _fieldService)
+		public ProductsController(IProductService _productService, ICategoryService _categoryService)
 		{
 			productService = _productService;
 			categoryService = _categoryService;
-			fieldService = _fieldService;
 		}
 
 		public IActionResult GetMostSellers()
@@ -36,14 +32,7 @@ namespace HighTech.Controllers
 					return Json(Array.Empty<ProductDTO>());
 				}
 
-				var dtos = new List<ProductDTO>();
-
-				foreach (var p in products)
-				{
-					var categoryName = categoryService.GetCategoryByProduct(p.Id);
-
-					dtos.Add(ConvertToProductDTO(p, categoryName));
-				}
+				var dtos = products.Select(p => ConvertToProductDTO(p)).ToList();
 
 				return Json(dtos);
 			}
@@ -53,44 +42,72 @@ namespace HighTech.Controllers
 			}
 		}
 
+		[HttpGet("{id}")]
 		public IActionResult Get(string id)
 		{
 			if (id is null)
 			{
-				return BadRequest();
+				return BadRequest("Product ID is required!");
 			}
 
-			var product = productService.Get(id);
-
-			if (product is null)
+			try
 			{
-				return Json(product);
+				var product = productService.Get(id);
+
+				if (product is null)
+				{
+					return NotFound($"Product with ID '{id}' not found.");
+				}
+
+				return Json(ConvertToProductDTO(product));
 			}
-
-			var categoryName = categoryService.GetCategoryByProduct(product.Id);
-
-			return Json(ConvertToProductDTO(product, categoryName));
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
 		}
 
 		public IActionResult GetAll()
 		{
-			var products = productService.GetAll();
-
-			if (products.Count == 0)
+			try
 			{
-				return Json(Array.Empty<ProductDTO>());
+				var products = productService.GetAll();
+
+				if (products.Count == 0)
+				{
+					return Json(Array.Empty<ProductDTO>());
+				}
+
+				var dtos = products.Select(p => ConvertToProductDTO(p)).ToList();
+
+				return Json(dtos);
 			}
-
-			var dtos = new List<ProductDTO>();
-
-			foreach (var p in products)
+			catch (Exception ex)
 			{
-				var categoryName = categoryService.GetCategoryByProduct(p.Id);
-
-				dtos.Add(ConvertToProductDTO(p, categoryName));
+				return BadRequest(ex.Message);
 			}
+		}
 
-			return Json(dtos);
+		[HttpGet("{categoryId}")]
+		public IActionResult GetByCategory(string categoryId)
+		{
+			try
+			{
+				var products = productService.GetByCategory(categoryId);
+
+				if (products.Count == 0)
+				{
+					return Json(Array.Empty<ProductDTO>());
+				}
+
+				var dtos = products.Select(p => ConvertToProductDTO(p)).ToList();
+
+				return Json(dtos);
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
 		}
 
 		[Authorize(Roles = "Administrator")]
@@ -102,73 +119,87 @@ namespace HighTech.Controllers
 				return BadRequest("Product is null!");
 			}
 
+			if (string.IsNullOrEmpty(dto.CategoryId))
+			{
+				return BadRequest("Valid Category ID is required!");
+			}
+
 			try
 			{
-				var product = productService.Create(dto.Manufacturer, dto.Model, dto.Warranty,
-				dto.Price, dto.Discount, dto.Quantity, dto.Image);
+				var product = productService.Create(
+					dto.Manufacturer, 
+					dto.Model, 
+					dto.Warranty,
+					dto.Price, 
+					dto.Discount, 
+					dto.Quantity, 
+					dto.Image,
+					dto.CategoryId);
 
 				if (product is null || product.Id is null)
 				{
-					return BadRequest();
+					return BadRequest("Failed to create product.");
 				}
 
-
-				if (dto.Fields is not null)
+				// Set product field values if provided
+				if (dto.Fields is not null && dto.Fields.Count > 0)
 				{
-					foreach (var field in dto.Fields)
-					{
-						var category = categoryService.Get(dto.CategoryName, field.Id);
+					var fieldValues = dto.Fields.ToDictionary(
+						f => f.Id, 
+						f => f.Value ?? string.Empty);
 
-						fieldService.AddProductField(product.Id, category.Id, field.Value);
-					}
+					productService.SetProductFieldValues(product.Id, fieldValues);
 				}
+
 				dto.Id = product.Id;
+				return Json(dto);
 			}
 			catch (Exception ex)
 			{
 				return BadRequest(ex.Message);
 			}
-
-
-			return Json(dto);
 		}
 
 		[Authorize(Roles = "Administrator")]
 		[HttpPut]
 		public IActionResult Edit(ProductDTO dto)
 		{
-			var product = productService.Edit(dto.Id, dto.Manufacturer, dto.Model, dto.Warranty,
-				dto.Price, dto.Discount, dto.Quantity, dto.Image);
-
-			if (product is null || product.Id is null)
+			if (dto is null || string.IsNullOrEmpty(dto.Id))
 			{
-				return BadRequest();
+				return BadRequest("Product ID is required!");
 			}
 
-			if (dto.Fields.Count == 0)
+			if (string.IsNullOrEmpty(dto.CategoryId))
 			{
-				return Json(dto);
+				return BadRequest("Valid Category ID is required!");
 			}
 
 			try
 			{
-				var productFields = fieldService.GetProductFields(dto.Id).OrderBy(pf => pf.Category.Field.Name).ToList();
-				var dtoFileds = dto.Fields.OrderBy(pf => pf.Name).ToList();
+				var product = productService.Edit(
+					dto.Id, 
+					dto.Manufacturer, 
+					dto.Model, 
+					dto.Warranty,
+					dto.Price, 
+					dto.Discount, 
+					dto.Quantity, 
+					dto.Image,
+					dto.CategoryId);
 
-				for (int i = 0; i < productFields.Count; i++)
+				if (product is null)
 				{
-					var category = categoryService.Get(dto.CategoryName, dtoFileds[i].Id);
-					fieldService.EditProductFieldValue(productFields[i].Id, category.Id, dtoFileds[i].Value);
+					return NotFound($"Product with ID '{dto.Id}' not found.");
 				}
 
-				var added = dtoFileds.Count - productFields.Count;
-				if (added > 0)
+				// Update product field values if provided
+				if (dto.Fields is not null && dto.Fields.Count > 0)
 				{
-					for (int i = 0; i < added; i++)
-					{
-						var category = categoryService.Get(dto.CategoryName, dtoFileds[i].Id);
-						fieldService.AddProductField(dto.Id, category.Id, dtoFileds[productFields.Count + i].Value);
-					}
+					var fieldValues = dto.Fields.ToDictionary(
+						f => f.Id, 
+						f => f.Value ?? string.Empty);
+
+					productService.SetProductFieldValues(product.Id!, fieldValues);
 				}
 
 				return Json(dto);
@@ -185,13 +216,12 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrEmpty(id))
 			{
-				return BadRequest("Id cannot be a null!");
+				return BadRequest("ID cannot be null!");
 			}
 
 			try
 			{
 				var removed = productService.Remove(id);
-
 				return Json(removed);
 			}
 			catch (Exception ex)
@@ -204,16 +234,21 @@ namespace HighTech.Controllers
 		[Authorize(Roles = "Administrator")]
 		public IActionResult MakeDiscount(DiscountDTO dto)
 		{
+			if (string.IsNullOrEmpty(dto.Id))
+			{
+				return BadRequest("Product ID is required!");
+			}
+
 			try
 			{
 				var product = productService.IncreaseDiscount(dto.Id, dto.Percentage);
 
 				if (product is null)
 				{
-					throw new InvalidOperationException();
+					return NotFound($"Product with ID '{dto.Id}' not found.");
 				}
 
-				return Json(ConvertToProductDTO(product, null));
+				return Json(ConvertToProductDTO(product));
 			}
 			catch (Exception ex)
 			{
@@ -225,9 +260,21 @@ namespace HighTech.Controllers
 		[Authorize(Roles = "Administrator")]
 		public IActionResult RemoveDiscount(DiscountDTO dto)
 		{
+			if (string.IsNullOrEmpty(dto.Id))
+			{
+				return BadRequest("Product ID is required!");
+			}
+
 			try
 			{
-				return Json(ConvertToProductDTO(productService.RemoveDiscount(dto.Id), null));
+				var product = productService.RemoveDiscount(dto.Id);
+
+				if (product is null)
+				{
+					return NotFound($"Product with ID '{dto.Id}' not found.");
+				}
+
+				return Json(ConvertToProductDTO(product));
 			}
 			catch (Exception ex)
 			{
@@ -235,7 +282,7 @@ namespace HighTech.Controllers
 			}
 		}
 
-		private ProductDTO ConvertToProductDTO(Product p, string categoryName)
+		private ProductDTO ConvertToProductDTO(Product p)
 		{
 			var dto = new ProductDTO()
 			{
@@ -247,21 +294,21 @@ namespace HighTech.Controllers
 				Discount = p.Discount,
 				Image = p.Image,
 				Quantity = p.Quantity,
-				CategoryName = categoryName,
+				CategoryId = p.CategoryID,
+				CategoryName = p.Category?.Name,
 				Fields = new List<FieldDTO>()
 			};
 
-			var productFields = fieldService.GetProductFields(p.Id);
-
-			if (productFields.Count > 0)
+			// Add product field values
+			if (p.ProductFieldValues is not null && p.ProductFieldValues.Count > 0)
 			{
-				foreach (var pf in productFields)
+				foreach (var pf in p.ProductFieldValues)
 				{
 					dto.Fields.Add(new FieldDTO()
 					{
-						Id = pf.Category.FieldId,
-						Name = pf.Category.Field.Name,
-						TypeCode = pf.Category.Field.TypeCode,
+						Id = pf.Field!.Id,
+						Name = pf.Field.Name,
+						TypeCode = pf.Field.TypeCode,
 						Value = pf.Value
 					});
 				}
