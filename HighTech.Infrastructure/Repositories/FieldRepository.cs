@@ -13,7 +13,7 @@ namespace HighTech.Infrastructure.Repositories
 			context = _context;
 		}
 
-		public Field CreateField(string name, TypeCode typeCode)
+		public Field CreateField(string? name, TypeCode typeCode)
 		{
 			var field = new Field()
 			{
@@ -27,11 +27,11 @@ namespace HighTech.Infrastructure.Repositories
 			return field;
 		}
 
-		public Field? EditField(string id, string name, TypeCode typeCode)
+		public Field? EditField(string? id, string? name, TypeCode typeCode)
 		{
-			var field = context.Fields.FirstOrDefault(x => x.Id == id);
+			var field = GetField(id);
 
-			if (field is null)
+            if (field is null)
 			{
 				return null;
 			}
@@ -43,7 +43,7 @@ namespace HighTech.Infrastructure.Repositories
 			return field;
 		}
 
-		public Field? GetField(string id)
+		public Field? GetField(string? id)
 		{
 			return context.Fields
 				.Include(f => f.CategoryFields!)
@@ -59,7 +59,7 @@ namespace HighTech.Infrastructure.Repositories
 				.ToList();
 		}
 
-		public bool RemoveField(string id)
+		public bool RemoveField(string? id)
 		{
 			var field = context.Fields.FirstOrDefault(f => f.Id == id);
 
@@ -73,7 +73,7 @@ namespace HighTech.Infrastructure.Repositories
 		}
 
 		// ProductFieldValue operations
-		public ICollection<ProductFieldValue> GetProductFieldValues(string productId)
+		public ICollection<ProductFieldValue> GetProductFieldValues(string? productId)
 		{
 			return context.ProductFieldValues
 				.Include(pf => pf.Field)
@@ -81,31 +81,26 @@ namespace HighTech.Infrastructure.Repositories
 				.ToList();
 		}
 
-		public ProductFieldValue? AddProductFieldValue(string productId, string fieldId, string value)
+        public ICollection<Field> GetFieldsByCategory(string? categoryId)
 		{
-			// Validate product exists
-			var productExists = context.Products.Any(p => p.Id == productId);
-			if (!productExists)
-			{
-				throw new InvalidOperationException($"Product with ID '{productId}' does not exist.");
-			}
+			//TODO think about !
+			return context.CategoryFields
+				.Include(cf => cf.Field)
+				.Where(cf => cf.CategoryId == categoryId)
+				.Select(cf => cf.Field!)
+				.ToList();
+        }
 
-			// Validate field exists
-			var fieldExists = context.Fields.Any(f => f.Id == fieldId);
-			if (!fieldExists)
-			{
-				throw new InvalidOperationException($"Field with ID '{fieldId}' does not exist.");
-			}
-
-			// Check if already exists
-			var existing = context.ProductFieldValues
+        public ProductFieldValue SetProductFieldValue(string? productId, string? fieldId, string? value)
+		{
+			var existingProductFieldValue = context.ProductFieldValues
 				.FirstOrDefault(pf => pf.ProductID == productId && pf.FieldID == fieldId);
 
-			if (existing != null)
+			if (existingProductFieldValue != null)
 			{
-				existing.Value = value;
+				existingProductFieldValue.Value = value;
 				context.SaveChanges();
-				return existing;
+				return existingProductFieldValue;
 			}
 
 			var productFieldValue = new ProductFieldValue()
@@ -118,36 +113,27 @@ namespace HighTech.Infrastructure.Repositories
 			context.ProductFieldValues.Add(productFieldValue);
 			context.SaveChanges();
 
-			return context.ProductFieldValues
-				.Include(pf => pf.Field)
-				.FirstOrDefault(pf => pf.ProductID == productId && pf.FieldID == fieldId);
-		}
+			return productFieldValue;
 
-		public bool EditProductFieldValue(string productId, string fieldId, string value)
-		{
-			var productFieldValue = context.ProductFieldValues
-				.FirstOrDefault(pf => pf.ProductID == productId && pf.FieldID == fieldId);
+        }
 
-			if (productFieldValue is null)
-			{
-				return false;
-			}
-
-			productFieldValue.Value = value;
-			return context.SaveChanges() != 0;
-		}
-
-		public bool RemoveProductFieldValue(string productId, string fieldId)
+		public bool RemoveProductFieldValue(string? productId, string? fieldId)
 		{
 			var productFieldValue = context.ProductFieldValues
 				.FirstOrDefault(pf => pf.ProductID == productId && pf.FieldID == fieldId);
 			if (productFieldValue is null)
-			{
-				return false;
-			}
+                return false;
 
-			context.ProductFieldValues.Remove(productFieldValue);
+            context.ProductFieldValues.Remove(productFieldValue);
 			return context.SaveChanges() != 0;
 		}
-	}
+
+        public Field? GetFieldByName(string? name)
+        {
+            return context.Fields
+				.Include(f => f.CategoryFields!)
+					.ThenInclude(cf => cf.Category)
+				.FirstOrDefault(f => f.Name == name);
+        }
+    }
 }

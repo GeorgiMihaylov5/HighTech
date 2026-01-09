@@ -16,7 +16,7 @@ namespace HighTech.Core.Services
 			productRepository = _productRepository;
 		}
 
-		public Order CreateOrder(DateTime orderedOn, string username)
+		public Order CreateOrder(DateTime orderedOn, string? username)
 		{
 			// Business validation
 			if (string.IsNullOrWhiteSpace(username))
@@ -32,7 +32,7 @@ namespace HighTech.Core.Services
 			return orderRepository.CreateOrder(orderedOn, username);
 		}
 
-		public bool CreateOrderedProduct(string productId, string orderId, decimal price, int count)
+		public bool CreateOrderedProduct(string? productId, string? orderId, decimal price, int count)
 		{
 			// Business validation
 			if (string.IsNullOrWhiteSpace(productId))
@@ -84,7 +84,7 @@ namespace HighTech.Core.Services
 			return orderRepository.CreateOrderedProduct(productId, orderId, price, count);
 		}
 
-		public bool EditOrder(string id, OrderStatus status, string notes)
+		public bool EditOrder(string? id, OrderStatus status, string? notes)
 		{
 			if (string.IsNullOrWhiteSpace(id))
 			{
@@ -106,7 +106,7 @@ namespace HighTech.Core.Services
 			return orderRepository.EditOrder(id, status, notes);
 		}
 
-		public bool EditOrderedProduct(string id, int count)
+		public bool EditOrderedProduct(string? id, int count)
 		{
 			if (count <= 0)
 			{
@@ -116,7 +116,7 @@ namespace HighTech.Core.Services
 			return orderRepository.EditOrderedProduct(id, count);
 		}
 
-		public ICollection<Order> GetMyOrders(string username)
+		public ICollection<Order> GetMyOrders(string? username)
 		{
 			if (string.IsNullOrWhiteSpace(username))
 			{
@@ -126,7 +126,7 @@ namespace HighTech.Core.Services
 			return orderRepository.GetMyOrders(username);
 		}
 
-		public Order? GetOrder(string id)
+		public Order? GetOrder(string? id)
 		{
 			if (string.IsNullOrWhiteSpace(id))
 			{
@@ -141,7 +141,7 @@ namespace HighTech.Core.Services
 			return orderRepository.GetOrders();
 		}
 
-		public bool CancelOrder(string id)
+		public bool CancelOrder(string? id)
 		{
 			if (string.IsNullOrWhiteSpace(id))
 			{
@@ -177,7 +177,7 @@ namespace HighTech.Core.Services
 			return orderRepository.EditOrder(id, OrderStatus.Rejected, "Order cancelled by user");
 		}
 
-		public decimal CalculateOrderTotal(string orderId)
+		public decimal CalculateOrderTotal(string? orderId)
 		{
 			if (string.IsNullOrWhiteSpace(orderId))
 			{

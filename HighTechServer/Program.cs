@@ -37,6 +37,8 @@ builder.Services.AddTransient<IProductService, ProductService>();
 builder.Services.AddTransient<IFieldService, FieldService>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<IOrderService, OrderService>();
+builder.Services.AddTransient<IFavoriteService, FavoriteService>();
+builder.Services.AddTransient<IReviewService, ReviewService>();
 
 // Add CORS
 //builder.Services.AddCors(options =>

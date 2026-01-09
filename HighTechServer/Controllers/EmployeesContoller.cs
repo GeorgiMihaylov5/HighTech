@@ -1,6 +1,7 @@
 ﻿using HighTech.Core.Entities;
 using HighTech.Core.Services.Abstraction;
 using HighTech.DTOs;
+using HighTech.Mappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -23,19 +24,7 @@ namespace HighTech.Controllers
 		[Authorize(Roles = "Administrator")]
 		public async Task<IActionResult> GetAll()
 		{
-			var employeesDTO = employeeService
-				.GetEmployees()
-				.Select(e => new EmployeeDTO()
-				{
-					Id = e.Id,
-					JobTitle = e.JobTitle,
-					UserId = e.User.Id,
-					FirstName = e.User.FirstName,
-					LastName = e.User.LastName,
-					Email = e.User.Email,
-					PhoneNumber = e.User.PhoneNumber,
-					Username = e.User.UserName,
-				})
+			var employeesDTO = EmployeeMapper.ToDTOList(employeeService.GetEmployees())
 				.OrderBy(x => x.FirstName)
 				.ToList();
 
@@ -71,23 +60,18 @@ namespace HighTech.Controllers
 				return Json(null);
 			}
 
-			return Json(new EmployeeDTO()
-			{
-				Id = employee.Id,
-				UserId = employee.UserId,
-				Username = employee.User.UserName,
-				Email = employee.User.Email,
-				FirstName = employee.User.FirstName,
-				LastName = employee.User.LastName,
-				JobTitle = employee.JobTitle,
-				PhoneNumber = employee.User.PhoneNumber
-			});
+			return Json(EmployeeMapper.ToDTO(employee));
 		}
 
 		[HttpPost]
 		[Authorize(Roles = "Administrator")]
 		public async Task<IActionResult> CreateEmployee(EmployeeDTO dto)
 		{
+			if (dto is null || dto.Username is null)
+			{
+				return BadRequest("Employee cannot be null!");
+			}
+
 			var employee = await userManager.FindByNameAsync(dto.Username);
 
 			if (employee is not null)
@@ -129,7 +113,7 @@ namespace HighTech.Controllers
 		[Authorize(Roles = "Administrator")]
 		public async Task<IActionResult> Promote(EmployeeDTO dto)
 		{
-			if (dto is null)
+			if (dto is null || dto.UserId is null)
 			{
 				return BadRequest("User cannot be null!");
 			}
@@ -155,7 +139,7 @@ namespace HighTech.Controllers
 		[Authorize(Roles = "Administrator")]
 		public async Task<IActionResult> Demote(EmployeeDTO dto)
 		{
-			if (dto == null)
+			if (dto == null || dto.UserId == null)
 			{
 				return BadRequest("User cannot be null!");
 			}
@@ -190,9 +174,9 @@ namespace HighTech.Controllers
 			return BadRequest();
 		}
 
-		public async Task<IActionResult> CheckUserRole(AuthUser token)
+		public async Task<IActionResult> CheckUserRole(AuthUserDTO token)
 		{
-			if (token is null)
+			if (token is null || token.Role is null)
 			{
 				return BadRequest("Token is null");
 			}
@@ -201,8 +185,11 @@ namespace HighTech.Controllers
 			{
 				return Json(true);
 			}
+			var employee = employeeService.GetEmployeeByUsername(token.Nameid)?.User;
+			if (employee is null)
+				return BadRequest("Employee not found");
 
-			var roles = await userManager.GetRolesAsync(employeeService.GetEmployeeByUsername(token.Nameid).User);
+			var roles = await userManager.GetRolesAsync(employee);
 
 			if (roles.Count != token.Role.Count)
 			{

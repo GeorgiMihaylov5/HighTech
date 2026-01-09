@@ -2,7 +2,7 @@
 {
     public class DiscountDTO
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
         public int Percentage { get; set; }
     }
 }

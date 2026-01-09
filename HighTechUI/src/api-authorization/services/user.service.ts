@@ -23,7 +23,7 @@ export class UserService {
 	}
 
 	public register(user: RegisterRM): Observable<IToken> {
-		return this.http.post<IToken>(`${this.baseUrl}clients/register`, user)
+		return this.http.post<IToken>(`${this.baseUrl}Clients/Register`, user)
 			.pipe(
 				catchError(this.errorService.handleError.bind(this.errorService))
 			);

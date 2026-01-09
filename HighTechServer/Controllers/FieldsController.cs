@@ -1,5 +1,6 @@
 ﻿using HighTech.Core.Services.Abstraction;
 using HighTech.DTOs;
+using HighTech.Mappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,12 +21,7 @@ namespace HighTech.Controllers
 		{
 			try
 			{
-				return Json(fieldService.GetFields().Select(f => new FieldDTO()
-				{
-					Id = f.Id,
-					Name = f.Name,
-					TypeCode = f.TypeCode,
-				}));
+				return Json(FieldMapper.ToDTOList(fieldService.GetFields()));
 			}
 			catch (Exception ex)
 			{
@@ -44,12 +40,7 @@ namespace HighTech.Controllers
 			try
 			{
 				var fields = fieldService.GetFieldsByCategory(categoryId);
-				return Json(fields.Select(f => new FieldDTO()
-				{
-					Id = f.Id,
-					Name = f.Name,
-					TypeCode = f.TypeCode,
-				}));
+				return Json(FieldMapper.ToDTOList(fields));
 			}
 			catch (Exception ex)
 			{
@@ -70,12 +61,7 @@ namespace HighTech.Controllers
 			{
 				var field = fieldService.CreateField(dto.Name, dto.TypeCode);
 
-				return Json(new FieldDTO()
-				{
-					Id = field.Id,
-					Name = field.Name,
-					TypeCode = field.TypeCode
-				});
+				return Json(FieldMapper.ToDTO(field));
 			}
 			catch (Exception ex)
 			{
@@ -106,12 +92,7 @@ namespace HighTech.Controllers
 					return NotFound($"Field with ID '{dto.Id}' not found.");
 				}
 
-				return Json(new FieldDTO()
-				{
-					Id = field.Id,
-					Name = field.Name,
-					TypeCode = field.TypeCode
-				});
+				return Json(FieldMapper.ToDTO(field));
 			}
 			catch (Exception ex)
 			{

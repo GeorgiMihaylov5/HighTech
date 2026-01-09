@@ -20,9 +20,10 @@ namespace HighTech.Core.Services
 			categoryRepository = _categoryRepository;
 		}
 
-		// Product CRUD
-		public Product? Get(string id)
+		public Product? Get(string? id)
 		{
+			if (string.IsNullOrEmpty(id))
+				return null;
 			return productRepository.Get(id);
 		}
 
@@ -31,105 +32,64 @@ namespace HighTech.Core.Services
 			return productRepository.GetAll();
 		}
 
-		public ICollection<Product> GetByCategory(string categoryId)
+		public ICollection<Product> GetByCategory(string? categoryId)
 		{
+			if (string.IsNullOrEmpty(categoryId))
+				return new List<Product>();
 			return productRepository.GetByCategory(categoryId);
 		}
 
-		public ICollection<Product> GetMostSellers()
+		public ICollection<Product> GetMostSellers(int top = 6)
 		{
-			return productRepository.GetMostSellers();
+			return productRepository.GetMostSellers(top);
 		}
 
-		public Product? Create(string manufacturer, string model, int warranty, decimal price, decimal discount, int quantity, string image, string categoryId)
+		public Product Create(string? manufacturer, string? model, int warranty, decimal price, decimal discount, int quantity, string? image, string? categoryId)
 		{
-			// Business validation
-			if (string.IsNullOrWhiteSpace(manufacturer))
-			{
-				throw new ArgumentException("Manufacturer is required.", nameof(manufacturer));
-			}
+			Guard.NotNullOrEmpty(manufacturer, nameof(manufacturer));
+			Guard.NotNullOrEmpty(model, nameof(model));
+			Guard.NotNegative(price, nameof(price));
+			Guard.NotBetween(discount, 0, price, nameof(discount));
+			Guard.NotNegative(quantity, nameof(quantity));
+			Guard.NotNegative(warranty, nameof(warranty));
 
-			if (string.IsNullOrWhiteSpace(model))
-			{
-				throw new ArgumentException("Model is required.", nameof(model));
-			}
-
-			if (price < 0)
-			{
-				throw new InvalidOperationException("Price cannot be negative.");
-			}
-
-			if (discount < 0 || discount > price)
-			{
-				throw new InvalidOperationException("Discount must be between 0 and price.");
-			}
-
-			if (quantity < 0)
-			{
-				throw new InvalidOperationException("Quantity cannot be negative.");
-			}
-
-			if (warranty < 0)
-			{
-				throw new InvalidOperationException("Warranty cannot be negative.");
-			}
-
-			// Validate category exists
+			//TODO custom exception or guard
 			var category = categoryRepository.Get(categoryId);
 			if (category == null)
-			{
 				throw new InvalidOperationException($"Category with ID '{categoryId}' does not exist.");
-			}
 
 			return productRepository.Create(manufacturer, model, warranty, price, discount, quantity, image, categoryId);
 		}
 
-		public Product? Edit(string id, string manufacturer, string model, int warranty, decimal price, decimal discount, int quantity, string image, string categoryId)
+		public Product Edit(string? id, string? manufacturer, string? model, int warranty, decimal price, decimal discount, int quantity, string? image, string? categoryId)
 		{
-			// Business validation
-			if (string.IsNullOrWhiteSpace(manufacturer))
-			{
-				throw new ArgumentException("Manufacturer is required.", nameof(manufacturer));
-			}
+			Guard.NotNullOrEmpty(id, nameof(id));
+			Guard.NotNullOrEmpty(manufacturer, nameof(manufacturer));
+			Guard.NotNullOrEmpty(model, nameof(model));
+			Guard.NotNegative(price, nameof(price));
+			Guard.NotBetween(discount, 0, price, nameof(discount));
+			Guard.NotNegative(quantity, nameof(quantity));
+			Guard.NotNegative(warranty, nameof(warranty));
 
-			if (string.IsNullOrWhiteSpace(model))
-			{
-				throw new ArgumentException("Model is required.", nameof(model));
-			}
-
-			if (price < 0)
-			{
-				throw new InvalidOperationException("Price cannot be negative.");
-			}
-
-			if (discount < 0 || discount > price)
-			{
-				throw new InvalidOperationException("Discount must be between 0 and price.");
-			}
-
-			if (quantity < 0)
-			{
-				throw new InvalidOperationException("Quantity cannot be negative.");
-			}
-
-			// Validate category exists
+			//TODO custom exception or guard
 			var category = categoryRepository.Get(categoryId);
 			if (category == null)
-			{
 				throw new InvalidOperationException($"Category with ID '{categoryId}' does not exist.");
-			}
 
-			return productRepository.Edit(id, manufacturer, model, warranty, price, discount, quantity, image, categoryId);
+            //TODO add custom exception
+            return productRepository.Edit(id, manufacturer, model, warranty, price, discount, quantity, image, categoryId) 
+				?? throw new NullReferenceException();
 		}
 
-		public bool Remove(string id)
+		public bool Remove(string? id)
 		{
 			return productRepository.Remove(id);
 		}
 
-		// Discount management
-		public Product? IncreaseDiscount(string id, int percentage)
+		//TODO RENAME AND MODIFY and custom and remove nullable 
+		public Product? IncreaseDiscount(string? id, int percentage)
 		{
+			Guard.NotBetween(percentage, 1, 100, nameof(percentage));
 			if (percentage <= 0 || percentage > 100)
 			{
 				throw new InvalidOperationException("Percentage must be between 1 and 100.");
@@ -138,67 +98,55 @@ namespace HighTech.Core.Services
 			return productRepository.IncreaseDiscount(id, percentage);
 		}
 
-		public Product? RemoveDiscount(string id)
+		public Product? RemoveDiscount(string? id)
 		{
 			return productRepository.RemoveDiscount(id);
 		}
 
-		// Product field values management
-		public ICollection<ProductFieldValue> GetProductFieldValues(string productId)
+		public ICollection<ProductFieldValue> GetProductFieldValues(string? productId)
 		{
 			return fieldRepository.GetProductFieldValues(productId);
 		}
 
-		public ProductFieldValue? SetProductFieldValue(string productId, string fieldId, string value)
+		public ProductFieldValue SetProductFieldValue(string? productId, string? fieldId, string? value)
 		{
-			// Validate product exists
 			var product = productRepository.Get(productId);
-			if (product == null)
-			{
-				throw new InvalidOperationException($"Product with ID '{productId}' does not exist.");
-			}
+			Guard.NotNull(product, nameof(product));
 
-			// Validate field exists and belongs to product's category
-			var categoryFields = categoryRepository.GetCategoryFields(product.CategoryID!);
+			var categoryFields = categoryRepository.GetCategoryFields(product?.CategoryID!);
 			var fieldBelongsToCategory = categoryFields.Any(cf => cf.FieldId == fieldId);
 
-			if (!fieldBelongsToCategory)
-			{
+            //TODO custom exception
+            if (!fieldBelongsToCategory)
 				throw new InvalidOperationException($"Field with ID '{fieldId}' is not associated with the product's category.");
-			}
 
-			return fieldRepository.AddProductFieldValue(productId, fieldId, value);
+			return fieldRepository.SetProductFieldValue(productId, fieldId, value);
 		}
 
-		public bool RemoveProductFieldValue(string productId, string fieldId)
+		public bool RemoveProductFieldValue(string? productId, string? fieldId)
 		{
 			return fieldRepository.RemoveProductFieldValue(productId, fieldId);
 		}
 
-		public bool SetProductFieldValues(string productId, Dictionary<string, string> fieldValues)
+		public bool SetProductFieldValues(string? productId, Dictionary<string, string?> fieldValues)
 		{
-			// Validate product exists
 			var product = productRepository.Get(productId);
-			if (product == null)
-			{
-				throw new InvalidOperationException($"Product with ID '{productId}' does not exist.");
-			}
+			Guard.NotNull(product, nameof(product));
 
-			// Get valid fields for this product's category
 			var categoryFields = categoryRepository.GetCategoryFields(product.CategoryID!);
 			var validFieldIds = categoryFields.Select(cf => cf.FieldId).ToHashSet();
 
-			// Validate all provided fields belong to the category
 			var invalidFields = fieldValues.Keys.Where(fid => !validFieldIds.Contains(fid)).ToList();
 			if (invalidFields.Any())
 			{
+				//TODO custom exception
 				throw new InvalidOperationException($"Fields with IDs [{string.Join(", ", invalidFields)}] are not associated with the product's category.");
 			}
 
 			// Set each field value
 			foreach (var kvp in fieldValues)
 			{
-				fieldRepository.AddProductFieldValue(productId, kvp.Key, kvp.Value);
+				fieldRepository.SetProductFieldValue(productId, kvp.Key, kvp.Value);
 			}
 
 			return true;
@@ -207,99 +155,33 @@ namespace HighTech.Core.Services
 		// Inventory management
 		public ICollection<Product> GetLowStockProducts(int threshold = 10)
 		{
-			if (threshold < 0)
-			{
-				throw new ArgumentException("Threshold cannot be negative.", nameof(threshold));
-			}
+			Guard.NotNegative(threshold, nameof(threshold));
 
-			var allProducts = productRepository.GetAll();
-			return allProducts.Where(p => p.Quantity <= threshold && p.Quantity > 0).ToList();
+			return productRepository.GetWhere(p => p.Quantity <= threshold && p.Quantity > 0);
 		}
 
-		public bool UpdateStock(string id, int quantity)
+		//TODO check is needed
+		public bool UpdateStock(string? id, int quantity)
 		{
-			if (string.IsNullOrWhiteSpace(id))
-			{
-				throw new ArgumentException("Product ID is required.", nameof(id));
-			}
-
-			if (quantity < 0)
-			{
-				throw new InvalidOperationException("Quantity cannot be negative.");
-			}
+			Guard.NotNullOrEmpty(id, nameof(id));
+			Guard.NotNegative(quantity, nameof(quantity));
 
 			var product = productRepository.Get(id);
 			if (product == null)
-			{
-				return false;
-			}
+                return false;
 
-			// Update through Edit method
-			return productRepository.Edit(id, product.Manufacturer!, product.Model!, product.Warranty,
+            return productRepository.Edit(id, product.Manufacturer!, product.Model!, product.Warranty,
 				product.Price, product.Discount, quantity, product.Image!, product.CategoryID!) != null;
 		}
 
-		public bool IsInStock(string id, int requestedQuantity = 1)
+		//TODO check is needed
+		public bool IsInStock(string? id, int requestedQuantity = 1)
 		{
-			if (string.IsNullOrWhiteSpace(id))
-			{
-				throw new ArgumentException("Product ID is required.", nameof(id));
-			}
-
-			if (requestedQuantity <= 0)
-			{
-				throw new ArgumentException("Requested quantity must be greater than zero.", nameof(requestedQuantity));
-			}
+			Guard.NotNullOrEmpty(id, nameof(id));
+            Guard.NotNegative(requestedQuantity, nameof(requestedQuantity));
 
 			var product = productRepository.Get(id);
 			return product != null && product.Quantity >= requestedQuantity;
-		}
-
-		// Advanced search and filtering
-		public ICollection<Product> SearchProducts(string searchTerm)
-		{
-			if (string.IsNullOrWhiteSpace(searchTerm))
-			{
-				return new List<Product>();
-			}
-
-			var allProducts = productRepository.GetAll();
-			searchTerm = searchTerm.ToLower();
-
-			return allProducts.Where(p =>
-				(p.Manufacturer?.ToLower().Contains(searchTerm) ?? false) ||
-				(p.Model?.ToLower().Contains(searchTerm) ?? false) ||
-				(p.Category?.Name?.ToLower().Contains(searchTerm) ?? false)
-			).ToList();
-		}
-
-		public ICollection<Product> FilterByPriceRange(decimal minPrice, decimal maxPrice)
-		{
-			if (minPrice < 0)
-			{
-				throw new ArgumentException("Minimum price cannot be negative.", nameof(minPrice));
-			}
-
-			if (maxPrice < minPrice)
-			{
-				throw new ArgumentException("Maximum price cannot be less than minimum price.", nameof(maxPrice));
-			}
-
-			var allProducts = productRepository.GetAll();
-			return allProducts.Where(p => p.Price >= minPrice && p.Price <= maxPrice).ToList();
-		}
-
-		public ICollection<Product> GetProductsByManufacturer(string manufacturer)
-		{
-			if (string.IsNullOrWhiteSpace(manufacturer))
-			{
-				throw new ArgumentException("Manufacturer is required.", nameof(manufacturer));
-			}
-
-			var allProducts = productRepository.GetAll();
-			return allProducts.Where(p =>
-				p.Manufacturer?.Equals(manufacturer, StringComparison.OrdinalIgnoreCase) ?? false
-			).ToList();
 		}
 	}
 }

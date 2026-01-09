@@ -13,7 +13,7 @@ namespace HighTech.Infrastructure.Repositories
 			context = _context;
 		}
 
-		public Category Create(string name)
+		public Category Create(string? name)
 		{
 			var category = new Category()
 			{
@@ -26,7 +26,7 @@ namespace HighTech.Infrastructure.Repositories
 			return category;
 		}
 
-		public Category? Edit(string id, string name)
+		public Category? Edit(string? id, string? name)
 		{
 			var category = context.Categories.FirstOrDefault(c => c.Id == id);
 
@@ -42,7 +42,7 @@ namespace HighTech.Infrastructure.Repositories
 			return category;
 		}
 
-		public Category? Get(string id)
+		public Category? Get(string? id)
 		{
 			return context.Categories
 				.Include(c => c.CategoryFields!)
@@ -50,7 +50,7 @@ namespace HighTech.Infrastructure.Repositories
 				.FirstOrDefault(c => c.Id == id);
 		}
 
-		public Category? GetByName(string name)
+		public Category? GetByName(string? name)
 		{
 			return context.Categories
 				.Include(c => c.CategoryFields!)
@@ -66,7 +66,7 @@ namespace HighTech.Infrastructure.Repositories
 				.ToList();
 		}
 
-		public string? GetCategoryByProduct(string productId)
+		public string? GetCategoryByProduct(string? productId)
 		{
 			return context.Products
 				.Where(p => p.Id == productId)
@@ -74,7 +74,7 @@ namespace HighTech.Infrastructure.Repositories
 				.FirstOrDefault();
 		}
 
-		public bool Remove(string id)
+		public bool Remove(string? id)
 		{
 			var category = context.Categories.FirstOrDefault(c => c.Id == id);
 
@@ -87,8 +87,7 @@ namespace HighTech.Infrastructure.Repositories
 			return context.SaveChanges() != 0;
 		}
 
-		// CategoryField operations
-		public ICollection<CategoryField> GetCategoryFields(string categoryId)
+		public ICollection<CategoryField> GetCategoryFields(string? categoryId)
 		{
 			return context.CategoryFields
 				.Include(cf => cf.Field)
@@ -96,9 +95,8 @@ namespace HighTech.Infrastructure.Repositories
 				.ToList();
 		}
 
-		public CategoryField? AddFieldToCategory(string categoryId, string fieldId)
+		public CategoryField? AddFieldToCategory(string? categoryId, string? fieldId)
 		{
-			// Check if already exists
 			var exists = context.CategoryFields.Any(cf => cf.CategoryId == categoryId && cf.FieldId == fieldId);
 			if (exists)
 			{
@@ -121,7 +119,7 @@ namespace HighTech.Infrastructure.Repositories
 				.FirstOrDefault(cf => cf.CategoryId == categoryId && cf.FieldId == fieldId);
 		}
 
-		public bool RemoveFieldFromCategory(string categoryId, string fieldId)
+		public bool RemoveFieldFromCategory(string? categoryId, string? fieldId)
 		{
 			var categoryField = context.CategoryFields
 				.FirstOrDefault(cf => cf.CategoryId == categoryId && cf.FieldId == fieldId);

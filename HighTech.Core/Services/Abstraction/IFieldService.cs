@@ -6,13 +6,13 @@ namespace HighTech.Core.Services.Abstraction
 	{
 		// Field CRUD
 		ICollection<Field> GetFields();
-		Field? GetField(string id);
-		Field? GetFieldByName(string name);
-		Field CreateField(string name, TypeCode typeCode);
-		Field? EditField(string id, string name, TypeCode typeCode);
-		bool RemoveField(string id);
+		Field? GetField(string? id);
+		Field? GetFieldByName(string? name);
+		Field CreateField(string? name, TypeCode typeCode);
+		Field EditField(string? id, string? name, TypeCode typeCode);
+		bool RemoveField(string? id);
 
 		// Get fields by category (useful for UI)
-		ICollection<Field> GetFieldsByCategory(string categoryId);
+		ICollection<Field> GetFieldsByCategory(string? categoryId);
 	}
 }

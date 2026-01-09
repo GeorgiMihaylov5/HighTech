@@ -15,37 +15,37 @@ namespace HighTech.Core.Services
 			fieldRepository = _fieldRepository;
 		}
 
-		// Category CRUD
-		public Category Create(string name)
+		public Category Create(string? name)
 		{
-			// Business validation: check if category with same name already exists
 			var existing = categoryRepository.GetByName(name);
 			if (existing != null)
 			{
+				//TODO add custom exception
 				throw new InvalidOperationException($"Category with name '{name}' already exists.");
 			}
 
 			return categoryRepository.Create(name);
 		}
 
-		public Category? Edit(string id, string name)
+		public Category Edit(string? id, string? name)
 		{
-			// Business validation: check if another category with same name exists
 			var existing = categoryRepository.GetByName(name);
 			if (existing != null && existing.Id != id)
 			{
+				//TODO add custom exception
 				throw new InvalidOperationException($"Category with name '{name}' already exists.");
 			}
 
-			return categoryRepository.Edit(id, name);
+			return categoryRepository.Edit(id, name)
+				?? throw new NullReferenceException();
 		}
 
-		public Category? Get(string id)
+		public Category? Get(string? id)
 		{
 			return categoryRepository.Get(id);
 		}
 
-		public Category? GetByName(string name)
+		public Category? GetByName(string? name)
 		{
 			return categoryRepository.GetByName(name);
 		}
@@ -55,73 +55,28 @@ namespace HighTech.Core.Services
 			return categoryRepository.GetAll();
 		}
 
-		public string? GetCategoryByProduct(string productId)
+		public bool Remove(string? id)
 		{
-			return categoryRepository.GetCategoryByProduct(productId);
-		}
-
-		public bool Remove(string id)
-		{
-			if (string.IsNullOrWhiteSpace(id))
-			{
-				throw new ArgumentException("Category ID is required.", nameof(id));
-			}
-
-			// Business rule: Check if there are products using this category
-			var categoryProducts = categoryRepository.GetCategoryByProduct(id);
-
-			// Alternative check - get all products in this category
-			var category = categoryRepository.Get(id);
-			if (category == null)
-			{
-				return false;
-			}
-
-			// Check if category has products (business validation)
-			// Note: This requires a method to check product count by category
-			// For now, we'll allow deletion and let FK constraints handle it
-			// In production, you'd want to add a method like: productRepository.CountByCategory(id)
-
 			return categoryRepository.Remove(id);
 		}
 
-		// CategoryField management
-		public ICollection<CategoryField> GetCategoryFields(string categoryId)
+		public ICollection<CategoryField> GetCategoryFields(string? categoryId)
 		{
 			return categoryRepository.GetCategoryFields(categoryId);
 		}
 
-		public ICollection<Field> GetAvailableFieldsForCategory(string categoryId)
+		public CategoryField? AddFieldToCategory(string? categoryId, string? fieldId)
 		{
-			// Get all fields that are NOT already assigned to this category
-			var allFields = fieldRepository.GetFields();
-			var assignedFieldIds = categoryRepository.GetCategoryFields(categoryId)
-				.Select(cf => cf.FieldId)
-				.ToHashSet();
-
-			return allFields.Where(f => !assignedFieldIds.Contains(f.Id!)).ToList();
-		}
-
-		public CategoryField? AddFieldToCategory(string categoryId, string fieldId)
-		{
-			// Business validation: verify category exists
 			var category = categoryRepository.Get(categoryId);
-			if (category == null)
-			{
-				throw new InvalidOperationException($"Category with ID '{categoryId}' does not exist.");
-			}
+			Guard.NotNull(category, nameof(category));
 
-			// Business validation: verify field exists
 			var field = fieldRepository.GetField(fieldId);
-			if (field == null)
-			{
-				throw new InvalidOperationException($"Field with ID '{fieldId}' does not exist.");
-			}
+            Guard.NotNull(field, nameof(field));
 
-			return categoryRepository.AddFieldToCategory(categoryId, fieldId);
+            return categoryRepository.AddFieldToCategory(categoryId, fieldId);
 		}
 
-		public bool RemoveFieldFromCategory(string categoryId, string fieldId)
+		public bool RemoveFieldFromCategory(string? categoryId, string? fieldId)
 		{
 			if (string.IsNullOrWhiteSpace(categoryId))
 			{
@@ -134,47 +89,6 @@ namespace HighTech.Core.Services
 			}
 
 			return categoryRepository.RemoveFieldFromCategory(categoryId, fieldId);
-		}
-
-		public bool AddMultipleFieldsToCategory(string categoryId, IEnumerable<string> fieldIds)
-		{
-			if (string.IsNullOrWhiteSpace(categoryId))
-			{
-				throw new ArgumentException("Category ID is required.", nameof(categoryId));
-			}
-
-			if (fieldIds == null || !fieldIds.Any())
-			{
-				throw new ArgumentException("At least one field ID is required.", nameof(fieldIds));
-			}
-
-			// Verify category exists
-			var category = categoryRepository.Get(categoryId);
-			if (category == null)
-			{
-				throw new InvalidOperationException($"Category with ID '{categoryId}' does not exist.");
-			}
-
-			// Add each field
-			var successCount = 0;
-			foreach (var fieldId in fieldIds)
-			{
-				try
-				{
-					var result = AddFieldToCategory(categoryId, fieldId);
-					if (result != null)
-					{
-						successCount++;
-					}
-				}
-				catch (InvalidOperationException)
-				{
-					// Field doesn't exist or already assigned, continue
-					continue;
-				}
-			}
-
-			return successCount > 0;
 		}
 	}
 }

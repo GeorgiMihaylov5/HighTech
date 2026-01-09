@@ -1,6 +1,7 @@
 ﻿using HighTech.Core.Entities;
 using HighTech.Core.Services.Abstraction;
 using HighTech.DTOs;
+using HighTech.Mappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -31,19 +32,10 @@ namespace HighTech.Controllers
 		[Authorize(Roles = "Employee,Administrator")]
 		public IActionResult GetAll()
 		{
-			var clients = service.GetClients().Select(client => new ClientDTO()
-			{
-				Id = client.Id,
-				UserId = client.UserId,
-				Username = client.User.UserName,
-				Email = client.User.Email,
-				FirstName = client.User.FirstName,
-				LastName = client.User.LastName,
-				Address = client.Address,
-				PhoneNumber = client.User.PhoneNumber
-			});
+			var clients = service.GetClients();
+			var dtos = ClientMapper.ToDTOList(clients);
 
-			return Json(clients);
+			return Json(dtos);
 		}
 
 		[Authorize]
@@ -75,24 +67,18 @@ namespace HighTech.Controllers
 				return Json(null);
 			}
 
-			return Json(new ClientDTO()
-			{
-				Id = client.Id,
-				UserId = client.UserId,
-				Username = client.User.UserName,
-				Email = client.User.Email,
-				FirstName = client.User.FirstName,
-				LastName = client.User.LastName,
-				Address = client.Address,
-				PhoneNumber = client.User.PhoneNumber
-			});
+			return Json(ClientMapper.ToDTO(client));
 		}
 
 		[HttpPost]
 		public async Task<ActionResult<ClientDTO>> Login(LoginDTO loginModel)
 		{
+			if (loginModel is null || loginModel.Username is null)
+			{
+				return BadRequest("Employee cannot be null!");
+			}
 			var user = await userManager.FindByNameAsync(loginModel.Username);
-			if (user is null)
+			if (user is null || loginModel.Password is null)
 			{
 				return Unauthorized("Invalid username or password!");
 			}
@@ -115,8 +101,11 @@ namespace HighTech.Controllers
 			{
 				return BadRequest($"An existing account is using {registerModel.Email}. Please try with another email!");
 			}
-			;
 
+			if (registerModel.Password == null || registerModel.ConfirmPassword == null)
+			{
+				return BadRequest("Password cannot be null");
+			}
 			if (registerModel.Password != registerModel.ConfirmPassword)
 			{
 				return BadRequest("Paswords don't match!");
@@ -154,16 +143,25 @@ namespace HighTech.Controllers
 		[HttpPost]
 		public async Task<IActionResult> ChangePassword(ChangePasswordDTO dto)
 		{
+			if (dto is null || dto.Username is null)
+			{
+				return BadRequest("Employee cannot be null!");
+			}
 			var user = await userManager.FindByNameAsync(dto.Username);
 			if (user == null)
 			{
 				return NotFound($"Unable to load user with username '{dto.Username}'.");
 			}
 
+			if (dto.NewPassword == null || dto.OldPassword == null)
+			{
+				return BadRequest("Password cannot be null");
+			}
 			if (dto.NewPassword == dto.OldPassword)
 			{
 				return BadRequest("Passwords doesn't match");
 			}
+
 
 			var changePasswordResult = await userManager
 				.ChangePasswordAsync(user, dto.OldPassword, dto.NewPassword);
@@ -176,9 +174,9 @@ namespace HighTech.Controllers
 			return Ok();
 		}
 
-		private AuthUser CreateAuthUserDTO(AppUser user, IList<string> roles)
+		private AuthUserDTO CreateAuthUserDTO(AppUser user, IList<string> roles)
 		{
-			return new AuthUser
+			return new AuthUserDTO
 			{
 				Given_name = user.FirstName,
 				Family_name = user.LastName,

@@ -1,10 +1,8 @@
-﻿using HighTech.Core.Entities;
-using HighTech.Core.Services;
 using HighTech.Core.Services.Abstraction;
 using HighTech.DTOs;
+using HighTech.Mappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 
 namespace HighTech.Controllers
 {
@@ -13,12 +11,10 @@ namespace HighTech.Controllers
 	public class ProductsController : Controller
 	{
 		private readonly IProductService productService;
-		private readonly ICategoryService categoryService;
 
-		public ProductsController(IProductService _productService, ICategoryService _categoryService)
+		public ProductsController(IProductService _productService)
 		{
 			productService = _productService;
-			categoryService = _categoryService;
 		}
 
 		public IActionResult GetMostSellers()
@@ -26,15 +22,7 @@ namespace HighTech.Controllers
 			try
 			{
 				var products = productService.GetMostSellers();
-
-				if (products.Count == 0)
-				{
-					return Json(Array.Empty<ProductDTO>());
-				}
-
-				var dtos = products.Select(p => ConvertToProductDTO(p)).ToList();
-
-				return Json(dtos);
+				return Json(ProductMapper.ToDTOList(products));
 			}
 			catch (Exception ex)
 			{
@@ -59,7 +47,7 @@ namespace HighTech.Controllers
 					return NotFound($"Product with ID '{id}' not found.");
 				}
 
-				return Json(ConvertToProductDTO(product));
+				return Json(ProductMapper.ToDTO(product));
 			}
 			catch (Exception ex)
 			{
@@ -72,15 +60,7 @@ namespace HighTech.Controllers
 			try
 			{
 				var products = productService.GetAll();
-
-				if (products.Count == 0)
-				{
-					return Json(Array.Empty<ProductDTO>());
-				}
-
-				var dtos = products.Select(p => ConvertToProductDTO(p)).ToList();
-
-				return Json(dtos);
+				return Json(ProductMapper.ToDTOList(products));
 			}
 			catch (Exception ex)
 			{
@@ -94,15 +74,7 @@ namespace HighTech.Controllers
 			try
 			{
 				var products = productService.GetByCategory(categoryId);
-
-				if (products.Count == 0)
-				{
-					return Json(Array.Empty<ProductDTO>());
-				}
-
-				var dtos = products.Select(p => ConvertToProductDTO(p)).ToList();
-
-				return Json(dtos);
+				return Json(ProductMapper.ToDTOList(products));
 			}
 			catch (Exception ex)
 			{
@@ -126,15 +98,17 @@ namespace HighTech.Controllers
 
 			try
 			{
+				//TODO i dont think be best option is to set a 0 when it is null. Better return a message
+				//Use Result pattern for return it will be the best
 				var product = productService.Create(
-					dto.Manufacturer, 
-					dto.Model, 
-					dto.Warranty,
-					dto.Price, 
-					dto.Discount, 
-					dto.Quantity, 
-					dto.Image,
-					dto.CategoryId);
+					dto?.Manufacturer,
+					dto?.Model,
+					dto?.Warranty ?? 0,
+					dto?.Price ?? 0,
+					dto?.Discount ?? 0,
+					dto?.Quantity ?? 0,
+					dto?.Image,
+					dto?.CategoryId);
 
 				if (product is null || product.Id is null)
 				{
@@ -142,16 +116,16 @@ namespace HighTech.Controllers
 				}
 
 				// Set product field values if provided
-				if (dto.Fields is not null && dto.Fields.Count > 0)
+				if (dto?.Fields is not null && dto.Fields.Count > 0)
 				{
 					var fieldValues = dto.Fields.ToDictionary(
-						f => f.Id, 
-						f => f.Value ?? string.Empty);
+						f => f.Id!,
+						f => f.Value);
 
 					productService.SetProductFieldValues(product.Id, fieldValues);
 				}
 
-				dto.Id = product.Id;
+				dto?.Id = product.Id;
 				return Json(dto);
 			}
 			catch (Exception ex)
@@ -177,13 +151,13 @@ namespace HighTech.Controllers
 			try
 			{
 				var product = productService.Edit(
-					dto.Id, 
-					dto.Manufacturer, 
-					dto.Model, 
+					dto.Id,
+					dto.Manufacturer,
+					dto.Model,
 					dto.Warranty,
-					dto.Price, 
-					dto.Discount, 
-					dto.Quantity, 
+					dto.Price,
+					dto.Discount,
+					dto.Quantity,
 					dto.Image,
 					dto.CategoryId);
 
@@ -196,8 +170,8 @@ namespace HighTech.Controllers
 				if (dto.Fields is not null && dto.Fields.Count > 0)
 				{
 					var fieldValues = dto.Fields.ToDictionary(
-						f => f.Id, 
-						f => f.Value ?? string.Empty);
+						f => f.Id!,
+						f => f.Value);
 
 					productService.SetProductFieldValues(product.Id!, fieldValues);
 				}
@@ -248,7 +222,7 @@ namespace HighTech.Controllers
 					return NotFound($"Product with ID '{dto.Id}' not found.");
 				}
 
-				return Json(ConvertToProductDTO(product));
+				return Json(ProductMapper.ToDTO(product));
 			}
 			catch (Exception ex)
 			{
@@ -274,7 +248,7 @@ namespace HighTech.Controllers
 					return NotFound($"Product with ID '{dto.Id}' not found.");
 				}
 
-				return Json(ConvertToProductDTO(product));
+				return Json(ProductMapper.ToDTO(product));
 			}
 			catch (Exception ex)
 			{
@@ -282,39 +256,6 @@ namespace HighTech.Controllers
 			}
 		}
 
-		private ProductDTO ConvertToProductDTO(Product p)
-		{
-			var dto = new ProductDTO()
-			{
-				Id = p.Id,
-				Manufacturer = p.Manufacturer,
-				Model = p.Model,
-				Price = p.Price,
-				Warranty = p.Warranty,
-				Discount = p.Discount,
-				Image = p.Image,
-				Quantity = p.Quantity,
-				CategoryId = p.CategoryID,
-				CategoryName = p.Category?.Name,
-				Fields = new List<FieldDTO>()
-			};
 
-			// Add product field values
-			if (p.ProductFieldValues is not null && p.ProductFieldValues.Count > 0)
-			{
-				foreach (var pf in p.ProductFieldValues)
-				{
-					dto.Fields.Add(new FieldDTO()
-					{
-						Id = pf.Field!.Id,
-						Name = pf.Field.Name,
-						TypeCode = pf.Field.TypeCode,
-						Value = pf.Value
-					});
-				}
-			}
-
-			return dto;
-		}
 	}
 }

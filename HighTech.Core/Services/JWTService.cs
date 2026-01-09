@@ -13,7 +13,7 @@ namespace HighTech.Core.Services
 	{
 		private readonly SymmetricSecurityKey jwtKey;
 		private readonly int expiresDays;
-		private readonly string issuer;
+		private readonly string? issuer;
 
 		public JWTService(IOptions<JWTServiceOption> options)
 		{

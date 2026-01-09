@@ -1,9 +1,8 @@
-﻿using HighTech.Core.Entities;
-using HighTech.Core.Services.Abstraction;
+﻿using HighTech.Core.Services.Abstraction;
 using HighTech.DTOs;
+using HighTech.Mappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 
 namespace HighTech.Controllers
 {
@@ -113,19 +112,7 @@ namespace HighTech.Controllers
 			try
 			{
 				var categories = categoryService.GetAll();
-
-				var dtos = categories.Select(c => new CategoryDTO()
-				{
-					Id = c.Id,
-					Name = c.Name,
-					Fields = c.CategoryFields?.Select(cf => new FieldDTO()
-					{
-						Id = cf.Field!.Id,
-						Name = cf.Field.Name,
-						TypeCode = cf.Field.TypeCode,
-						Value = null
-					}).ToList() ?? new List<FieldDTO>()
-				}).ToList();
+				var dtos = CategoryMapper.ToDTOList(categories);
 
 				return Json(dtos);
 			}
@@ -152,18 +139,7 @@ namespace HighTech.Controllers
 					return NotFound($"Category with ID '{id}' not found.");
 				}
 
-				var dto = new CategoryDTO()
-				{
-					Id = category.Id,
-					Name = category.Name,
-					Fields = category.CategoryFields?.Select(cf => new FieldDTO()
-					{
-						Id = cf.Field!.Id,
-						Name = cf.Field.Name,
-						TypeCode = cf.Field.TypeCode,
-						Value = null
-					}).ToList() ?? new List<FieldDTO>()
-				};
+				var dto = CategoryMapper.ToDTO(category);
 
 				return Json(dto);
 			}

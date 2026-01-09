@@ -13,7 +13,7 @@ namespace HighTech.Infrastructure.Repositories
 			context = _context;
 		}
 
-		public Client CreateClient(string address, string userId)
+		public Client CreateClient(string? address, string? userId)
 		{
 			if (context.Clients.Any(x => x.UserId == userId))
 			{
@@ -39,12 +39,12 @@ namespace HighTech.Infrastructure.Repositories
 			return client;
 		}
 
-		public Client? GetClient(string id)
+		public Client? GetClient(string? id)
 		{
 			return context.Clients.FirstOrDefault(x => x.UserId == id);
 		}
 
-		public Client? GetClientByUsername(string username)
+		public Client? GetClientByUsername(string? username)
 		{
 			var user = context.Users.FirstOrDefault(x => x.UserName == username);
 			if (user == null) return null;
@@ -56,7 +56,7 @@ namespace HighTech.Infrastructure.Repositories
 			return context.Clients.ToList();
 		}
 
-		public bool Update(string id, string firstName, string lastName, string phone, string address)
+		public bool Update(string? id, string? firstName, string? lastName, string? phone, string? address)
 		{
 			var client = context.Clients.Find(id);
 

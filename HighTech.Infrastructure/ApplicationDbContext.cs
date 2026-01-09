@@ -22,6 +22,8 @@ namespace HighTech.Infrastructure
 		public DbSet<Category> Categories { get; set; }
 		public DbSet<CategoryField> CategoryFields { get; set; }
 		public DbSet<ProductFieldValue> ProductFieldValues { get; set; }
+		public DbSet<FavoriteProduct> FavoriteProducts { get; set; }
+		public DbSet<Review> Reviews { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
@@ -36,6 +38,8 @@ namespace HighTech.Infrastructure
 			builder.ApplyConfiguration(new ProductConfiguration());
 			builder.ApplyConfiguration(new CategoryFieldConfiguration());
 			builder.ApplyConfiguration(new ProductFieldValueConfiguration());
+			builder.ApplyConfiguration(new FavoriteProductConfiguration());
+			builder.ApplyConfiguration(new ReviewConfiguration());
 		}
 	}
 }

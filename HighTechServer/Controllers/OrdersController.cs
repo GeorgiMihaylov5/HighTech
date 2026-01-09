@@ -1,6 +1,7 @@
 ﻿using HighTech.Core.Entities.Enum;
 using HighTech.Core.Services.Abstraction;
 using HighTech.DTOs;
+using HighTech.Mappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,38 +23,8 @@ namespace HighTech.Controllers
 		public IActionResult GetOrders()
 		{
 			var orders = orderService.GetOrders()
-				.Select(x => new OrderDTO
-				{
-					Id = x.Id,
-					OrderedOn = x.OrderedOn.Ticks.ToString(),
-					Status = x.Status,
-					Notes = x.Notes,
-					OrderedProducts = x.OrderedProducts.Select(op => new OrderedProductDTO()
-					{
-						Id = op.Id,
-						Count = op.Count,
-						OrderedPrice = op.OrderedPrice,
-						ProductId = op.ProductId,
-						Product = new ProductDTO()
-						{
-							Id = op.ProductId,
-							Manufacturer = op.Product.Manufacturer,
-							Model = op.Product.Model,
-							Warranty = op.Product.Warranty,
-							Image = op.Product.Image,
-						}
-					}).ToList(),
-					User = new UserDTO()
-					{
-						UserId = x.CustomerId,
-						FirstName = x.Customer.FirstName,
-						LastName = x.Customer.LastName,
-						Email = x.Customer.Email,
-						Username = x.Customer.UserName,
-						PhoneNumber = x.Customer.PhoneNumber,
-					}
-
-				}).OrderByDescending(x => x.Status == OrderStatus.Pending)
+				.Select(OrderMapper.ToDTO)
+				.OrderByDescending(x => x.Status == OrderStatus.Pending)
 				.ThenByDescending(x => x.Status == OrderStatus.Approved)
 				.ThenByDescending(x => x.Status == OrderStatus.Completed).ToList();
 
@@ -69,38 +40,8 @@ namespace HighTech.Controllers
 			}
 
 			var orders = orderService.GetMyOrders(username)
-				.Select(x => new OrderDTO
-				{
-					Id = x.Id,
-					OrderedOn = x.OrderedOn.Ticks.ToString(),
-					Status = x.Status,
-					Notes = x.Notes,
-					OrderedProducts = x.OrderedProducts.Select(op => new OrderedProductDTO()
-					{
-						Id = op.Id,
-						Count = op.Count,
-						OrderedPrice = op.OrderedPrice,
-						ProductId = op.ProductId,
-						Product = new ProductDTO()
-						{
-							Id = op.ProductId,
-							Manufacturer = op.Product.Manufacturer,
-							Model = op.Product.Model,
-							Warranty = op.Product.Warranty,
-							Image = op.Product.Image,
-						}
-					}).ToList(),
-					User = new UserDTO()
-					{
-						UserId = x.CustomerId,
-						FirstName = x.Customer.FirstName,
-						LastName = x.Customer.LastName,
-						Email = x.Customer.Email,
-						Username = x.Customer.UserName,
-						PhoneNumber = x.Customer.PhoneNumber,
-					}
-
-				}).OrderByDescending(x => x.Status == OrderStatus.Pending)
+				.Select(OrderMapper.ToDTO)
+				.OrderByDescending(x => x.Status == OrderStatus.Pending)
 				.ThenByDescending(x => x.Status == OrderStatus.Approved)
 				.ThenByDescending(x => x.Status == OrderStatus.Completed).ToList();
 
@@ -115,7 +56,8 @@ namespace HighTech.Controllers
 			{
 				var order = orderService.CreateOrder(DateTime.UtcNow, dto.Username);
 
-				foreach (var orderedProductDto in dto.OrderedProducts)
+				//TODO use if or guard
+				foreach (var orderedProductDto in dto?.OrderedProducts!)
 				{
 					orderService.CreateOrderedProduct(orderedProductDto.ProductId, order.Id, orderedProductDto.OrderedPrice, orderedProductDto.Count);
 				}

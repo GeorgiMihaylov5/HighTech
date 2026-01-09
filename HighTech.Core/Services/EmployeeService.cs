@@ -13,17 +13,17 @@ namespace HighTech.Core.Services
 			employeeRepository = _employeeRepository;
 		}
 
-		public Employee CreateEmployee(string jobTitle, string userId)
+		public Employee CreateEmployee(string? jobTitle, string? userId)
 		{
 			return employeeRepository.CreateEmployee(jobTitle, userId);
 		}
 
-		public Employee GetEmployee(string employeeId)
+		public Employee? GetEmployee(string? employeeId)
 		{
 			return employeeRepository.GetEmployee(employeeId);
 		}
 
-		public Employee GetEmployeeByUsername(string username)
+		public Employee? GetEmployeeByUsername(string? username)
 		{
 			return employeeRepository.GetEmployeeByUsername(username);
 		}
@@ -33,7 +33,7 @@ namespace HighTech.Core.Services
 			return employeeRepository.GetEmployees();
 		}
 
-		public bool Update(string id, string firstName, string lastName, string phone)
+		public bool Update(string? id, string? firstName, string? lastName, string? phone)
 		{
 			return employeeRepository.Update(id, firstName, lastName, phone);
 		}

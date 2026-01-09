@@ -13,12 +13,12 @@ namespace HighTech.Infrastructure
 	{
 		public static IServiceCollection AddInfrastructure(this IServiceCollection services, string? connectionString)
 		{
-			if(string.IsNullOrEmpty(connectionString))
+			if (string.IsNullOrEmpty(connectionString))
 			{
 				throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-            }
+			}
 
-            services.AddDbContext<ApplicationDbContext>(options =>
+			services.AddDbContext<ApplicationDbContext>(options =>
 				options.UseSqlServer(connectionString));
 
 			services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = false)
@@ -26,12 +26,14 @@ namespace HighTech.Infrastructure
 				.AddEntityFrameworkStores<ApplicationDbContext>()
 				.AddDefaultTokenProviders();
 
-            services.AddTransient<ICategoryRepository, CategoryRepository>();
+			services.AddTransient<ICategoryRepository, CategoryRepository>();
 			services.AddTransient<IClientRepository, ClientRepository>();
 			services.AddTransient<IEmployeeRepository, EmployeeRepository>();
 			services.AddTransient<IFieldRepository, FieldRepository>();
 			services.AddTransient<IOrderRepository, OrderRepository>();
 			services.AddTransient<IProductRepository, ProductRepository>();
+			services.AddTransient<IFavoriteRepository, FavoriteRepository>();
+			services.AddTransient<IReviewRepository, ReviewRepository>();
 
 			return services;
 		}
@@ -43,7 +45,6 @@ namespace HighTech.Infrastructure
 
 			await RoleSeeder(services);
 			await SeedAdministrator(services);
-
 
 			return app;
 		}
@@ -67,7 +68,6 @@ namespace HighTech.Infrastructure
 			}
 		}
 
-
 		private static async Task SeedAdministrator(IServiceProvider serviceProvider)
 		{
 			var userManager = serviceProvider.GetRequiredService<UserManager<AppUser>>();
@@ -88,9 +88,7 @@ namespace HighTech.Infrastructure
 					LastName = "Admin"
 				};
 
-
-				var result = await userManager.CreateAsync
-				(user, "123!@#qweQWE");
+				var result = await userManager.CreateAsync(user, "123!@#qweQWE");
 
 				if (result.Succeeded)
 				{

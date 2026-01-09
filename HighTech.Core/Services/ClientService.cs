@@ -13,17 +13,17 @@ namespace HighTech.Core.Services
 			clientRepository = _clientRepository;
 		}
 
-		public Client CreateClient(string address, string userId)
+		public Client CreateClient(string? address, string? userId)
 		{
 			return clientRepository.CreateClient(address, userId);
 		}
 
-		public Client GetClient(string id)
+		public Client? GetClient(string? id)
 		{
 			return clientRepository.GetClient(id);
 		}
 
-		public Client GetClientByUsername(string username)
+		public Client? GetClientByUsername(string? username)
 		{
 			return clientRepository.GetClientByUsername(username);
 		}
@@ -33,7 +33,7 @@ namespace HighTech.Core.Services
 			return clientRepository.GetClients();
 		}
 
-		public bool Update(string id, string firstName, string lastName, string phone, string address)
+		public bool Update(string? id, string? firstName, string? lastName, string? phone, string? address)
 		{
 			return clientRepository.Update(id, firstName, lastName, phone, address);
 		}

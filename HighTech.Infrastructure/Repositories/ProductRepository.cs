@@ -1,6 +1,7 @@
 using HighTech.Core.Entities;
 using HighTech.Core.Repositories;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace HighTech.Infrastructure.Repositories
 {
@@ -13,7 +14,7 @@ namespace HighTech.Infrastructure.Repositories
 			context = _context;
 		}
 
-		public Product? Get(string id)
+		public Product? Get(string? id)
 		{
 			return context.Products.Where(x => x.IsRemoved != true)
 				.Include(p => p.Category)
@@ -32,7 +33,18 @@ namespace HighTech.Infrastructure.Repositories
 				.ToList();
 		}
 
-		public ICollection<Product> GetByCategory(string categoryId)
+		public ICollection<Product> GetWhere(Expression<Func<Product, bool>> predicate)
+		{
+			return context.Products
+				.Where(x => x.IsRemoved != true)
+				.Where(predicate)
+				.Include(p => p.Category)
+				.Include(p => p.ProductFieldValues!)
+					.ThenInclude(pf => pf.Field)
+				.ToList();
+		}
+
+		public ICollection<Product> GetByCategory(string? categoryId)
 		{
 			return context.Products
 				.Where(x => x.IsRemoved != true && x.CategoryID == categoryId)
@@ -42,7 +54,7 @@ namespace HighTech.Infrastructure.Repositories
 				.ToList();
 		}
 
-		public ICollection<Product> GetMostSellers()
+		public ICollection<Product> GetMostSellers(int top)
 		{
 			return context.OrderedProducts
 				.GroupBy(x => x.ProductId)
@@ -60,11 +72,11 @@ namespace HighTech.Infrastructure.Repositories
 					orderedProduct => orderedProduct.ProductId,
 					product => product.Id,
 					(orderedProduct, product) => product)
-				.Take(6)
+				.Take(top)
 				.ToList();
 		}
 
-		public Product Create(string manufacturer, string model, int warranty, decimal price, decimal discount, int quantity, string image, string categoryId)
+		public Product Create(string? manufacturer, string? model, int warranty, decimal price, decimal discount, int quantity, string? image, string? categoryId)
 		{
 			var product = new Product()
 			{
@@ -85,7 +97,7 @@ namespace HighTech.Infrastructure.Repositories
 			return product;
 		}
 
-		public Product? Edit(string id, string manufacturer, string model, int warranty, decimal price, decimal discount, int quantity, string image, string categoryId)
+		public Product? Edit(string? id, string? manufacturer, string? model, int warranty, decimal price, decimal discount, int quantity, string? image, string? categoryId)
 		{
 			var product = Get(id);
 
@@ -109,7 +121,7 @@ namespace HighTech.Infrastructure.Repositories
 			return product;
 		}
 
-		public bool Remove(string id)
+		public bool Remove(string? id)
 		{
 			var product = Get(id);
 
@@ -124,7 +136,7 @@ namespace HighTech.Infrastructure.Repositories
 			return context.SaveChanges() != 0;
 		}
 
-		public Product? IncreaseDiscount(string id, int percentage)
+		public Product? IncreaseDiscount(string? id, int percentage)
 		{
 			var product = Get(id);
 
@@ -152,7 +164,7 @@ namespace HighTech.Infrastructure.Repositories
 			return product;
 		}
 
-		public Product? RemoveDiscount(string id)
+		public Product? RemoveDiscount(string? id)
 		{
 			var product = Get(id);
 
