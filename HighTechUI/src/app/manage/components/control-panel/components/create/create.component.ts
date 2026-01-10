@@ -267,6 +267,7 @@ export class CreateComponent implements OnInit, OnDestroy {
 						this.toastr.success('Category was created!');
 
 						this.categories.push(data as Category);
+						this.groupedCategories.push(data as Category);
 
 						this.category = {
 							id: null,

@@ -1,43 +1,63 @@
 <style>
- 
+
 </style>
 
 <div>
-  <div style="position: relative">
-    <img src="../../assets/images/computers.jpg" class="img-fluid rounded"/>
-    <div class="text-block col-3">
-        <h5 class="some-paragraph" style="color: white; margin-bottom: 15px">See our promotions:</h5>
-        <a asp-controller="Products" asp-action="AllDiscounts" class="some-paragraph btn btn-outline-light">Promotions</a>
-    </div>
-</div>
-<div class="text-center mt-5 content">
-    <h3>See Our Products</h3>
+	<div style="position: relative">
+		<img src="../../assets/images/computers.jpg"
+			 class="img-fluid rounded" />
+		<div class="text-block col-3">
+			<h5 class="some-paragraph"
+				style="color: white; margin-bottom: 15px">See our promotions:</h5>
+			<a asp-controller="Products"
+			   asp-action="AllDiscounts"
+			   class="some-paragraph btn btn-outline-light">Promotions</a>
+		</div>
+	</div>
+	<div class="text-center mt-5 content">
+		<h3>See Our Products</h3>
 
-    <div class="col-3 d-inline-block">
-        <a asp-controller="Computers" asp-action="All" class="text-decoration-none">
-            <img src="../../assets/images/computerProduct.webp" width="200" height="200" class="img-fluid" />
-            <p class="font-weight-bolder text-dark" >Computers</p>
-        </a>
-    </div>
-    <div class="col-3 d-inline-block">
-        <a asp-controller="Components" asp-action="All" class="text-decoration-none">
-            <img src="../../assets/images/processorProduct.webp" width="200" height="200" class="img-fluid" />
-            <p class="font-weight-bolder text-dark">Components</p>
-        </a>
-    </div>
-    <div class="col-3 d-inline-block">
-        <a asp-controller="Peripheries" asp-action="All" class="text-decoration-none">
-            <img src="../../assets/images/keyboardProduct.png" width="200" height="200" class="img-fluid" />
-            <p class="font-weight-bolder text-dark">Periphery</p>
-        </a>
-    </div>
-</div>
+		<div class="col-3 d-inline-block">
+			<a asp-controller="Computers"
+			   asp-action="All"
+			   class="text-decoration-none">
+				<img src="../../assets/images/computerProduct.webp"
+					 width="200"
+					 height="200"
+					 class="img-fluid" />
+				<p class="font-weight-bolder text-dark">Computers</p>
+			</a>
+		</div>
+		<div class="col-3 d-inline-block">
+			<a asp-controller="Components"
+			   asp-action="All"
+			   class="text-decoration-none">
+				<img src="../../assets/images/processorProduct.webp"
+					 width="200"
+					 height="200"
+					 class="img-fluid" />
+				<p class="font-weight-bolder text-dark">Components</p>
+			</a>
+		</div>
+		<div class="col-3 d-inline-block">
+			<a asp-controller="Peripheries"
+			   asp-action="All"
+			   class="text-decoration-none">
+				<img src="../../assets/images/keyboardProduct.png"
+					 width="200"
+					 height="200"
+					 class="img-fluid" />
+				<p class="font-weight-bolder text-dark">Periphery</p>
+			</a>
+		</div>
+	</div>
 </div>
 <div>
-    <h3 class="text-center mt-3 bg-primary p-4 text-light rounded-pill mb-4">TOP PRODUCTS</h3>
+	<h3 class="text-center mt-3 bg-primary p-4 text-light rounded-pill mb-4">TOP PRODUCTS</h3>
 
-    <!-- <div class="flex-row flex-wrap list-group col-7">
-       <div *ngFor="let product of products">
+	<!-- <div class="flex-row flex-wrap list-group col-7">
+       @for (product of products; track product.id) {
+       <div>
         <div class="w-100 h-100 list-group-item rounded text-center d-flex flex-column justify-content-between">
             <div>
                 <a class="link">
@@ -45,29 +65,39 @@
                     <h5 (click)="routeToDetail(product)" class="cursor-pointer center-title title-underline">{{ product.manufacturer }} {{ product.model }}</h5>
                 </a>
             </div>
-            <div *ngIf="product.quantity == 0">
+            @if (product.quantity == 0) {
+            <div>
                 <p class="text-danger">Not Available</p>
             </div>
+            }
             <div class="text-center" style="font-size: 14px;">
-                <div *ngFor="let field of product.fields.slice(0,3);">
+                @for (field of product.fields.slice(0,3); track field.name) {
+                <div>
                     <p style="margin-bottom: 10px"> {{ field.name + ': ' + field.value  }}</p>
                 </div>
+                }
             </div>
             <div>
               
                 <div class="d-flex flex-row justify-content-between align-items-end">
                     <div>
-                        <div *ngIf="product.discount > 0">
+                        @if (product.discount > 0) {
+                        <div>
                             <div style="height: 24px">
-                                <div *ngIf="product.discount > 0">
+                                @if (product.discount > 0) {
+                                <div>
                                     <p class="mb-0 text-left"><s>{{ product.discount + product.price }} BGN.</s></p>
                                 </div>
+                                }
                             </div>
                             <span class="font-weight-bold text-danger" style="font-size: 17px">{{ product.price }} BGN.</span>
                         </div>
-                        <div *ngIf="product.discount == 0">
+                        }
+                        @if (product.discount == 0) {
+                        <div>
                             <span class="font-weight-bold" style="font-size: 17px">{{ product.price }} BGN.</span>
                         </div>
+                        }
                     </div>
                     <div>
                         <button class="btn btn-primary" (click)="routeToDetail(product)">SEE MORE</button>
@@ -75,47 +105,62 @@
                 </div>
             </div>
         </div>
-       </div>
+       }
    </div> -->
 
 
 
 
-    <div class="b-inline-top">
-        <div class="d-flex flex-sm-row flex-wrap justify-content-between justify-content-smd-start">
-                <div class="text-center m-1 border d-flex justify-content-around p" style="flex: 0 0 32%;" *ngFor="let product of products">
-                    <div class="d-inline-block align-top">
-                        <a>
-                            <img [src]="product.image" width="120" height="120">
-                        </a>
-                    </div>
-                    <div class="d-inline-block">
-                      
-                        <div class="d-flex flex-column justify-content-between align-items-end h-100">
-                            <div class="m-auto">
-                                <p class="font-weight-bold">{{ product.manufacturer + ' ' + product.model }}</p>
-                            </div>
-                           <div>
-                            <div>
-                                <div *ngIf="product.discount > 0">
-                                    <div style="height: 24px">
-                                        <div *ngIf="product.discount > 0">
-                                            <p class="mb-0 text-left"><s>{{ product.discount + product.price }} BGN.</s></p>
-                                        </div>
-                                    </div>
-                                    <span class="font-weight-bold text-danger" style="font-size: 17px">{{ product.price }} BGN.</span>
-                                </div>
-                                <div *ngIf="product.discount == 0">
-                                    <span class="font-weight-bold" style="font-size: 17px">{{ product.price }} BGN.</span>
-                                </div>
-                            </div>
-                            <div>
-                                <button class="btn btn-primary" (click)="routeToDetail(product)">SEE MORE</button>
-                            </div>
-                           </div>
-                        </div>
-                    </div>
-                </div>
-        </div>
-    </div>
+	<div class="b-inline-top">
+		<div class="d-flex flex-sm-row flex-wrap justify-content-between justify-content-smd-start">
+			@for (product of products; track product.id) {
+			<div class="text-center m-1 border d-flex justify-content-around p"
+				 style="flex: 0 0 32%;">
+				<div class="d-inline-block align-top">
+					<a>
+						<img [src]="product.image"
+							 width="120"
+							 height="120">
+					</a>
+				</div>
+				<div class="d-inline-block">
+
+					<div class="d-flex flex-column justify-content-between align-items-end h-100">
+						<div class="m-auto">
+							<p class="font-weight-bold">{{ product.manufacturer + ' ' + product.model }}</p>
+						</div>
+						<div>
+							<div>
+								@if (product.discount > 0) {
+								<div>
+									<div style="height: 24px">
+										@if (product.discount > 0) {
+										<div>
+											<p class="mb-0 text-left"><s>{{ product.discount + product.price }} BGN.</s>
+											</p>
+										</div>
+										}
+									</div>
+									<span class="font-weight-bold text-danger"
+										  style="font-size: 17px">{{ product.price }} BGN.</span>
+								</div>
+								}
+								@if (product.discount == 0) {
+								<div>
+									<span class="font-weight-bold"
+										  style="font-size: 17px">{{ product.price }} BGN.</span>
+								</div>
+								}
+							</div>
+							<div>
+								<button class="btn btn-primary"
+										(click)="routeToDetail(product)">SEE MORE</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			}
+		</div>
+	</div>
 </div>

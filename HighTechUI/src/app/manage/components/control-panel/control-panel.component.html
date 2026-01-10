@@ -1,23 +1,45 @@
 <div>
-    <ul class="nav nav-tabs align-items-end justify-content-around">
-        <li class="nav-item" (click)="ChangeTab(0)" [routerLink]="[['/manage', { outlets: { 'manage': ['control-panel'] } }]]">
-            <a class="nav-link" [ngClass]="{'active': controlPanelTab == 0}">Orders</a>
-        </li>
-        <li class="nav-item" (click)="ChangeTab(1)" [routerLink]="[{ outlets: { 'control-panel': ['clients'] } }]">
-            <a class="nav-link" role="tab" [ngClass]="{'active': controlPanelTab == 1}">Clients</a>
-        </li>
-        <li class="nav-item" (click)="ChangeTab(2)" [routerLink]="[{ outlets: { 'control-panel': ['employees'] } }]" *ngIf="showTab">
-            <a class="nav-link"[ngClass]="{'active': controlPanelTab == 2}">Employees</a>
-        </li>
-        <li class="nav-item" (click)="ChangeTab(3)" [routerLink]="[{ outlets: { 'control-panel': ['table'] } }]" *ngIf="showTab">
-            <a class="nav-link" [ngClass]="{'active': controlPanelTab == 3}">All</a>
-        </li>
-        <li class="nav-item" (click)="ChangeTab(4)" [routerLink]="[{ outlets: { 'control-panel': ['create'] } }]" *ngIf="showTab">
-            <a class="nav-link" [ngClass]="{'active': controlPanelTab == 4}">Create</a>
-        </li>
-    </ul>
-    
-    <div class="max-width w-100 margin-left">
-        <router-outlet name="control-panel"></router-outlet>
-    </div>
+	<ul class="nav nav-tabs align-items-end justify-content-around">
+		<li class="nav-item"
+			(click)="ChangeTab(0)"
+			[routerLink]="[['/manage', { outlets: { 'manage': ['control-panel'] } }]]">
+			<a class="nav-link"
+			   [ngClass]="{'active': controlPanelTab == 0}">Orders</a>
+		</li>
+		<li class="nav-item"
+			(click)="ChangeTab(1)"
+			[routerLink]="[{ outlets: { 'control-panel': ['clients'] } }]">
+			<a class="nav-link"
+			   role="tab"
+			   [ngClass]="{'active': controlPanelTab == 1}">Clients</a>
+		</li>
+		@if (showTab) {
+		<li class="nav-item"
+			(click)="ChangeTab(2)"
+			[routerLink]="[{ outlets: { 'control-panel': ['employees'] } }]">
+			<a class="nav-link"
+			   [ngClass]="{'active': controlPanelTab == 2}">Employees</a>
+		</li>
+		}
+		@if (showTab) {
+		<li class="nav-item"
+			(click)="ChangeTab(3)"
+			[routerLink]="[{ outlets: { 'control-panel': ['table'] } }]">
+			<a class="nav-link"
+			   [ngClass]="{'active': controlPanelTab == 3}">All</a>
+		</li>
+		}
+		@if (showTab) {
+		<li class="nav-item"
+			(click)="ChangeTab(4)"
+			[routerLink]="[{ outlets: { 'control-panel': ['create'] } }]">
+			<a class="nav-link"
+			   [ngClass]="{'active': controlPanelTab == 4}">Create</a>
+		</li>
+		}
+	</ul>
+
+	<div class="max-width w-100 margin-left">
+		<router-outlet name="control-panel"></router-outlet>
+	</div>
 </div>
