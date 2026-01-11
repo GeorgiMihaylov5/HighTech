@@ -22,7 +22,7 @@ namespace HighTech.Core.Services
                 throw new InvalidOperationException($"Field with name '{name}' already exists.");
 			}
 
-			return fieldRepository.CreateField(name, typeCode);
+			return fieldRepository.Create(name, typeCode);
 		}
 
 		public Field EditField(string? id, string? name, TypeCode typeCode)
@@ -30,13 +30,13 @@ namespace HighTech.Core.Services
 			Guard.NotNullOrEmpty(id, nameof(id));
 			Guard.NotNullOrEmpty(name, nameof(name));
 
-            return fieldRepository.EditField(id, name, typeCode)
+            return fieldRepository.Edit(id, name, typeCode)
 				?? throw new NullReferenceException();
 		}
 
 		public Field? GetField(string? id)
 		{
-			return fieldRepository.GetField(id);
+			return fieldRepository.Get(id);
 		}
 
 		public Field? GetFieldByName(string? name)
@@ -46,12 +46,12 @@ namespace HighTech.Core.Services
 
 		public ICollection<Field> GetFields()
 		{
-			return fieldRepository.GetFields();
+			return fieldRepository.GetAll();
 		}
 
 		public bool RemoveField(string? id)
 		{
-			return fieldRepository.RemoveField(id);
+			return fieldRepository.SoftDelete(id);
 		}
 
 		public ICollection<Field> GetFieldsByCategory(string? categoryId)

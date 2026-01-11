@@ -45,7 +45,8 @@ namespace HighTech.Infrastructure.Repositories
 		public Category? Get(string? id)
 		{
 			return context.Categories
-				.Include(c => c.CategoryFields!)
+				.Where(c => !c.IsRemoved)
+                .Include(c => c.CategoryFields!)
 					.ThenInclude(cf => cf.Field)
 				.FirstOrDefault(c => c.Id == id);
 		}
@@ -53,7 +54,8 @@ namespace HighTech.Infrastructure.Repositories
 		public Category? GetByName(string? name)
 		{
 			return context.Categories
-				.Include(c => c.CategoryFields!)
+                .Where(c => !c.IsRemoved)
+                .Include(c => c.CategoryFields!)
 					.ThenInclude(cf => cf.Field)
 				.FirstOrDefault(c => c.Name == name);
 		}
@@ -61,29 +63,24 @@ namespace HighTech.Infrastructure.Repositories
 		public ICollection<Category> GetAll()
 		{
 			return context.Categories
-				.Include(c => c.CategoryFields!)
+                .Where(c => !c.IsRemoved)
+                .Include(c => c.CategoryFields!)
 					.ThenInclude(cf => cf.Field)
 				.ToList();
 		}
 
-		public string? GetCategoryByProduct(string? productId)
+		public bool SoftDelete(string? id)
 		{
-			return context.Products
-				.Where(p => p.Id == productId)
-				.Select(p => p.Category!.Name)
-				.FirstOrDefault();
-		}
+            var category = Get(id);
 
-		public bool Remove(string? id)
-		{
-			var category = context.Categories.FirstOrDefault(c => c.Id == id);
+            if (category is null)
+            {
+                return false;
+            }
 
-			if (category is null)
-			{
-				return false;
-			}
+            category.IsRemoved = true;
+            context.Categories.Update(category);
 
-			context.Remove(category);
 			return context.SaveChanges() != 0;
 		}
 
@@ -92,6 +89,7 @@ namespace HighTech.Infrastructure.Repositories
 			return context.CategoryFields
 				.Include(cf => cf.Field)
 				.Where(cf => cf.CategoryId == categoryId)
+				.Where(cf => !cf.Field!.IsRemoved)
 				.ToList();
 		}
 

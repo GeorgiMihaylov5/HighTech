@@ -76,14 +76,14 @@ namespace HighTech.Core.Services
 			if (category == null)
 				throw new InvalidOperationException($"Category with ID '{categoryId}' does not exist.");
 
-            //TODO add custom exception
-            return productRepository.Edit(id, manufacturer, model, warranty, price, discount, quantity, image, categoryId) 
+			//TODO add custom exception
+			return productRepository.Edit(id, manufacturer, model, warranty, price, discount, quantity, image, categoryId)
 				?? throw new NullReferenceException();
 		}
 
 		public bool Remove(string? id)
 		{
-			return productRepository.Remove(id);
+			return productRepository.SoftDelete(id);
 		}
 
 		//TODO RENAME AND MODIFY and custom and remove nullable 
@@ -103,37 +103,12 @@ namespace HighTech.Core.Services
 			return productRepository.RemoveDiscount(id);
 		}
 
-		public ICollection<ProductFieldValue> GetProductFieldValues(string? productId)
-		{
-			return fieldRepository.GetProductFieldValues(productId);
-		}
-
-		public ProductFieldValue SetProductFieldValue(string? productId, string? fieldId, string? value)
-		{
-			var product = productRepository.Get(productId);
-			Guard.NotNull(product, nameof(product));
-
-			var categoryFields = categoryRepository.GetCategoryFields(product?.CategoryID!);
-			var fieldBelongsToCategory = categoryFields.Any(cf => cf.FieldId == fieldId);
-
-            //TODO custom exception
-            if (!fieldBelongsToCategory)
-				throw new InvalidOperationException($"Field with ID '{fieldId}' is not associated with the product's category.");
-
-			return fieldRepository.SetProductFieldValue(productId, fieldId, value);
-		}
-
-		public bool RemoveProductFieldValue(string? productId, string? fieldId)
-		{
-			return fieldRepository.RemoveProductFieldValue(productId, fieldId);
-		}
-
 		public bool SetProductFieldValues(string? productId, Dictionary<string, string?> fieldValues)
 		{
 			var product = productRepository.Get(productId);
 			Guard.NotNull(product, nameof(product));
 
-			var categoryFields = categoryRepository.GetCategoryFields(product.CategoryID!);
+			var categoryFields = categoryRepository.GetCategoryFields(product?.CategoryID!);
 			var validFieldIds = categoryFields.Select(cf => cf.FieldId).ToHashSet();
 
 			var invalidFields = fieldValues.Keys.Where(fid => !validFieldIds.Contains(fid)).ToList();
@@ -168,9 +143,9 @@ namespace HighTech.Core.Services
 
 			var product = productRepository.Get(id);
 			if (product == null)
-                return false;
+				return false;
 
-            return productRepository.Edit(id, product.Manufacturer!, product.Model!, product.Warranty,
+			return productRepository.Edit(id, product.Manufacturer!, product.Model!, product.Warranty,
 				product.Price, product.Discount, quantity, product.Image!, product.CategoryID!) != null;
 		}
 
@@ -178,7 +153,7 @@ namespace HighTech.Core.Services
 		public bool IsInStock(string? id, int requestedQuantity = 1)
 		{
 			Guard.NotNullOrEmpty(id, nameof(id));
-            Guard.NotNegative(requestedQuantity, nameof(requestedQuantity));
+			Guard.NotNegative(requestedQuantity, nameof(requestedQuantity));
 
 			var product = productRepository.Get(id);
 			return product != null && product.Quantity >= requestedQuantity;

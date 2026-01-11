@@ -16,12 +16,12 @@ namespace HighTech.Infrastructure.Configurations
 			builder.HasOne(cf => cf.Category)
 				.WithMany(c => c.CategoryFields)
 				.HasForeignKey(cf => cf.CategoryId)
-				.OnDelete(DeleteBehavior.Cascade);
+				.OnDelete(DeleteBehavior.Restrict);
 
 			builder.HasOne(cf => cf.Field)
 				.WithMany(f => f.CategoryFields)
 				.HasForeignKey(cf => cf.FieldId)
-				.OnDelete(DeleteBehavior.Cascade);
+				.OnDelete(DeleteBehavior.Restrict);
 		}
 	}
 }

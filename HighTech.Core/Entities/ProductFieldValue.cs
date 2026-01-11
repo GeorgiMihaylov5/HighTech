@@ -7,6 +7,5 @@ namespace HighTech.Core.Entities
 		public string? Value { get; set; }
 		public Product? Product { get; set; }
 		public Field? Field { get; set; }
-
 	}
 }

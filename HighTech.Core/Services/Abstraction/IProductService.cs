@@ -14,12 +14,7 @@ namespace HighTech.Core.Services.Abstraction
 		bool Remove(string? id);
 		Product? IncreaseDiscount(string? id, int percentage);
 		Product? RemoveDiscount(string? id);
-
-		ICollection<ProductFieldValue> GetProductFieldValues(string? productId);
-		ProductFieldValue? SetProductFieldValue(string? productId, string? fieldId, string? value);
-		bool RemoveProductFieldValue(string? productId, string? fieldId);
 		bool SetProductFieldValues(string? productId, Dictionary<string, string?> fieldValues);
-
 		bool UpdateStock(string? id, int quantity);
 		bool IsInStock(string? id, int requestedQuantity = 1);
 	}

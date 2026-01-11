@@ -28,7 +28,7 @@ namespace HighTech.Infrastructure.Configurations
 			builder.HasMany(p => p.ProductFieldValues)
 				.WithOne(pf => pf.Product)
 				.HasForeignKey(pf => pf.ProductID)
-				.OnDelete(DeleteBehavior.Cascade);
+				.OnDelete(DeleteBehavior.Restrict);
 		}
 	}
 }

@@ -13,7 +13,7 @@ namespace HighTech.Infrastructure.Repositories
 			context = _context;
 		}
 
-		public Field CreateField(string? name, TypeCode typeCode)
+		public Field Create(string? name, TypeCode typeCode)
 		{
 			var field = new Field()
 			{
@@ -27,9 +27,9 @@ namespace HighTech.Infrastructure.Repositories
 			return field;
 		}
 
-		public Field? EditField(string? id, string? name, TypeCode typeCode)
+		public Field? Edit(string? id, string? name, TypeCode typeCode)
 		{
-			var field = GetField(id);
+			var field = Get(id);
 
             if (field is null)
 			{
@@ -43,42 +43,37 @@ namespace HighTech.Infrastructure.Repositories
 			return field;
 		}
 
-		public Field? GetField(string? id)
+		public Field? Get(string? id)
 		{
 			return context.Fields
-				.Include(f => f.CategoryFields!)
+				.Where(f => !f.IsRemoved)
+                .Include(f => f.CategoryFields!)
 					.ThenInclude(cf => cf.Category)
 				.FirstOrDefault(x => x.Id == id);
 		}
 
-		public ICollection<Field> GetFields()
+		public ICollection<Field> GetAll()
 		{
 			return context.Fields
-				.Include(f => f.CategoryFields!)
+                .Where(f => !f.IsRemoved)
+                .Include(f => f.CategoryFields!)
 					.ThenInclude(cf => cf.Category)
 				.ToList();
 		}
 
-		public bool RemoveField(string? id)
+		public bool SoftDelete(string? id)
 		{
-			var field = context.Fields.FirstOrDefault(f => f.Id == id);
+            var field = Get(id);
 
-			if (field is null)
-			{
-				return false;
-			}
+            if (field is null)
+            {
+                return false;
+            }
 
-			context.Fields.Remove(field);
-			return context.SaveChanges() != 0;
-		}
+            field.IsRemoved = true;
+            context.Fields.Update(field);
 
-		// ProductFieldValue operations
-		public ICollection<ProductFieldValue> GetProductFieldValues(string? productId)
-		{
-			return context.ProductFieldValues
-				.Include(pf => pf.Field)
-				.Where(pf => pf.ProductID == productId)
-				.ToList();
+            return context.SaveChanges() != 0;
 		}
 
         public ICollection<Field> GetFieldsByCategory(string? categoryId)
@@ -87,7 +82,8 @@ namespace HighTech.Infrastructure.Repositories
 			return context.CategoryFields
 				.Include(cf => cf.Field)
 				.Where(cf => cf.CategoryId == categoryId)
-				.Select(cf => cf.Field!)
+                .Where(f => !f.Field!.IsRemoved)
+                .Select(cf => cf.Field!)
 				.ToList();
         }
 
@@ -117,21 +113,11 @@ namespace HighTech.Infrastructure.Repositories
 
         }
 
-		public bool RemoveProductFieldValue(string? productId, string? fieldId)
-		{
-			var productFieldValue = context.ProductFieldValues
-				.FirstOrDefault(pf => pf.ProductID == productId && pf.FieldID == fieldId);
-			if (productFieldValue is null)
-                return false;
-
-            context.ProductFieldValues.Remove(productFieldValue);
-			return context.SaveChanges() != 0;
-		}
-
         public Field? GetFieldByName(string? name)
         {
             return context.Fields
-				.Include(f => f.CategoryFields!)
+				.Where(f => !f.IsRemoved)
+                .Include(f => f.CategoryFields!)
 					.ThenInclude(cf => cf.Category)
 				.FirstOrDefault(f => f.Name == name);
         }

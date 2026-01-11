@@ -16,7 +16,8 @@ namespace HighTech.Infrastructure.Repositories
 
 		public Product? Get(string? id)
 		{
-			return context.Products.Where(x => x.IsRemoved != true)
+			return context.Products
+				.Where(x => !x.IsRemoved)
 				.Include(p => p.Category)
 				.Include(p => p.ProductFieldValues!)
 					.ThenInclude(pf => pf.Field)
@@ -26,7 +27,7 @@ namespace HighTech.Infrastructure.Repositories
 		public ICollection<Product> GetAll()
 		{
 			return context.Products
-				.Where(x => x.IsRemoved != true)
+				.Where(x => !x.IsRemoved)
 				.Include(p => p.Category)
 				.Include(p => p.ProductFieldValues!)
 					.ThenInclude(pf => pf.Field)
@@ -36,7 +37,7 @@ namespace HighTech.Infrastructure.Repositories
 		public ICollection<Product> GetWhere(Expression<Func<Product, bool>> predicate)
 		{
 			return context.Products
-				.Where(x => x.IsRemoved != true)
+				.Where(x => !x.IsRemoved)
 				.Where(predicate)
 				.Include(p => p.Category)
 				.Include(p => p.ProductFieldValues!)
@@ -47,7 +48,7 @@ namespace HighTech.Infrastructure.Repositories
 		public ICollection<Product> GetByCategory(string? categoryId)
 		{
 			return context.Products
-				.Where(x => x.IsRemoved != true && x.CategoryID == categoryId)
+				.Where(x => !x.IsRemoved && x.CategoryID == categoryId)
 				.Include(p => p.Category)
 				.Include(p => p.ProductFieldValues!)
 					.ThenInclude(pf => pf.Field)
@@ -65,7 +66,7 @@ namespace HighTech.Infrastructure.Repositories
 				})
 				.OrderByDescending(x => x.Count)
 				.Join(context.Products
-					.Where(x => x.IsRemoved != true)
+					.Where(x => !x.IsRemoved)
 					.Include(p => p.Category)
 					.Include(p => p.ProductFieldValues!)
 						.ThenInclude(pf => pf.Field),
@@ -121,7 +122,7 @@ namespace HighTech.Infrastructure.Repositories
 			return product;
 		}
 
-		public bool Remove(string? id)
+		public bool SoftDelete(string? id)
 		{
 			var product = Get(id);
 

@@ -12,8 +12,11 @@ namespace HighTech.Infrastructure.Configurations
 			builder.Property(c => c.Id).ValueGeneratedOnAdd();
 
 			builder.Property(c => c.Name).IsRequired();
+			builder.HasIndex(c => c.Name)
+				.IsUnique()
+				.HasFilter("[IsRemoved] = 0");
 
-			builder.HasMany(c => c.Products)
+            builder.HasMany(c => c.Products)
 				.WithOne(p => p.Category)
 				.HasForeignKey(p => p.CategoryID)
 				.OnDelete(DeleteBehavior.Restrict);
@@ -21,7 +24,7 @@ namespace HighTech.Infrastructure.Configurations
 			builder.HasMany(c => c.CategoryFields)
 				.WithOne(cf => cf.Category)
 				.HasForeignKey(cf => cf.CategoryId)
-				.OnDelete(DeleteBehavior.Cascade);
+				.OnDelete(DeleteBehavior.Restrict);
 		}
 	}
 }

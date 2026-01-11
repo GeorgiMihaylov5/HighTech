@@ -65,7 +65,9 @@ export class TableComponent implements OnInit {
 					this.splice(this.fields, id, 'id', 'field');
 				}
 				else if (selectedOption === CreateOptions.Category) {
-					this.splice(this.categories, id, 'name', 'category');
+					//TODO why two arrays?
+					this.splice(this.categories, id, 'id', 'category');
+					this.splice(this.groupedCategories, id, 'id', 'category');
 				}
 				else if (selectedOption === CreateOptions.Product) {
 					this.splice(this.products, id, 'id', 'product');

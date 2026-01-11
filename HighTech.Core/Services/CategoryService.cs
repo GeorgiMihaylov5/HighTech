@@ -57,7 +57,7 @@ namespace HighTech.Core.Services
 
 		public bool Remove(string? id)
 		{
-			return categoryRepository.Remove(id);
+			return categoryRepository.SoftDelete(id);
 		}
 
 		public ICollection<CategoryField> GetCategoryFields(string? categoryId)
@@ -70,7 +70,7 @@ namespace HighTech.Core.Services
 			var category = categoryRepository.Get(categoryId);
 			Guard.NotNull(category, nameof(category));
 
-			var field = fieldRepository.GetField(fieldId);
+			var field = fieldRepository.Get(fieldId);
             Guard.NotNull(field, nameof(field));
 
             return categoryRepository.AddFieldToCategory(categoryId, fieldId);
