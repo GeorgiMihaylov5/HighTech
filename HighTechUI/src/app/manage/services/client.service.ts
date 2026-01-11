@@ -8,41 +8,41 @@ import { ApiResponse } from "src/app/models/api-response.model";
 
 @Injectable()
 export class ClientService {
-    constructor(private http: HttpClient,
-        private errorService: ErrorService,
-        @Inject('BASE_URL') private baseUrl: string) {
+	constructor(private http: HttpClient,
+		private errorService: ErrorService,
+		@Inject('BASE_URL') private baseUrl: string) {
 
-    }
-    
-    public getClients(): Observable<Client[]> {
-        return this.http.get<ApiResponse<Client[]>>((`${this.baseUrl}Clients/GetAll`))
-            .pipe(
-                map(response => response.data),
-                catchError(this.errorService.handleError.bind(this.errorService))
-            );
-    }
+	}
 
-    public getClient(username: string): Observable<Client> {
-        return this.http.get<ApiResponse<Client>>((`${this.baseUrl}Clients/GetByUsername?username=${username}`))
-            .pipe(
-                map(response => response.data),
-                catchError(this.errorService.handleError.bind(this.errorService))
-            );
-    }
+	public getClients(): Observable<Client[]> {
+		return this.http.get<ApiResponse<Client[]>>((`${this.baseUrl}Clients/GetAll`))
+			.pipe(
+				map(response => response.data),
+				catchError(this.errorService.handleError.bind(this.errorService))
+			);
+	}
 
-    public editClient(client: Client): Observable<Client> {
-        return this.http.post<ApiResponse<Client>>((`${this.baseUrl}Clients/EditClient`), client)
-            .pipe(
-                map(response => response.data),
-                catchError(this.errorService.handleError.bind(this.errorService))
-            );
-    }
+	public getClient(username: string): Observable<Client> {
+		return this.http.get<ApiResponse<Client>>((`${this.baseUrl}Clients/GetByUsername?username=${username}`))
+			.pipe(
+				map(response => response.data),
+				catchError(this.errorService.handleError.bind(this.errorService))
+			);
+	}
 
-    public changePassword(model: IChangePassword): Observable<void> {
-        return this.http.post<ApiResponse<void>>((`${this.baseUrl}Clients/ChangePassword`), model)
-            .pipe(
-                map((): void => undefined as void),
-                catchError(this.errorService.handleError.bind(this.errorService))
-            );
-    }
+	public editClient(client: Client): Observable<Client> {
+		return this.http.post<ApiResponse<Client>>((`${this.baseUrl}Clients/EditClient`), client)
+			.pipe(
+				map(response => response.data),
+				catchError(this.errorService.handleError.bind(this.errorService))
+			);
+	}
+
+	public changePassword(model: IChangePassword): Observable<void> {
+		return this.http.post<ApiResponse<void>>((`${this.baseUrl}Clients/ChangePassword`), model)
+			.pipe(
+				map((): void => undefined as void),
+				catchError(this.errorService.handleError.bind(this.errorService))
+			);
+	}
 }
