@@ -11,6 +11,7 @@ export class ErrorService {
   handleError(error: HttpErrorResponse) {
     if (error.status === 0) {
       console.error('An error occurred:', error.error);
+      this.toastr.error('Network error. Please check your connection.');
     } else {
       this.readError(error.error);
       console.error(
@@ -20,13 +21,23 @@ export class ErrorService {
   }
 
   private readError(error: any) {
+    // Handle array format (e.g., Identity errors)
     if (error instanceof Array) {
       error.forEach(e => {
-        this.toastr.error(e.description);
+        this.toastr.error(e.description || e);
       });
     }
-    else {
+    // Handle string error
+    else if (typeof error === 'string') {
       this.toastr.error(error);
+    }
+    // Handle object with message property
+    else if (error && error.message) {
+      this.toastr.error(error.message);
+    }
+    // Fallback
+    else {
+      this.toastr.error('An unexpected error occurred.');
     }
   }
 }

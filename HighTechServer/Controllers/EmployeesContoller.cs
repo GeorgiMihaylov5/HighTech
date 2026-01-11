@@ -2,6 +2,7 @@
 using HighTech.Core.Services.Abstraction;
 using HighTech.DTOs;
 using HighTech.Mappers;
+using HighTechServer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +43,7 @@ namespace HighTech.Controllers
 				}
 			}
 
-			return Json(employeesDTO);
+			return Response.Success(employeesDTO);
 		}
 
 		[Authorize(Roles = "Administrator,Employee")]
@@ -50,17 +51,17 @@ namespace HighTech.Controllers
 		{
 			if (username is null)
 			{
-				return BadRequest($"There is not a user with {username} username.");
+				return Response.Error($"There is not a user with {username} username.", ErrorCode.EmployeeUsernameMissing, 400);
 			}
 
 			var employee = employeeService.GetEmployeeByUsername(username);
 
 			if (employee is null)
 			{
-				return Json(null);
+				return Response.Success<EmployeeDTO?>(null);
 			}
 
-			return Json(EmployeeMapper.ToDTO(employee));
+			return Response.Success(EmployeeMapper.ToDTO(employee));
 		}
 
 		[HttpPost]
@@ -69,14 +70,14 @@ namespace HighTech.Controllers
 		{
 			if (dto is null || dto.Username is null)
 			{
-				return BadRequest("Employee cannot be null!");
+				return Response.Error("Employee cannot be null!", ErrorCode.InvalidRequest, 400);
 			}
 
 			var employee = await userManager.FindByNameAsync(dto.Username);
 
 			if (employee is not null)
 			{
-				return BadRequest("Employee exists!");
+				return Response.Error("Employee exists!", ErrorCode.EmployeeAlreadyExists, 400);
 			}
 
 			var user = new AppUser
@@ -91,7 +92,7 @@ namespace HighTech.Controllers
 
 			if (!result.Succeeded)
 			{
-				return BadRequest(result.Errors);
+				return Response.Error(string.Join(", ", result.Errors.Select(e => e.Description)), ErrorCode.EmployeeCreateError, 400);
 			}
 
 			try
@@ -103,10 +104,10 @@ namespace HighTech.Controllers
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.EmployeeCreateError, 400);
 			}
 
-			return Json(dto);
+			return Response.Success(dto, 201);
 		}
 
 		[HttpPost]
@@ -115,19 +116,19 @@ namespace HighTech.Controllers
 		{
 			if (dto is null || dto.UserId is null)
 			{
-				return BadRequest("User cannot be null!");
+				return Response.Error("User cannot be null!", ErrorCode.InvalidRequest, 400);
 			}
 
 			var user = await userManager.FindByIdAsync(dto.UserId);
 
 			if (user == null)
 			{
-				return BadRequest($"Cannot find user with {dto.UserId} id!");
+				return Response.Error($"Cannot find user with {dto.UserId} id!", ErrorCode.EmployeeNotFound, 404);
 			}
 
 			if (await userManager.IsInRoleAsync(user, "Administrator"))
 			{
-				return BadRequest("User is already in admininstrator role!");
+				return Response.Error("User is already in admininstrator role!", ErrorCode.EmployeePromotionError, 400);
 			}
 
 			await userManager.AddToRoleAsync(user, "Administrator");
@@ -141,18 +142,18 @@ namespace HighTech.Controllers
 		{
 			if (dto == null || dto.UserId == null)
 			{
-				return BadRequest("User cannot be null!");
+				return Response.Error("User cannot be null!", ErrorCode.InvalidRequest, 400);
 			}
 			var user = await userManager.FindByIdAsync(dto.UserId);
 
 			if (user == null)
 			{
-				return BadRequest($"Cannot find user with {dto.UserId} id!");
+				return Response.Error($"Cannot find user with {dto.UserId} id!", ErrorCode.EmployeeNotFound, 404);
 			}
 
 			if (!await userManager.IsInRoleAsync(user, "Administrator"))
 			{
-				return BadRequest("User isn't an administaror!");
+				return Response.Error("User isn't an administaror!", ErrorCode.EmployeeDemotionError, 400);
 			}
 
 			await userManager.RemoveFromRoleAsync(user, "Administrator");
@@ -168,43 +169,43 @@ namespace HighTech.Controllers
 
 			if (updatedEmp)
 			{
-				return Json(dto);
+				return Response.Success(dto);
 			}
 
-			return BadRequest();
+			return Response.Error("Failed to update employee.", ErrorCode.EmployeeUpdateError, 400);
 		}
 
 		public async Task<IActionResult> CheckUserRole(AuthUserDTO token)
 		{
 			if (token is null || token.Role is null)
 			{
-				return BadRequest("Token is null");
+				return Response.Error("Token is null", ErrorCode.InvalidRequest, 400);
 			}
 
 			if (token.Role.Contains("Client"))
 			{
-				return Json(true);
+				return Response.Success(true);
 			}
 			var employee = employeeService.GetEmployeeByUsername(token.Nameid)?.User;
 			if (employee is null)
-				return BadRequest("Employee not found");
+				return Response.Error("Employee not found", ErrorCode.EmployeeNotFound, 404);
 
 			var roles = await userManager.GetRolesAsync(employee);
 
 			if (roles.Count != token.Role.Count)
 			{
-				return Json(false);
+				return Response.Success(false);
 			}
 
 			foreach (var tokenRole in token.Role)
 			{
 				if (!roles.Contains(tokenRole))
 				{
-					return Json(false);
+					return Response.Success(false);
 				}
 			}
 
-			return Json(true);
+			return Response.Success(true);
 		}
 	}
 }

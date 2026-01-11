@@ -1,5 +1,6 @@
 using HighTech.Core.Services.Abstraction;
 using HighTech.Mappers;
+using HighTechServer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -21,21 +22,14 @@ namespace HighTech.Controllers
 		[HttpGet]
 		public IActionResult GetUserFavorites()
 		{
-			try
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (string.IsNullOrEmpty(userId))
 			{
-				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-				if (string.IsNullOrEmpty(userId))
-				{
-					return Unauthorized("User not authenticated.");
-				}
+				return Response.Error("User not authenticated.", ErrorCode.UnauthorizedAccess, 401);
+			}
 
-				var favorites = favoriteService.GetUserFavorites(userId);
-				return Json(FavoriteMapper.ToDTOList(favorites));
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(ex.Message);
-			}
+			var favorites = favoriteService.GetUserFavorites(userId);
+			return Response.Success(FavoriteMapper.ToDTOList(favorites));
 		}
 
 		[Authorize]
@@ -44,30 +38,23 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrWhiteSpace(productId))
 			{
-				return BadRequest("Product ID is required.");
+				return Response.Error("Product ID is required.", ErrorCode.FavoriteProductIdMissing, 400);
 			}
 
-			try
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (string.IsNullOrEmpty(userId))
 			{
-				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-				if (string.IsNullOrEmpty(userId))
-				{
-					return Unauthorized("User not authenticated.");
-				}
-
-				var favorite = favoriteService.AddFavorite(userId, productId);
-
-				if (favorite == null)
-				{
-					return NotFound("Product not found or is no longer available.");
-				}
-
-				return Json(new { message = "Product added to favorites.", favorite = FavoriteMapper.ToDTO(favorite) });
+				return Response.Error("User not authenticated.", ErrorCode.UnauthorizedAccess, 401);
 			}
-			catch (Exception ex)
+
+			var favorite = favoriteService.AddFavorite(userId, productId);
+
+			if (favorite == null)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error("Product not found or is no longer available.", ErrorCode.ProductNotFound, 404);
 			}
+
+			return Response.Success(new { message = "Product added to favorites.", favorite = FavoriteMapper.ToDTO(favorite) }, 201);
 		}
 
 		[Authorize]
@@ -76,30 +63,23 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrWhiteSpace(productId))
 			{
-				return BadRequest("Product ID is required.");
+				return Response.Error("Product ID is required.", ErrorCode.FavoriteProductIdMissing, 400);
 			}
 
-			try
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (string.IsNullOrEmpty(userId))
 			{
-				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-				if (string.IsNullOrEmpty(userId))
-				{
-					return Unauthorized("User not authenticated.");
-				}
-
-				var removed = favoriteService.RemoveFavorite(userId, productId);
-
-				if (!removed)
-				{
-					return NotFound("Favorite not found.");
-				}
-
-				return Json(new { message = "Product removed from favorites." });
+				return Response.Error("User not authenticated.", ErrorCode.UnauthorizedAccess, 401);
 			}
-			catch (Exception ex)
+
+			var removed = favoriteService.RemoveFavorite(userId, productId);
+
+			if (!removed)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error("Favorite not found.", ErrorCode.FavoriteNotFound, 404);
 			}
+
+			return Response.Success(new { message = "Product removed from favorites." });
 		}
 
 		[Authorize]
@@ -108,29 +88,22 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrWhiteSpace(productId))
 			{
-				return BadRequest("Product ID is required.");
+				return Response.Error("Product ID is required.", ErrorCode.FavoriteProductIdMissing, 400);
 			}
 
-			try
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (string.IsNullOrEmpty(userId))
 			{
-				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-				if (string.IsNullOrEmpty(userId))
-				{
-					return Unauthorized("User not authenticated.");
-				}
-
-				var isNowFavorite = favoriteService.ToggleFavorite(userId, productId);
-
-				return Json(new
-				{
-					message = isNowFavorite ? "Product added to favorites." : "Product removed from favorites.",
-					isFavorite = isNowFavorite
-				});
+				return Response.Error("User not authenticated.", ErrorCode.UnauthorizedAccess, 401);
 			}
-			catch (Exception ex)
+
+			var isNowFavorite = favoriteService.ToggleFavorite(userId, productId);
+
+			return Response.Success(new
 			{
-				return BadRequest(ex.Message);
-			}
+				message = isNowFavorite ? "Product added to favorites." : "Product removed from favorites.",
+				isFavorite = isNowFavorite
+			});
 		}
 
 		[Authorize]
@@ -139,47 +112,33 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrWhiteSpace(productId))
 			{
-				return BadRequest("Product ID is required.");
+				return Response.Error("Product ID is required.", ErrorCode.FavoriteProductIdMissing, 400);
 			}
 
-			try
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (string.IsNullOrEmpty(userId))
 			{
-				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-				if (string.IsNullOrEmpty(userId))
-				{
-					return Unauthorized("User not authenticated.");
-				}
-
-				var isFavorite = favoriteService.IsFavorite(userId, productId);
-
-				return Json(new { isFavorite });
+				return Response.Error("User not authenticated.", ErrorCode.UnauthorizedAccess, 401);
 			}
-			catch (Exception ex)
-			{
-				return BadRequest(ex.Message);
-			}
+
+			var isFavorite = favoriteService.IsFavorite(userId, productId);
+
+			return Response.Success(new { isFavorite });
 		}
 
 		[Authorize]
 		[HttpGet]
 		public IActionResult GetFavoritesCount()
 		{
-			try
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (string.IsNullOrEmpty(userId))
 			{
-				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-				if (string.IsNullOrEmpty(userId))
-				{
-					return Unauthorized("User not authenticated.");
-				}
-
-				var count = favoriteService.GetFavoritesCount(userId);
-
-				return Json(new { count });
+				return Response.Error("User not authenticated.", ErrorCode.UnauthorizedAccess, 401);
 			}
-			catch (Exception ex)
-			{
-				return BadRequest(ex.Message);
-			}
+
+			var count = favoriteService.GetFavoritesCount(userId);
+
+			return Response.Success(new { count });
 		}
 	}
 }

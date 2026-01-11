@@ -1,6 +1,7 @@
 ﻿using HighTech.Core.Services.Abstraction;
 using HighTech.DTOs;
 using HighTech.Mappers;
+using HighTechServer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,11 +22,11 @@ namespace HighTech.Controllers
 		{
 			try
 			{
-				return Json(FieldMapper.ToDTOList(fieldService.GetFields()));
+				return Response.Success(FieldMapper.ToDTOList(fieldService.GetFields()));
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.UnknownError, 400);
 			}
 		}
 
@@ -34,17 +35,17 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrEmpty(categoryId))
 			{
-				return BadRequest("Category ID is required!");
+				return Response.Error("Category ID is required!", ErrorCode.CategoryIdMissing, 400);
 			}
 
 			try
 			{
 				var fields = fieldService.GetFieldsByCategory(categoryId);
-				return Json(FieldMapper.ToDTOList(fields));
+				return Response.Success(FieldMapper.ToDTOList(fields));
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.UnknownError, 400);
 			}
 		}
 
@@ -54,18 +55,18 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrEmpty(dto.Name))
 			{
-				return BadRequest("Field name is required!");
+				return Response.Error("Field name is required!", ErrorCode.FieldNameMissing, 400);
 			}
 
 			try
 			{
 				var field = fieldService.CreateField(dto.Name, dto.TypeCode);
 
-				return Json(FieldMapper.ToDTO(field));
+				return Response.Success(FieldMapper.ToDTO(field), 201);
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.FieldCreateError, 400);
 			}
 		}
 
@@ -75,12 +76,12 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrEmpty(dto.Id))
 			{
-				return BadRequest("Field ID is required!");
+				return Response.Error("Field ID is required!", ErrorCode.FieldIdMissing, 400);
 			}
 
 			if (string.IsNullOrEmpty(dto.Name))
 			{
-				return BadRequest("Field name is required!");
+				return Response.Error("Field name is required!", ErrorCode.FieldNameMissing, 400);
 			}
 
 			try
@@ -89,14 +90,14 @@ namespace HighTech.Controllers
 
 				if (field is null)
 				{
-					return NotFound($"Field with ID '{dto.Id}' not found.");
+					return Response.Error($"Field with ID '{dto.Id}' not found.", ErrorCode.FieldNotFound, 404);
 				}
 
-				return Json(FieldMapper.ToDTO(field));
+				return Response.Success(FieldMapper.ToDTO(field));
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.FieldUpdateError, 400);
 			}
 		}
 
@@ -106,17 +107,17 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrEmpty(id))
 			{
-				return BadRequest("ID cannot be null!");
+				return Response.Error("ID cannot be null!", ErrorCode.FieldIdMissing, 400);
 			}
 
 			try
 			{
 				var removed = fieldService.RemoveField(id);
-				return Json(removed);
+				return Response.Success(removed);
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.FieldDeleteError, 400);
 			}
 		}
 	}

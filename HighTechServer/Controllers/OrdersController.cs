@@ -2,6 +2,7 @@
 using HighTech.Core.Services.Abstraction;
 using HighTech.DTOs;
 using HighTech.Mappers;
+using HighTechServer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +19,6 @@ namespace HighTech.Controllers
 			orderService = _orderService;
 		}
 
-
 		[Authorize(Roles = "Administrator,Employee")]
 		public IActionResult GetOrders()
 		{
@@ -28,7 +28,7 @@ namespace HighTech.Controllers
 				.ThenByDescending(x => x.Status == OrderStatus.Approved)
 				.ThenByDescending(x => x.Status == OrderStatus.Completed).ToList();
 
-			return Json(orders);
+			return Response.Success(orders);
 		}
 
 		[Authorize]
@@ -36,7 +36,7 @@ namespace HighTech.Controllers
 		{
 			if (username is null)
 			{
-				return NotFound();
+				return Response.Error("Username is required.", ErrorCode.OrderUsernameMissing, 400);
 			}
 
 			var orders = orderService.GetMyOrders(username)
@@ -45,7 +45,7 @@ namespace HighTech.Controllers
 				.ThenByDescending(x => x.Status == OrderStatus.Approved)
 				.ThenByDescending(x => x.Status == OrderStatus.Completed).ToList();
 
-			return Json(orders);
+			return Response.Success(orders);
 		}
 
 		[Authorize]
@@ -56,7 +56,6 @@ namespace HighTech.Controllers
 			{
 				var order = orderService.CreateOrder(DateTime.UtcNow, dto.Username);
 
-				//TODO use if or guard
 				foreach (var orderedProductDto in dto?.OrderedProducts!)
 				{
 					orderService.CreateOrderedProduct(orderedProductDto.ProductId, order.Id, orderedProductDto.OrderedPrice, orderedProductDto.Count);
@@ -66,7 +65,7 @@ namespace HighTech.Controllers
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.OrderCreateError, 400);
 			}
 		}
 
@@ -83,11 +82,11 @@ namespace HighTech.Controllers
 					return Ok();
 				}
 
-				return BadRequest("Order cannot be edited!");
+				return Response.Error("Order cannot be edited!", ErrorCode.OrderUpdateError, 400);
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.OrderUpdateError, 400);
 			}
 		}
 	}

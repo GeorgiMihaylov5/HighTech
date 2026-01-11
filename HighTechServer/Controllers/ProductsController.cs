@@ -1,6 +1,7 @@
 using HighTech.Core.Services.Abstraction;
 using HighTech.DTOs;
 using HighTech.Mappers;
+using HighTechServer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,11 +23,11 @@ namespace HighTech.Controllers
 			try
 			{
 				var products = productService.GetMostSellers();
-				return Json(ProductMapper.ToDTOList(products));
+				return Response.Success(ProductMapper.ToDTOList(products));
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.UnknownError, 400);
 			}
 		}
 
@@ -35,7 +36,7 @@ namespace HighTech.Controllers
 		{
 			if (id is null)
 			{
-				return BadRequest("Product ID is required!");
+				return Response.Error("Product ID is required!", ErrorCode.ProductIdMissing, 400);
 			}
 
 			try
@@ -44,14 +45,14 @@ namespace HighTech.Controllers
 
 				if (product is null)
 				{
-					return NotFound($"Product with ID '{id}' not found.");
+					return Response.Error($"Product with ID '{id}' not found.", ErrorCode.ProductNotFound, 404);
 				}
 
-				return Json(ProductMapper.ToDTO(product));
+				return Response.Success(ProductMapper.ToDTO(product));
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.UnknownError, 400);
 			}
 		}
 
@@ -60,11 +61,11 @@ namespace HighTech.Controllers
 			try
 			{
 				var products = productService.GetAll();
-				return Json(ProductMapper.ToDTOList(products));
+				return Response.Success(ProductMapper.ToDTOList(products));
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.UnknownError, 400);
 			}
 		}
 
@@ -74,11 +75,11 @@ namespace HighTech.Controllers
 			try
 			{
 				var products = productService.GetByCategory(categoryId);
-				return Json(ProductMapper.ToDTOList(products));
+				return Response.Success(ProductMapper.ToDTOList(products));
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.UnknownError, 400);
 			}
 		}
 
@@ -88,18 +89,16 @@ namespace HighTech.Controllers
 		{
 			if (dto is null)
 			{
-				return BadRequest("Product is null!");
+				return Response.Error("Product is null!", ErrorCode.InvalidRequest, 400);
 			}
 
 			if (string.IsNullOrEmpty(dto.CategoryId))
 			{
-				return BadRequest("Valid Category ID is required!");
+				return Response.Error("Valid Category ID is required!", ErrorCode.ProductCategoryIdMissing, 400);
 			}
 
 			try
 			{
-				//TODO i dont think be best option is to set a 0 when it is null. Better return a message
-				//Use Result pattern for return it will be the best
 				var product = productService.Create(
 					dto?.Manufacturer,
 					dto?.Model,
@@ -112,7 +111,7 @@ namespace HighTech.Controllers
 
 				if (product is null || product.Id is null)
 				{
-					return BadRequest("Failed to create product.");
+					return Response.Error("Failed to create product.", ErrorCode.ProductCreateError, 400);
 				}
 
 				// Set product field values if provided
@@ -125,12 +124,12 @@ namespace HighTech.Controllers
 					productService.SetProductFieldValues(product.Id, fieldValues);
 				}
 
-				dto?.Id = product.Id;
-				return Json(dto);
+				dto!.Id = product.Id;
+				return Response.Success(dto, 201);
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.ProductCreateError, 400);
 			}
 		}
 
@@ -140,12 +139,12 @@ namespace HighTech.Controllers
 		{
 			if (dto is null || string.IsNullOrEmpty(dto.Id))
 			{
-				return BadRequest("Product ID is required!");
+				return Response.Error("Product ID is required!", ErrorCode.ProductIdMissing, 400);
 			}
 
 			if (string.IsNullOrEmpty(dto.CategoryId))
 			{
-				return BadRequest("Valid Category ID is required!");
+				return Response.Error("Valid Category ID is required!", ErrorCode.ProductCategoryIdMissing, 400);
 			}
 
 			try
@@ -163,7 +162,7 @@ namespace HighTech.Controllers
 
 				if (product is null)
 				{
-					return NotFound($"Product with ID '{dto.Id}' not found.");
+					return Response.Error($"Product with ID '{dto.Id}' not found.", ErrorCode.ProductNotFound, 404);
 				}
 
 				// Update product field values if provided
@@ -176,11 +175,11 @@ namespace HighTech.Controllers
 					productService.SetProductFieldValues(product.Id!, fieldValues);
 				}
 
-				return Json(dto);
+				return Response.Success(dto);
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.ProductUpdateError, 400);
 			}
 		}
 
@@ -190,17 +189,17 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrEmpty(id))
 			{
-				return BadRequest("ID cannot be null!");
+				return Response.Error("ID cannot be null!", ErrorCode.ProductIdMissing, 400);
 			}
 
 			try
 			{
 				var removed = productService.Remove(id);
-				return Json(removed);
+				return Response.Success(removed);
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.ProductDeleteError, 400);
 			}
 		}
 
@@ -210,7 +209,7 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrEmpty(dto.Id))
 			{
-				return BadRequest("Product ID is required!");
+				return Response.Error("Product ID is required!", ErrorCode.ProductIdMissing, 400);
 			}
 
 			try
@@ -219,14 +218,14 @@ namespace HighTech.Controllers
 
 				if (product is null)
 				{
-					return NotFound($"Product with ID '{dto.Id}' not found.");
+					return Response.Error($"Product with ID '{dto.Id}' not found.", ErrorCode.ProductNotFound, 404);
 				}
 
-				return Json(ProductMapper.ToDTO(product));
+				return Response.Success(ProductMapper.ToDTO(product));
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.ProductDiscountError, 400);
 			}
 		}
 
@@ -236,7 +235,7 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrEmpty(dto.Id))
 			{
-				return BadRequest("Product ID is required!");
+				return Response.Error("Product ID is required!", ErrorCode.ProductIdMissing, 400);
 			}
 
 			try
@@ -245,17 +244,15 @@ namespace HighTech.Controllers
 
 				if (product is null)
 				{
-					return NotFound($"Product with ID '{dto.Id}' not found.");
+					return Response.Error($"Product with ID '{dto.Id}' not found.", ErrorCode.ProductNotFound, 404);
 				}
 
-				return Json(ProductMapper.ToDTO(product));
+				return Response.Success(ProductMapper.ToDTO(product));
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.ProductDiscountError, 400);
 			}
 		}
-
-
 	}
 }

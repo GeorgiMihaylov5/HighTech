@@ -1,6 +1,7 @@
 ﻿using HighTech.Core.Services.Abstraction;
 using HighTech.DTOs;
 using HighTech.Mappers;
+using HighTechServer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,7 +24,7 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrEmpty(dto.Name))
 			{
-				return BadRequest("Category name is required!");
+				return Response.Error("Category name is required!", ErrorCode.CategoryNameMissing, 400);
 			}
 
 			try
@@ -32,7 +33,7 @@ namespace HighTech.Controllers
 
 				if (category is null)
 				{
-					return BadRequest();
+					return Response.Error("Failed to create category.", ErrorCode.CategoryCreateError, 400);
 				}
 
 				// Add fields to the category if provided
@@ -45,11 +46,11 @@ namespace HighTech.Controllers
 				}
 
 				dto.Id = category.Id;
-				return Json(dto);
+				return Response.Success(dto, 201);
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.CategoryCreateError, 400);
 			}
 		}
 
@@ -59,12 +60,12 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrEmpty(dto.Id))
 			{
-				return BadRequest("Category ID is required!");
+				return Response.Error("Category ID is required!", ErrorCode.CategoryIdMissing, 400);
 			}
 
 			if (string.IsNullOrEmpty(dto.Name))
 			{
-				return BadRequest("Category name is required!");
+				return Response.Error("Category name is required!", ErrorCode.CategoryNameMissing, 400);
 			}
 
 			try
@@ -73,7 +74,7 @@ namespace HighTech.Controllers
 
 				if (category is null)
 				{
-					return NotFound($"Category with ID '{dto.Id}' not found.");
+					return Response.Error($"Category with ID '{dto.Id}' not found.", ErrorCode.CategoryNotFound, 404);
 				}
 
 				// Update fields if provided
@@ -99,11 +100,11 @@ namespace HighTech.Controllers
 					}
 				}
 
-				return Json(dto);
+				return Response.Success(dto);
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.CategoryUpdateError, 400);
 			}
 		}
 
@@ -114,11 +115,11 @@ namespace HighTech.Controllers
 				var categories = categoryService.GetAll();
 				var dtos = CategoryMapper.ToDTOList(categories);
 
-				return Json(dtos);
+				return Response.Success(dtos);
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.UnknownError, 400);
 			}
 		}
 
@@ -127,7 +128,7 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrEmpty(id))
 			{
-				return BadRequest("Category ID is required!");
+				return Response.Error("Category ID is required!", ErrorCode.CategoryIdMissing, 400);
 			}
 
 			try
@@ -136,16 +137,16 @@ namespace HighTech.Controllers
 
 				if (category is null)
 				{
-					return NotFound($"Category with ID '{id}' not found.");
+					return Response.Error($"Category with ID '{id}' not found.", ErrorCode.CategoryNotFound, 404);
 				}
 
 				var dto = CategoryMapper.ToDTO(category);
 
-				return Json(dto);
+				return Response.Success(dto);
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.UnknownError, 400);
 			}
 		}
 
@@ -155,17 +156,17 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrEmpty(id))
 			{
-				return BadRequest("ID cannot be null!");
+				return Response.Error("ID cannot be null!", ErrorCode.CategoryIdMissing, 400);
 			}
 
 			try
 			{
 				var removed = categoryService.Remove(id);
-				return Json(removed);
+				return Response.Success(removed);
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.CategoryDeleteError, 400);
 			}
 		}
 
@@ -175,17 +176,17 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrEmpty(categoryId))
 			{
-				return BadRequest("Category ID is required!");
+				return Response.Error("Category ID is required!", ErrorCode.CategoryIdMissing, 400);
 			}
 
 			try
 			{
 				var categoryField = categoryService.AddFieldToCategory(categoryId, fieldId);
-				return Json(categoryField);
+				return Response.Success(categoryField);
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.CategoryUpdateError, 400);
 			}
 		}
 
@@ -195,17 +196,17 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrEmpty(categoryId))
 			{
-				return BadRequest("Category ID is required!");
+				return Response.Error("Category ID is required!", ErrorCode.CategoryIdMissing, 400);
 			}
 
 			try
 			{
 				var removed = categoryService.RemoveFieldFromCategory(categoryId, fieldId);
-				return Json(removed);
+				return Response.Success(removed);
 			}
 			catch (Exception ex)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error(ex.Message, ErrorCode.CategoryUpdateError, 400);
 			}
 		}
 	}

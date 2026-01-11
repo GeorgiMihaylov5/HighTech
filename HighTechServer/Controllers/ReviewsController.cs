@@ -1,6 +1,7 @@
 using HighTech.Core.Services.Abstraction;
 using HighTech.DTOs;
 using HighTech.Mappers;
+using HighTechServer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -23,39 +24,25 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrWhiteSpace(productId))
 			{
-				return BadRequest("Product ID is required.");
+				return Response.Error("Product ID is required.", ErrorCode.ReviewProductIdMissing, 400);
 			}
 
-			try
-			{
-				var reviews = reviewService.GetProductReviews(productId);
-				return Json(ReviewMapper.ToDTOList(reviews));
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(ex.Message);
-			}
+			var reviews = reviewService.GetProductReviews(productId);
+			return Response.Success(ReviewMapper.ToDTOList(reviews));
 		}
 
 		[Authorize]
 		[HttpGet]
 		public IActionResult GetUserReviews()
 		{
-			try
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (string.IsNullOrEmpty(userId))
 			{
-				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-				if (string.IsNullOrEmpty(userId))
-				{
-					return Unauthorized("User not authenticated.");
-				}
+				return Response.Error("User not authenticated.", ErrorCode.UnauthorizedAccess, 401);
+			}
 
-				var reviews = reviewService.GetUserReviews(userId);
-				return Json(ReviewMapper.ToDTOList(reviews));
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(ex.Message);
-			}
+			var reviews = reviewService.GetUserReviews(userId);
+			return Response.Success(ReviewMapper.ToDTOList(reviews));
 		}
 
 		[HttpGet("{reviewId}")]
@@ -63,24 +50,17 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrWhiteSpace(reviewId))
 			{
-				return BadRequest("Review ID is required.");
+				return Response.Error("Review ID is required.", ErrorCode.ReviewIdMissing, 400);
 			}
 
-			try
+			var review = reviewService.GetReview(reviewId);
+
+			if (review == null)
 			{
-				var review = reviewService.GetReview(reviewId);
-
-				if (review == null)
-				{
-					return NotFound("Review not found.");
-				}
-
-				return Json(ReviewMapper.ToDTO(review));
+				return Response.Error("Review not found.", ErrorCode.ReviewNotFound, 404);
 			}
-			catch (Exception ex)
-			{
-				return BadRequest(ex.Message);
-			}
+
+			return Response.Success(ReviewMapper.ToDTO(review));
 		}
 
 		[HttpPost]
@@ -88,47 +68,36 @@ namespace HighTech.Controllers
 		{
 			if (request == null || string.IsNullOrWhiteSpace(request.ProductId))
 			{
-				return BadRequest("Product ID is required.");
+				return Response.Error("Product ID is required.", ErrorCode.ReviewProductIdMissing, 400);
 			}
 
 			if (request.Rating < 1 || request.Rating > 5)
 			{
-				return BadRequest("Rating must be between 1 and 5.");
+				return Response.Error("Rating must be between 1 and 5.", ErrorCode.ReviewRatingInvalid, 400);
 			}
 
-			try
+			string? userId = null;
 			{
-				string? userId = null;
+				userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+				if (string.IsNullOrEmpty(userId))
 				{
-					userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-					if (string.IsNullOrEmpty(userId))
-					{
-						return Unauthorized("User must be authenticated for non-anonymous reviews.");
-					}
+					return Response.Error("User must be authenticated for non-anonymous reviews.", ErrorCode.UnauthorizedAccess, 401);
 				}
-
-				var review = reviewService.CreateReview(
-					request.ProductId,
-					request.Rating,
-					request.Comment,
-					request.IsAnonymous,
-					userId);
-
-				if (review == null)
-				{
-					return NotFound("Product not found or is no longer available.");
-				}
-
-				return Json(new { message = "Review created successfully.", review = ReviewMapper.ToDTO(review) });
 			}
-			catch (ArgumentException ex)
+
+			var review = reviewService.CreateReview(
+				request.ProductId,
+				request.Rating,
+				request.Comment,
+				request.IsAnonymous,
+				userId);
+
+			if (review == null)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error("Product not found or is no longer available.", ErrorCode.ProductNotFound, 404);
 			}
-			catch (Exception ex)
-			{
-				return BadRequest(ex.Message);
-			}
+
+			return Response.Success(new { message = "Review created successfully.", review = ReviewMapper.ToDTO(review) }, 201);
 		}
 
 		[Authorize]
@@ -137,39 +106,28 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrWhiteSpace(reviewId))
 			{
-				return BadRequest("Review ID is required.");
+				return Response.Error("Review ID is required.", ErrorCode.ReviewIdMissing, 400);
 			}
 
 			if (request == null || request.Rating < 1 || request.Rating > 5)
 			{
-				return BadRequest("Rating must be between 1 and 5.");
+				return Response.Error("Rating must be between 1 and 5.", ErrorCode.ReviewRatingInvalid, 400);
 			}
 
-			try
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (string.IsNullOrEmpty(userId))
 			{
-				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-				if (string.IsNullOrEmpty(userId))
-				{
-					return Unauthorized("User not authenticated.");
-				}
-
-				var review = reviewService.UpdateReview(reviewId, request.Rating, request.Comment, userId);
-
-				if (review == null)
-				{
-					return NotFound("Review not found or you don't have permission to update it.");
-				}
-
-				return Json(new { message = "Review updated successfully.", review = ReviewMapper.ToDTO(review) });
+				return Response.Error("User not authenticated.", ErrorCode.UnauthorizedAccess, 401);
 			}
-			catch (ArgumentException ex)
+
+			var review = reviewService.UpdateReview(reviewId, request.Rating, request.Comment, userId);
+
+			if (review == null)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error("Review not found or you don't have permission to update it.", ErrorCode.ReviewNotFound, 404);
 			}
-			catch (Exception ex)
-			{
-				return BadRequest(ex.Message);
-			}
+
+			return Response.Success(new { message = "Review updated successfully.", review = ReviewMapper.ToDTO(review) });
 		}
 
 		[Authorize]
@@ -178,30 +136,23 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrWhiteSpace(reviewId))
 			{
-				return BadRequest("Review ID is required.");
+				return Response.Error("Review ID is required.", ErrorCode.ReviewIdMissing, 400);
 			}
 
-			try
+			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (string.IsNullOrEmpty(userId))
 			{
-				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-				if (string.IsNullOrEmpty(userId))
-				{
-					return Unauthorized("User not authenticated.");
-				}
-
-				var deleted = reviewService.DeleteReview(reviewId, userId);
-
-				if (!deleted)
-				{
-					return NotFound("Review not found or you don't have permission to delete it.");
-				}
-
-				return Json(new { message = "Review deleted successfully." });
+				return Response.Error("User not authenticated.", ErrorCode.UnauthorizedAccess, 401);
 			}
-			catch (Exception ex)
+
+			var deleted = reviewService.DeleteReview(reviewId, userId);
+
+			if (!deleted)
 			{
-				return BadRequest(ex.Message);
+				return Response.Error("Review not found or you don't have permission to delete it.", ErrorCode.ReviewNotFound, 404);
 			}
+
+			return Response.Success(new { message = "Review deleted successfully." });
 		}
 
 		[HttpGet("{productId}")]
@@ -209,24 +160,17 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrWhiteSpace(productId))
 			{
-				return BadRequest("Product ID is required.");
+				return Response.Error("Product ID is required.", ErrorCode.ReviewProductIdMissing, 400);
 			}
 
-			try
-			{
-				var averageRating = reviewService.GetAverageRating(productId);
-				var reviewCount = reviewService.GetReviewCount(productId);
+			var averageRating = reviewService.GetAverageRating(productId);
+			var reviewCount = reviewService.GetReviewCount(productId);
 
-				return Json(new
-				{
-					averageRating = Math.Round(averageRating, 2),
-					reviewCount
-				});
-			}
-			catch (Exception ex)
+			return Response.Success(new
 			{
-				return BadRequest(ex.Message);
-			}
+				averageRating = Math.Round(averageRating, 2),
+				reviewCount
+			});
 		}
 
 		[HttpGet("{productId}")]
@@ -234,18 +178,11 @@ namespace HighTech.Controllers
 		{
 			if (string.IsNullOrWhiteSpace(productId))
 			{
-				return BadRequest("Product ID is required.");
+				return Response.Error("Product ID is required.", ErrorCode.ReviewProductIdMissing, 400);
 			}
 
-			try
-			{
-				var distribution = reviewService.GetRatingDistribution(productId);
-				return Json(distribution);
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(ex.Message);
-			}
+			var distribution = reviewService.GetRatingDistribution(productId);
+			return Response.Success(distribution);
 		}
 	}
 }

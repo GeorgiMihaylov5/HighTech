@@ -2,6 +2,7 @@
 using HighTech.Core.Services.Abstraction;
 using HighTech.DTOs;
 using HighTech.Mappers;
+using HighTechServer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -35,7 +36,7 @@ namespace HighTech.Controllers
 			var clients = service.GetClients();
 			var dtos = ClientMapper.ToDTOList(clients);
 
-			return Json(dtos);
+			return Response.Success(dtos);
 		}
 
 		[Authorize]
@@ -46,10 +47,10 @@ namespace HighTech.Controllers
 
 			if (updatedClient)
 			{
-				return Json(dto);
+				return Response.Success(dto);
 			}
 
-			return BadRequest();
+			return Response.Error("Failed to update client.", ErrorCode.ClientUpdateError, 400);
 		}
 
 		[Authorize]
@@ -57,17 +58,17 @@ namespace HighTech.Controllers
 		{
 			if (username is null)
 			{
-				return BadRequest($"There is not a user with {username} username.");
+				return Response.Error($"There is not a user with {username} username.", ErrorCode.ClientUsernameMissing, 400);
 			}
 
 			var client = service.GetClientByUsername(username);
 
 			if (client is null)
 			{
-				return Json(null);
+				return Response.Success<ClientDTO?>(null);
 			}
 
-			return Json(ClientMapper.ToDTO(client));
+			return Response.Success(ClientMapper.ToDTO(client));
 		}
 
 		[HttpPost]
@@ -75,23 +76,23 @@ namespace HighTech.Controllers
 		{
 			if (loginModel is null || loginModel.Username is null)
 			{
-				return BadRequest("Employee cannot be null!");
+				return Response.Error("Employee cannot be null!", ErrorCode.InvalidRequest, 400);
 			}
 			var user = await userManager.FindByNameAsync(loginModel.Username);
 			if (user is null || loginModel.Password is null)
 			{
-				return Unauthorized("Invalid username or password!");
+				return Response.Error("Invalid username or password!", ErrorCode.InvalidCredentials, 401);
 			}
 
 			var result = await signInManager.PasswordSignInAsync(user, loginModel.Password, false, false);
 
 			if (!result.Succeeded)
 			{
-				return Unauthorized("Invalid username or password!");
+				return Response.Error("Invalid username or password!", ErrorCode.InvalidCredentials, 401);
 			}
 			var userRoles = await userManager.GetRolesAsync(user);
 
-			return Json(CreateAuthUserDTO(user, userRoles));
+			return Response.Success(CreateAuthUserDTO(user, userRoles));
 		}
 
 		[HttpPost]
@@ -99,16 +100,16 @@ namespace HighTech.Controllers
 		{
 			if (await userManager.Users.AnyAsync(u => u.Email == registerModel.Email!.ToLower()))
 			{
-				return BadRequest($"An existing account is using {registerModel.Email}. Please try with another email!");
+				return Response.Error($"An existing account is using {registerModel.Email}. Please try with another email!", ErrorCode.EmailAlreadyExists, 400);
 			}
 
 			if (registerModel.Password == null || registerModel.ConfirmPassword == null)
 			{
-				return BadRequest("Password cannot be null");
+				return Response.Error("Password cannot be null", ErrorCode.InvalidRequest, 400);
 			}
 			if (registerModel.Password != registerModel.ConfirmPassword)
 			{
-				return BadRequest("Paswords don't match!");
+				return Response.Error("Paswords don't match!", ErrorCode.PasswordMismatch, 400);
 			}
 
 			var user = new AppUser
@@ -132,11 +133,11 @@ namespace HighTech.Controllers
 
 					var userRoles = await userManager.GetRolesAsync(user);
 
-					return Json(CreateAuthUserDTO(user, userRoles));
+					return Response.Success(CreateAuthUserDTO(user, userRoles), 201);
 				}
 			}
 
-			return BadRequest(result.Errors);
+			return Response.Error(string.Join(", ", result.Errors.Select(e => e.Description)), ErrorCode.ClientCreateError, 400);
 		}
 
 		[Authorize]
@@ -145,30 +146,29 @@ namespace HighTech.Controllers
 		{
 			if (dto is null || dto.Username is null)
 			{
-				return BadRequest("Employee cannot be null!");
+				return Response.Error("Employee cannot be null!", ErrorCode.InvalidRequest, 400);
 			}
 			var user = await userManager.FindByNameAsync(dto.Username);
 			if (user == null)
 			{
-				return NotFound($"Unable to load user with username '{dto.Username}'.");
+				return Response.Error($"Unable to load user with username '{dto.Username}'.", ErrorCode.ClientNotFound, 404);
 			}
 
 			if (dto.NewPassword == null || dto.OldPassword == null)
 			{
-				return BadRequest("Password cannot be null");
+				return Response.Error("Password cannot be null", ErrorCode.InvalidRequest, 400);
 			}
 			if (dto.NewPassword == dto.OldPassword)
 			{
-				return BadRequest("Passwords doesn't match");
+				return Response.Error("Passwords doesn't match", ErrorCode.PasswordMismatch, 400);
 			}
-
 
 			var changePasswordResult = await userManager
 				.ChangePasswordAsync(user, dto.OldPassword, dto.NewPassword);
 
 			if (!changePasswordResult.Succeeded)
 			{
-				return BadRequest(changePasswordResult.Errors);
+				return Response.Error(string.Join(", ", changePasswordResult.Errors.Select(e => e.Description)), ErrorCode.PasswordChangeError, 400);
 			}
 
 			return Ok();
@@ -186,6 +186,5 @@ namespace HighTech.Controllers
 				Exp = new DateTime().AddDays(jwtService.ExpiresDays).Ticks
 			};
 		}
-
 	}
 }
