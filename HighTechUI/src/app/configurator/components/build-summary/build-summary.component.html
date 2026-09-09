@@ -1,0 +1,108 @@
+<div class="build-summary">
+  <div class="summary-header">
+    <i class="bi bi-clipboard-list summary-icon"></i>
+    <h3 class="summary-title">Build Summary</h3>
+  </div>
+
+  <div class="empty-state" *ngIf="!hasSummaryItems">
+    <p>No parts selected yet.</p>
+    <p class="hint">Pick parts from each slot on the left.</p>
+  </div>
+
+  <div class="selected-items" *ngIf="hasSummaryItems">
+    <div class="item-row" *ngFor="let item of selectedItems">
+      <i class="bi {{ getCategoryIcon(item.categoryName) }} item-icon"></i>
+      <div class="item-middle">
+        <span class="item-category">{{ item.categoryName }}</span>
+        <span class="item-name">{{ getProductName(item.productId) }}</span>
+      </div>
+      <span class="item-price">{{ getProductPrice(item.productId) | currency:'EUR' }}</span>
+    </div>
+
+    <div class="item-row service-row" *ngFor="let item of defaultServiceItems">
+      <i class="bi bi-tools item-icon"></i>
+      <div class="item-middle">
+        <span class="item-category">Assembly</span>
+        <span class="item-name">{{ item.product?.manufacturer }} {{ item.product?.model }}</span>
+      </div>
+      <span class="item-price">{{ item.orderedPrice | currency:'EUR' }}</span>
+    </div>
+
+    <div class="summary-divider"></div>
+
+    <div class="stat-row" *ngIf="estimatedPower > 0">
+      <div class="stat-left">
+        <i class="bi bi-lightning-charge stat-icon"></i>
+        <span class="stat-label">Estimated Power Usage</span>
+      </div>
+      <span class="stat-value">{{ estimatedPower }}W</span>
+    </div>
+
+    <div class="stat-row" *ngIf="integratedGraphicsLabel">
+      <div class="stat-left">
+        <i class="bi bi-display stat-icon"></i>
+        <span class="stat-label">Graphics</span>
+      </div>
+      <span class="stat-value">{{ integratedGraphicsLabel }}</span>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat-left">
+        <i class="bi bi-shield-check stat-icon"></i>
+        <span class="stat-label">Compatibility</span>
+      </div>
+      <span class="stat-value compat-ok" *ngIf="compatibilityIssues.length === 0">
+        No issues found <i class="bi bi-check-circle-fill"></i>
+      </span>
+      <span class="stat-value compat-err" *ngIf="compatibilityIssues.length > 0">
+        {{ compatibilityIssues.length }} issue(s)
+      </span>
+    </div>
+
+    <div class="issues-list" *ngIf="compatibilityIssues.length > 0">
+      <div class="issue-item" *ngFor="let issue of compatibilityIssues">
+        <i class="bi bi-exclamation-circle"></i>
+        <span>{{ issue.message }}</span>
+      </div>
+      <button type="button" class="btn-fix-ai" (click)="onFixWithAi()">
+        <i class="bi bi-stars"></i>
+        Fix with AI
+      </button>
+    </div>
+
+    <div class="total-row">
+      <span class="total-label">Total</span>
+      <span class="total-price">{{ totalPrice | currency:'EUR' }}</span>
+    </div>
+  </div>
+
+  <div class="missing-section" *ngIf="hasSelection && missingCategories.length > 0">
+    <div class="missing-title">Missing Parts</div>
+    <div class="missing-item"
+      *ngFor="let category of missingCategories"
+      (click)="onSelectCategory(category.name)">
+      <div class="missing-item-left">
+        <div class="missing-icon-wrap">
+          <i class="bi {{ getCategoryIcon(category.name) }}"></i>
+        </div>
+        <span class="missing-text">{{ getMissingMessage(category.name) }}</span>
+      </div>
+      <i class="bi bi-chevron-right missing-chevron"></i>
+    </div>
+  </div>
+
+  <div class="add-result-success" *ngIf="addResult === 'success'">
+    <i class="bi bi-check-circle-fill"></i> Build added to cart!
+  </div>
+
+  <div class="summary-actions">
+    <button class="btn-commit" [disabled]="!canCommit" (click)="onAddToBasket()">
+      <i class="bi bi-cart3"></i>
+      <span *ngIf="!isBusy">Add to shopping cart</span>
+      <span *ngIf="isBusy">Adding...</span>
+    </button>
+    <button class="btn-clear-all" (click)="onClearAll()" *ngIf="hasSelection">
+      <i class="bi bi-trash3"></i> Clear All
+    </button>
+  </div>
+</div>

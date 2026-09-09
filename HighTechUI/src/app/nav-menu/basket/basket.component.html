@@ -1,0 +1,176 @@
+<main class="basket-page container">
+    <form #checkoutForm="ngForm" (ngSubmit)="createOrder(checkoutForm)" class="basket-form">
+        <header class="basket-header card border rounded-4 p-4">
+            <div>
+                <h1>Shopping cart</h1>
+                <p>{{ itemCount }} {{ itemCount === 1 ? 'item' : 'items' }} ready for checkout</p>
+            </div>
+            <button *ngIf="orders?.length > 0" type="button" class="basket-clear-btn btn btn-outline-danger rounded-3" (click)="clean()">
+                Clear cart
+            </button>
+        </header>
+
+        <section *ngIf="orders == null || orders?.length == 0" class="basket-empty card border rounded-4">
+            <i class="bi bi-bag"></i>
+            <h4>Your shopping cart is empty</h4>
+            <a class="basket-primary-btn btn btn-primary rounded-3" [routerLink]="['/products']">Browse products</a>
+        </section>
+
+        <div *ngIf="orders?.length > 0" class="basket-layout">
+            <section class="basket-card basket-items card border rounded-4">
+
+                <!-- PC Build groups -->
+                <div *ngFor="let build of builds" class="build-card">
+                    <div class="build-card__header" (click)="toggleBuildExpanded(build.buildId)">
+                        <span *ngIf="getBuildCaseItem(build) as caseItem; else buildImageFallback"
+                              class="cart-product-link--image">
+                            <img *ngIf="getBuildCaseImage(build) as caseImage; else buildImageFallbackContent"
+                                 class="build-card__image"
+                                 [src]="caseImage"
+                                 [alt]="getBuildCaseAlt(build)">
+                        </span>
+                        <ng-template #buildImageFallback>
+                            <span class="build-card__image build-card__image--fallback">
+                                <i class="bi bi-pc-display-horizontal"></i>
+                            </span>
+                        </ng-template>
+                        <ng-template #buildImageFallbackContent>
+                            <span class="build-card__image build-card__image--fallback">
+                                <i class="bi bi-pc-display-horizontal"></i>
+                            </span>
+                        </ng-template>
+                        <div class="build-card__title">
+                            <strong>PC Build</strong>
+                            <span class="build-card__meta">{{ getBuildItemCount(build) }} items</span>
+                        </div>
+                        <div class="build-card__actions">
+                            <strong class="build-card__total">{{ build.total | number:'1.2-2' }} &euro;</strong>
+                            <button type="button" class="btn btn-outline-danger btn-sm rounded-3" (click)="removeBuild(build.buildId); $event.stopPropagation()">
+                                <i class="bi bi-trash"></i> Remove build
+                            </button>
+                            <i class="bi" [class.bi-chevron-down]="!isBuildExpanded(build.buildId)" [class.bi-chevron-up]="isBuildExpanded(build.buildId)"></i>
+                        </div>
+                    </div>
+
+                    <div class="build-card__items" *ngIf="isBuildExpanded(build.buildId)">
+                        <div *ngFor="let item of build.items" class="build-item">
+                            <a class="cart-product-link cart-product-link--image" [routerLink]="['/detail', item.productId]">
+                                <img [src]="item.product?.image" [alt]="item.product?.model" *ngIf="item.product?.image; else buildPartImageFallback">
+                                <ng-template #buildPartImageFallback>
+                                    <span class="build-item__image-placeholder" [attr.aria-label]="item.product?.model || 'Product image unavailable'">
+                                        <i class="bi bi-image"></i>
+                                    </span>
+                                </ng-template>
+                            </a>
+                            <div class="build-item__info">
+                                <span class="build-item__category">{{ item.product?.categoryName }}</span>
+                                <a class="build-item__name cart-product-link" [routerLink]="['/detail', item.productId]">{{ item.product?.manufacturer }} {{ item.product?.model }}</a>
+                            </div>
+                            <strong class="build-item__price">{{ (item.orderedPrice ?? item.product?.price) | number:'1.2-2' }} &euro;</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Regular products -->
+                <article *ngFor="let order of regularProducts; let i = index" class="basket-item">
+                    <a class="cart-product-link cart-product-link--image" [routerLink]="['/detail', order.productId]">
+                        <img *ngIf="order.product?.image; else basketItemImageFallback" [src]="order.product.image" [alt]="order.product.manufacturer + ' ' + order.product.model">
+                        <ng-template #basketItemImageFallback>
+                            <span class="basket-item__image-placeholder" [attr.aria-label]="(order.product?.manufacturer || '') + ' ' + (order.product?.model || 'Product image unavailable')">
+                                <i class="bi bi-image"></i>
+                            </span>
+                        </ng-template>
+                    </a>
+
+                    <div class="basket-item__info">
+                        <h2>
+                            <a class="cart-product-link" [routerLink]="['/detail', order.productId]">{{ order.product?.manufacturer }} - {{ order.product?.model }}</a>
+                        </h2>
+                        <p>
+                            <span>{{ order.product?.categoryName }}</span>
+                            <span>Warranty: {{ order.product?.warranty }} months</span>
+                            <span>In Stock: {{ order.product?.quantity }}</span>
+                        </p>
+                    </div>
+
+                    <strong class="basket-item__price">{{ order.product?.price | number:'1.2-2' }} &euro;</strong>
+
+                    <div class="basket-quantity">
+                        <button type="button" (click)="decreaseCount(i)" [disabled]="order.count <= 1">
+                            <i class="bi bi-dash"></i>
+                        </button>
+                        <input type="number"
+                               [min]="1"
+                               [max]="order.product?.quantity"
+                               [(ngModel)]="order.count"
+                               [name]="'count' + i"
+                               (change)="updateBasket()">
+                        <button type="button" (click)="increaseCount(i)" [disabled]="order.count >= order.product?.quantity">
+                            <i class="bi bi-plus"></i>
+                        </button>
+                    </div>
+
+                    <button type="button" class="basket-remove-btn btn btn-outline-danger rounded-3" (click)="removeAlaCarteItem(i)" title="Remove">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </article>
+            </section>
+
+            <aside class="basket-card basket-summary card border rounded-4">
+                <h2>Order summary</h2>
+                <div class="basket-summary__row">
+                    <span>Products</span>
+                    <strong>{{ itemCount }}</strong>
+                </div>
+                <div class="basket-summary__row">
+                    <span>Subtotal</span>
+                    <strong>{{ totalPrice | number:'1.2-2' }} &euro;</strong>
+                </div>
+                <div class="basket-summary__row">
+                    <span>Delivery</span>
+                    <strong class="basket-summary__free">Free</strong>
+                </div>
+                <div class="basket-summary__total">
+                    <span>Total</span>
+                    <strong>{{ totalPrice | number:'1.2-2' }} &euro;</strong>
+                </div>
+                <button type="submit" class="basket-checkout-btn btn btn-primary rounded-3">
+                    <i class="bi bi-lock"></i>
+                    Proceed to checkout
+                </button>
+            </aside>
+        </div>
+
+        <section class="basket-card checkout-details card border rounded-4" *ngIf="orders?.length > 0">
+            <header class="checkout-details__header">
+                <h2>Checkout details</h2>
+                <p>Payment is cash on delivery. You pay when the order is delivered.</p>
+            </header>
+
+            <div class="checkout-details__grid">
+                <label class="checkout-field" for="checkoutCity">
+                    <span>City</span>
+                    <input id="checkoutCity" name="city" required [(ngModel)]="checkoutDetails.city" placeholder="Enter city">
+                </label>
+                <label class="checkout-field" for="checkoutPostalCode">
+                    <span>Postal code</span>
+                    <input id="checkoutPostalCode" name="postalCode" required [(ngModel)]="checkoutDetails.postalCode" placeholder="Enter postal code">
+                </label>
+                <label class="checkout-field checkout-field--wide" for="checkoutDeliveryAddress">
+                    <span>Delivery address</span>
+                    <input id="checkoutDeliveryAddress" name="deliveryAddress" required [(ngModel)]="checkoutDetails.deliveryAddress" placeholder="Enter delivery address">
+                </label>
+                <label class="checkout-field" for="checkoutPhoneNumber">
+                    <span>Phone number</span>
+                    <input id="checkoutPhoneNumber" name="phoneNumber" required [(ngModel)]="checkoutDetails.phoneNumber" placeholder="Enter phone number">
+                </label>
+                <div class="checkout-payment">
+                    <i class="bi bi-cash-stack"></i>
+                    <span>Payment method</span>
+                    <strong>Cash on delivery</strong>
+                    <small>Pay when you receive your order</small>
+                </div>
+            </div>
+        </section>
+    </form>
+</main>

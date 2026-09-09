@@ -1,0 +1,350 @@
+<div class="cp-table">
+    <div class="cp-segment">
+        <label class="cp-segment__option" [class.is-active]="selectedOption === 0">
+            <input type="radio" name="cpSegment" [value]="0" [(ngModel)]="selectedOption"/>
+            <span class="cp-segment__dot"></span>
+            <span>Products</span>
+        </label>
+        <label class="cp-segment__option" [class.is-active]="selectedOption === 1">
+            <input type="radio" name="cpSegment" [value]="1" [(ngModel)]="selectedOption"/>
+            <span class="cp-segment__dot"></span>
+            <span>Fields</span>
+        </label>
+        <label class="cp-segment__option" [class.is-active]="selectedOption === 2">
+            <input type="radio" name="cpSegment" [value]="2" [(ngModel)]="selectedOption"/>
+            <span class="cp-segment__dot"></span>
+            <span>Categories</span>
+        </label>
+    </div>
+
+    <!-- ============== Products ============== -->
+    <ng-container *ngIf="selectedOption === 0">
+        <section class="cp-summary">
+            <div class="cp-summary__icon"><i class="bi bi-box"></i></div>
+            <div class="cp-summary__title">
+                <h3>Products</h3>
+                <p>Manage all your products in one place</p>
+            </div>
+            <div class="cp-summary__stats">
+                <div class="cp-stat">
+                    <span class="cp-stat__label">Total products</span>
+                    <span class="cp-stat__value">{{ products?.length || 0 }}</span>
+                </div>
+                <div class="cp-stat">
+                    <span class="cp-stat__label">Total quantity</span>
+                    <span class="cp-stat__value">{{ getTotalQuantity() }}</span>
+                </div>
+                <div class="cp-stat">
+                    <span class="cp-stat__label">Active</span>
+                    <span class="cp-stat__value cp-stat__value--success">{{ getActiveCount() }}</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="cp-search">
+            <i class="bi bi-search cp-search__icon"></i>
+            <input type="text"
+                   class="cp-search__input"
+                   placeholder="Search by manufacturer or model…"
+                   [(ngModel)]="productSearch"/>
+            <button *ngIf="productSearch"
+                    type="button"
+                    class="cp-search__clear"
+                    title="Clear search"
+                    (click)="productSearch = ''">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <div class="cp-table-wrapper">
+            <table class="cp-data-table">
+                <thead>
+                    <tr>
+                        <th class="cp-data-table__image"></th>
+                        <th>Manufacturer</th>
+                        <th>Model</th>
+                        <th>Warranty<br/><span class="cp-data-table__sub">(Months)</span></th>
+                        <th>Price</th>
+                        <th>Discount</th>
+                        <th>Quantity</th>
+                        <th>Category</th>
+                        <th class="cp-data-table__actions-th"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let product of filteredProducts"
+                        [class.is-selected]="selectedDiscountProduct?.id === product.id && isDiscountDialogOpen">
+                        <td class="cp-data-table__image">
+                            <div class="cp-thumb">
+                                <img *ngIf="product.image" [src]="product.image" [alt]="product.model"/>
+                                <i *ngIf="!product.image" class="bi bi-box"></i>
+                            </div>
+                        </td>
+                        <td>{{ product.manufacturer }}</td>
+                        <td>{{ product.model }}</td>
+                        <td>{{ product.warranty }}</td>
+                        <td>{{ product.price | number:'1.2-2' }} €</td>
+                        <td>
+                            <span>{{ product.discount | number:'1.2-2' }} €</span>
+                            <span class="cp-data-table__pct">({{ getDiscountPercentage(product) }}%)</span>
+                        </td>
+                        <td>
+                            <span class="cp-pill">{{ product.quantity }}</span>
+                        </td>
+                        <td>{{ product.categoryName }}</td>
+                        <td class="cp-data-table__actions">
+                            <div class="cp-actions">
+                                <button type="button" class="cp-icon-btn cp-icon-btn--edit"
+                                        (click)="editObj(product, 0)" title="Edit product">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button type="button" class="cp-icon-btn cp-icon-btn--delete"
+                                        (click)="deleteObj(product.id, 0)" title="Delete product">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                                <button type="button" class="cp-icon-btn cp-icon-btn--discount"
+                                        (click)="openSetDiscountDialog(product)" title="Set discount">
+                                    <i class="bi bi-percent"></i>
+                                </button>
+                                <button type="button" class="cp-icon-btn cp-icon-btn--info"
+                                        (click)="detailProduct(product)" title="Details">
+                                    <i class="bi bi-info-circle"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p class="cp-table__footer" *ngIf="filteredProducts.length">
+            Showing 1 to {{ filteredProducts.length }} of {{ products?.length || 0 }} products
+        </p>
+        <p class="cp-table__footer" *ngIf="products?.length && !filteredProducts.length">
+            No products match "{{ productSearch }}".
+        </p>
+    </ng-container>
+
+    <!-- ============== Fields ============== -->
+    <ng-container *ngIf="selectedOption === 1">
+        <section class="cp-summary">
+            <div class="cp-summary__icon"><i class="bi bi-list-ul"></i></div>
+            <div class="cp-summary__title">
+                <h3>Fields</h3>
+                <p>Specifications used to describe your products</p>
+            </div>
+            <div class="cp-summary__stats">
+                <div class="cp-stat">
+                    <span class="cp-stat__label">Total fields</span>
+                    <span class="cp-stat__value">{{ fields?.length || 0 }}</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="cp-search">
+            <i class="bi bi-search cp-search__icon"></i>
+            <input type="text"
+                   class="cp-search__input"
+                   placeholder="Search by field name…"
+                   [(ngModel)]="fieldSearch"/>
+            <button *ngIf="fieldSearch"
+                    type="button"
+                    class="cp-search__clear"
+                    title="Clear search"
+                    (click)="fieldSearch = ''">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <div class="cp-table-wrapper">
+            <table class="cp-data-table">
+                <thead>
+                    <tr>
+                        <th>Field name</th>
+                        <th>Type code</th>
+                        <th class="cp-data-table__actions-th"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let field of filteredFields">
+                        <td>{{ field.name }}</td>
+                        <td>{{ getTypeCodeLabel(field.typeCode) }}</td>
+                        <td class="cp-data-table__actions">
+                            <div class="cp-actions">
+                                <button type="button" class="cp-icon-btn cp-icon-btn--edit"
+                                        (click)="editObj(field, 1)" title="Edit field">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button type="button" class="cp-icon-btn cp-icon-btn--delete"
+                                        (click)="deleteObj(field.id, 1)" title="Delete field">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p class="cp-table__footer" *ngIf="filteredFields.length">
+            Showing 1 to {{ filteredFields.length }} of {{ fields?.length || 0 }} fields
+        </p>
+        <p class="cp-table__footer" *ngIf="fields?.length && !filteredFields.length">
+            No fields match "{{ fieldSearch }}".
+        </p>
+    </ng-container>
+
+    <!-- ============== Categories ============== -->
+    <ng-container *ngIf="selectedOption === 2">
+        <section class="cp-summary">
+            <div class="cp-summary__icon"><i class="bi bi-collection"></i></div>
+            <div class="cp-summary__title">
+                <h3>Categories</h3>
+                <p>Group your products by type and shared specifications</p>
+            </div>
+            <div class="cp-summary__stats">
+                <div class="cp-stat">
+                    <span class="cp-stat__label">Total categories</span>
+                    <span class="cp-stat__value">{{ categories?.length || 0 }}</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="cp-search">
+            <i class="bi bi-search cp-search__icon"></i>
+            <input type="text"
+                   class="cp-search__input"
+                   placeholder="Search by category name…"
+                   [(ngModel)]="categorySearch"/>
+            <button *ngIf="categorySearch"
+                    type="button"
+                    class="cp-search__clear"
+                    title="Clear search"
+                    (click)="categorySearch = ''">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <div class="cp-table-wrapper">
+            <table class="cp-data-table">
+                <thead>
+                    <tr>
+                        <th>Category name</th>
+                        <th>Fields</th>
+                        <th class="cp-data-table__actions-th"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let category of filteredCategories">
+                        <td>{{ category.name }}</td>
+                        <td class="cp-data-table__muted">{{ getFieldsNames(category) }}</td>
+                        <td class="cp-data-table__actions">
+                            <div class="cp-actions">
+                                <button type="button" class="cp-icon-btn cp-icon-btn--edit"
+                                        (click)="editObj(category, 2)" title="Edit category">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button type="button" class="cp-icon-btn cp-icon-btn--delete"
+                                        (click)="deleteObj(category.id, 2)" title="Delete category">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p class="cp-table__footer" *ngIf="filteredCategories.length">
+            Showing 1 to {{ filteredCategories.length }} of {{ categories?.length || 0 }} categories
+        </p>
+        <p class="cp-table__footer" *ngIf="categories?.length && !filteredCategories.length">
+            No categories match "{{ categorySearch }}".
+        </p>
+    </ng-container>
+
+    <!-- ============== Category delete dialog ============== -->
+    <div *ngIf="isCategoryDeleteDialogOpen" class="cp-dialog-backdrop" (click)="closeCategoryDeleteDialog()">
+        <div class="cp-dialog" (click)="$event.stopPropagation()">
+            <div class="cp-dialog__header">
+                <h5 class="cp-dialog__title">Delete category</h5>
+                <button type="button" class="cp-dialog__close" (click)="closeCategoryDeleteDialog()" [disabled]="categoryDeleteSaving">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <ng-container *ngIf="categoryDeletePreviewLoading">
+                <p class="cp-dialog__subtitle">Checking impact…</p>
+            </ng-container>
+
+            <ng-container *ngIf="!categoryDeletePreviewLoading && categoryDeletePreview">
+                <p class="cp-dialog__subtitle" *ngIf="categoryDeletePreview.totalAffectedProducts === 0">
+                    No products are using this category. Safe to delete.
+                </p>
+
+                <p class="cp-dialog__subtitle" *ngIf="categoryDeletePreview.totalAffectedProducts > 0">
+                    This will permanently delete spec values from
+                    <strong>{{ categoryDeletePreview.totalAffectedProducts }}</strong>
+                    product(s). The products themselves remain.
+                </p>
+
+                <div class="cp-dialog__body" *ngIf="categoryDeletePreview.affectedFields?.length">
+                    <ul class="cp-dialog__impact">
+                        <li *ngFor="let f of categoryDeletePreview.affectedFields">
+                            <strong>{{ f.fieldName }}</strong>
+                            <span class="cp-dialog__impact-count">{{ f.productCount }} product(s)</span>
+                        </li>
+                    </ul>
+                </div>
+            </ng-container>
+
+            <div class="cp-dialog__actions">
+                <button type="button" class="cp-dialog-btn cp-dialog-btn--ghost" (click)="closeCategoryDeleteDialog()" [disabled]="categoryDeleteSaving">
+                    Cancel
+                </button>
+                <button type="button" class="cp-dialog-btn cp-dialog-btn--primary" (click)="confirmCategoryDelete()"
+                        [disabled]="categoryDeleteSaving || categoryDeletePreviewLoading">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============== Discount dialog ============== -->
+    <div *ngIf="isDiscountDialogOpen" class="cp-dialog-backdrop">
+        <div class="cp-dialog">
+            <div class="cp-dialog__header">
+                <h5 class="cp-dialog__title">Set Discount</h5>
+                <button type="button" class="cp-dialog__close" (click)="closeSetDiscountDialog()" [disabled]="isDiscountSaving">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <p class="cp-dialog__subtitle" *ngIf="selectedDiscountProduct">
+                Enter discount percentage for
+                <span class="cp-dialog__product">{{ selectedDiscountProduct.manufacturer }} {{ selectedDiscountProduct.model }}</span>
+            </p>
+            <label class="cp-dialog__label" for="discountPercentage">Discount (%)</label>
+            <input id="discountPercentage"
+                   name="discountPercentage"
+                   class="cp-dialog__input"
+                   type="number"
+                   min="0"
+                   max="100"
+                   step="1"
+                   [(ngModel)]="discountPercentage"
+                   [disabled]="isDiscountSaving"/>
+            <div class="cp-dialog__error" *ngIf="isDiscountPercentageInvalid">
+                Please enter a valid percentage between 0 and 100.
+            </div>
+            <div class="cp-dialog__actions">
+                <button type="button" class="cp-dialog-btn cp-dialog-btn--ghost" (click)="closeSetDiscountDialog()" [disabled]="isDiscountSaving">
+                    Cancel
+                </button>
+                <button type="button" class="cp-dialog-btn cp-dialog-btn--primary" (click)="saveDiscount()"
+                        [disabled]="isDiscountSaving || isDiscountPercentageInvalid">
+                    Apply
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

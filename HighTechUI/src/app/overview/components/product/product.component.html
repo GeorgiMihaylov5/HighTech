@@ -1,0 +1,64 @@
+<article class="product-card">
+    <div class="product-card__quick-actions">
+        <button class="product-card__icon-action"
+                type="button"
+                [class.is-favorite]="isFavorite"
+                (click)="toggleFavorite($event)"
+                title="Toggle favorite">
+            <i [ngClass]="isFavorite ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
+        </button>
+        <button class="product-card__icon-action"
+                type="button"
+                [class.is-compared]="isCompared"
+                (click)="toggleCompare($event)"
+                title="Toggle compare">
+            <i [ngClass]="isCompared ? 'bi bi-bar-chart-fill' : 'bi bi-bar-chart'"></i>
+        </button>
+    </div>
+
+    <span class="product-card__discount-badge" *ngIf="product.discount > 0">
+        -{{ product.discount | number:'1.2-2' }}€
+    </span>
+
+    <div class="product-card__media" (click)="routeToDetail()">
+        <img [src]="product.image" [alt]="product.manufacturer + ' ' + product.model" class="product-card__image"/>
+    </div>
+
+    <div class="product-card__body">
+        <h5 class="product-card__title" (click)="routeToDetail()">
+            {{ product.categoryName ? product.categoryName + ' / ' : '' }}{{ product.manufacturer }} {{ product.model }}
+        </h5>
+
+        <div class="product-card__rating">
+            <span class="product-card__stars">
+                <span *ngFor="let isFilled of ratingStars" [class.is-empty]="!isFilled">★</span>
+            </span>
+            <span class="product-card__rating-value">{{ product.averageRating || 0 | number:'1.1-2' }}</span>
+            <span class="product-card__rating-count">({{ product.reviewCount || 0 }})</span>
+        </div>
+
+        <ul class="product-card__specs" *ngIf="description?.length">
+            <li *ngFor="let field of description">
+                <span class="product-card__spec-label">{{ field.name }}</span>
+                <span class="product-card__spec-value">{{ field.value }}</span>
+            </li>
+        </ul>
+
+        <p class="product-card__unavailable" *ngIf="product.quantity == 0">Not available</p>
+    </div>
+
+    <div class="product-card__footer">
+        <div class="product-card__price">
+            <span class="product-card__price-old" *ngIf="product.discount > 0">
+                {{ product.discount + product.price | number:'1.2-2' }} €
+            </span>
+            <span class="product-card__price-current"
+                  [class.is-discounted]="product.discount > 0">
+                {{ product.price | number:'1.2-2' }} €
+            </span>
+        </div>
+        <button class="product-card__action" (click)="routeToDetail()">
+            See more
+        </button>
+    </div>
+</article>

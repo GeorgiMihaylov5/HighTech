@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="HighTechServer/HighTechServer.csproj" />
+  <Project Path="HighTechUI/HighTechUI.esproj">
+    <Build />
+    <Deploy />
+  </Project>
+</Solution>

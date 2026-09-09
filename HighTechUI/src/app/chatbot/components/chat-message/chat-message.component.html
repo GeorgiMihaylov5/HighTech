@@ -1,0 +1,38 @@
+<div class="chat-msg" [class.chat-msg--user]="isUser" [class.chat-msg--assistant]="!isUser">
+  <div class="chat-msg__bubble">
+    <p *ngIf="turn.text" class="chat-msg__text">{{ turn.text }}</p>
+
+    <div *ngIf="isAction" class="chat-msg__action">
+      <p class="chat-msg__action-title">
+        {{ turn.action?.type === 'pc-creation' ? 'Proposed build' : 'Proposed changes' }}
+      </p>
+
+      <ul class="chat-msg__list">
+        <li *ngFor="let line of lines" class="chat-msg__line">
+          <span class="chat-msg__line-category">{{ line.category }}</span>
+          <span class="chat-msg__line-label" [class.chat-msg__line-label--remove]="line.isRemoval">
+            {{ line.label }}
+          </span>
+          <span *ngIf="line.price != null" class="chat-msg__line-price">
+            €{{ line.price | number:'1.2-2' }}
+          </span>
+        </li>
+      </ul>
+
+      <p *ngIf="turn.action?.type === 'pc-creation'" class="chat-msg__total">
+        <span>Total</span>
+        <strong>€{{ totalPrice | number:'1.2-2' }}</strong>
+      </p>
+
+      <div class="chat-msg__buttons">
+        <button
+          type="button"
+          class="chat-msg__btn chat-msg__btn--primary"
+          [disabled]="isApplied"
+          (click)="onApply()">
+          {{ isApplied ? 'Applied' : actionLabel }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

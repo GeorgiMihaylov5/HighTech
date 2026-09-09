@@ -1,0 +1,60 @@
+<div class="cp-clients" *ngIf="clients | async as clientList">
+    <section class="cp-summary">
+        <div class="cp-summary__icon"><i class="bi bi-people"></i></div>
+        <div class="cp-summary__title">
+            <h3>Clients</h3>
+            <p>Review registered customer accounts and contact details</p>
+        </div>
+        <div class="cp-summary__stats">
+            <div class="cp-stat">
+                <span class="cp-stat__label">Total clients</span>
+                <span class="cp-stat__value">{{ clientList.length }}</span>
+            </div>
+            <div class="cp-stat">
+                <span class="cp-stat__label">With phone</span>
+                <span class="cp-stat__value cp-stat__value--success">{{ getClientsWithPhone(clientList) }}</span>
+            </div>
+            <div class="cp-stat">
+                <span class="cp-stat__label">With address</span>
+                <span class="cp-stat__value">{{ getClientsWithAddress(clientList) }}</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="cp-table-wrapper">
+        <table class="cp-data-table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Full name</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let client of clientList">
+                    <td>{{ client.username }}</td>
+                    <td>{{ client.email }}</td>
+                    <td>{{ client.firstName }} {{ client.lastName }}</td>
+                    <td>
+                        <span *ngIf="client.phoneNumber; else emptyValue">{{ client.phoneNumber }}</span>
+                    </td>
+                    <td class="cp-data-table__muted">
+                        <span *ngIf="client.address; else emptyValue">{{ client.address }}</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p class="cp-table__footer" *ngIf="clientList.length">
+        Showing 1 to {{ clientList.length }} of {{ clientList.length }} clients
+    </p>
+
+    <p class="cp-empty" *ngIf="!clientList.length">No clients found.</p>
+</div>
+
+<ng-template #emptyValue>
+    <span class="cp-data-table__empty">Not set</span>
+</ng-template>

@@ -1,0 +1,155 @@
+<section class="overview-page">
+    <header class="overview-page__header">
+        <div class="overview-page__heading">
+            <h1 class="overview-page__title">Products</h1>
+            <p class="overview-page__subtitle">Browse our full catalogue and find the perfect parts.</p>
+        </div>
+        <div class="overview-page__count" *ngIf="!isLoading && filteredProducts">
+            <span class="overview-page__count-value">{{ filteredProducts.length }}</span>
+            <span class="overview-page__count-label">{{ filteredProducts.length === 1 ? 'product' : 'products' }}</span>
+        </div>
+    </header>
+
+    <button type="button"
+            class="filter-toggle"
+            [attr.aria-expanded]="isFilterPanelOpen"
+            (click)="toggleFilterPanel()">
+        <i class="bi bi-funnel"></i>
+        <span>Filters</span>
+    </button>
+
+    <div class="overview-page__layout">
+        <div class="filter-backdrop"
+             *ngIf="isFilterPanelOpen"
+             (click)="closeFilterPanel()"></div>
+
+        <aside #filterPanel
+            class="filter-panel"
+            [class.is-open]="isFilterPanelOpen"
+            [style.max-height.px]="filterPanelMaxHeight">
+            <div class="filter-panel__mobile-header">
+                <h3>Filters</h3>
+                <button type="button" class="filter-panel__close" (click)="closeFilterPanel()" aria-label="Close filters">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <div class="filter-card filter-card--accent">
+                <div class="filter-card__header">
+                    <i class="bi bi-tag-fill"></i>
+                    <h4 class="filter-card__title">Special Offers</h4>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" id="promotionsOnly" name="promotionsOnly"
+                        [checked]="showPromotionsOnly" (change)="togglePromotionsFilter()" />
+                    <span class="toggle__slider"></span>
+                    <span class="toggle__label">Show only promotions</span>
+                </label>
+            </div>
+
+            <div class="filter-card">
+                <h4 class="filter-card__title">Sort by</h4>
+                <label class="radio-row">
+                    <input type="radio" id="ascendingPrice" value="1" name="filter" (click)="sortFilter(1)"/>
+                    <span>Ascending price</span>
+                </label>
+                <label class="radio-row">
+                    <input type="radio" id="descendingPrice" value="2" name="filter" (click)="sortFilter(2)"/>
+                    <span>Descending price</span>
+                </label>
+            </div>
+
+            <div class="filter-card">
+                <h4 class="filter-card__title">Price</h4>
+                <div class="price-range">
+                    <input type="number" placeholder="Min" [min]="0" name="minPrice" [(ngModel)]="priceFilterObj.min" class="price-input"/>
+                    <span class="price-range__dash">—</span>
+                    <input type="number" placeholder="Max" [min]="0" name="maxPrice" [(ngModel)]="priceFilterObj.max" class="price-input"/>
+                </div>
+            </div>
+
+            <div class="filter-card" *ngIf="filterManufactorersObj.length > 0">
+                <h4 class="filter-card__title">Manufacturer</h4>
+                <div class="filter-list">
+                    <label class="check-row" *ngFor="let m of filterManufactorersObj; let i = index" [hidden]="!m.isVisible">
+                        <input type="checkbox" [id]="m.manufacturer" [name]="m.manufacturer + i" [(ngModel)]="m.isChecked" />
+                        <span>{{ m?.manufacturer }}</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="filter-card" *ngIf="filterModelsObj.length > 0">
+                <h4 class="filter-card__title">Model</h4>
+                <div class="filter-list">
+                    <label class="check-row" *ngFor="let m of filterModelsObj; let i = index" [hidden]="!m.isVisible">
+                        <input type="checkbox" [id]="m.model" [name]="m.model + i" [(ngModel)]="m.isChecked" />
+                        <span>{{ m.model }}</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="filter-card" *ngIf="categoryOptions.length > 0">
+                <h4 class="filter-card__title">Category</h4>
+                <select class="filter-select" [ngModel]="selectedCategoryName"
+                    name="categoryFilter" (ngModelChange)="onCategoryChanged($event, false)">
+                    <option [ngValue]="null">All categories</option>
+                    <option *ngFor="let categoryName of categoryOptions" [ngValue]="categoryName">
+                        {{ categoryName }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="filter-card" *ngIf="selectedCategoryName && categoryFieldFilters.length > 0">
+                <h4 class="filter-card__title">Advanced filters</h4>
+                <div class="category-field-filter" *ngFor="let fieldFilter of categoryFieldFilters">
+                    <h5 class="category-field-filter__name">{{ fieldFilter.fieldName }}</h5>
+                    <div class="filter-list">
+                        <label class="check-row" *ngFor="let valueFilter of fieldFilter.values; let i = index">
+                            <input type="checkbox" [id]="fieldFilter.fieldId + '-' + i"
+                                [name]="fieldFilter.fieldId + '-' + i"
+                                [(ngModel)]="valueFilter.isChecked" />
+                            <span>{{ valueFilter.value }}</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="apply-btn" (click)="applyFilters()">
+                <i class="bi bi-funnel"></i>
+                <span>Apply filters</span>
+            </button>
+        </aside>
+
+        <main class="product-grid-wrapper">
+            <div class="product-grid" *ngIf="!isLoading && filteredProducts && filteredProducts.length > 0">
+                <app-product *ngFor="let p of pagedProducts" [product]="p"></app-product>
+            </div>
+
+            <nav class="pagination" *ngIf="!isLoading && totalPages > 1">
+                <button type="button" class="pagination__btn" [disabled]="currentPage === 1"
+                        (click)="goToPage(currentPage - 1)" aria-label="Previous page">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <button type="button" class="pagination__btn"
+                        *ngFor="let p of pageNumbers"
+                        [class.is-active]="p === currentPage"
+                        (click)="goToPage(p)">{{ p }}</button>
+                <button type="button" class="pagination__btn" [disabled]="currentPage === totalPages"
+                        (click)="goToPage(currentPage + 1)" aria-label="Next page">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            </nav>
+
+            <div class="empty-state" *ngIf="!isLoading && filteredProducts && filteredProducts.length === 0">
+                <i class="bi bi-search empty-state__icon"></i>
+                <h3 class="empty-state__title">No products found</h3>
+                <p class="empty-state__text">Try adjusting your filters to see more results.</p>
+            </div>
+
+            <div class="loading-state" *ngIf="isLoading">
+                <div class="loading-state__spinner"></div>
+                <p>Loading products…</p>
+            </div>
+        </main>
+    </div>
+</section>

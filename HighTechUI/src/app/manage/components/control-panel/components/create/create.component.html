@@ -1,0 +1,229 @@
+<div class="cp-create">
+    <div class="cp-segment" *ngIf="!isEdit">
+        <label class="cp-segment__option" [class.is-active]="selectedOption === 0">
+            <input type="radio" name="createOption" [value]="0" [(ngModel)]="selectedOption"/>
+            <span class="cp-segment__dot"></span>
+            <span>Product</span>
+        </label>
+        <label class="cp-segment__option" [class.is-active]="selectedOption === 1">
+            <input type="radio" name="createOption" [value]="1" [(ngModel)]="selectedOption"/>
+            <span class="cp-segment__dot"></span>
+            <span>Field</span>
+        </label>
+        <label class="cp-segment__option" [class.is-active]="selectedOption === 2">
+            <input type="radio" name="createOption" [value]="2" [(ngModel)]="selectedOption"/>
+            <span class="cp-segment__dot"></span>
+            <span>Category</span>
+        </label>
+        <label class="cp-segment__option" [class.is-active]="selectedOption === 3">
+            <input type="radio" name="createOption" [value]="3" [(ngModel)]="selectedOption"/>
+            <span class="cp-segment__dot"></span>
+            <span>Employee</span>
+        </label>
+    </div>
+
+    <section class="cp-summary">
+        <div class="cp-summary__icon">
+            <i class="bi" [ngClass]="{
+                'bi-box': selectedOption === 0,
+                'bi-list-ul': selectedOption === 1,
+                'bi-collection': selectedOption === 2,
+                'bi-person-badge': selectedOption === 3
+            }"></i>
+        </div>
+        <div class="cp-summary__title">
+            <h3>{{ isEdit ? 'Edit' : 'Create' }} {{ getSelectedOptionName() }}</h3>
+            <p>{{ getSelectedOptionDescription() }}</p>
+        </div>
+    </section>
+
+    <div class="cp-form-panel">
+        <form #f="ngForm" ngNativeValidate (ngSubmit)="save(f)">
+        <ng-container *ngIf="selectedOption == 0">
+            <div class="cp-form-grid">
+                <label class="cp-field">
+                    <span>Manufacturer</span>
+                    <input class="cp-input" name="manufacturer" type="text" [(ngModel)]="product.manufacturer" required>
+                </label>
+                <label class="cp-field">
+                    <span>Model</span>
+                    <input class="cp-input" name="model" type="text" [(ngModel)]="product.model" required>
+                </label>
+                <label class="cp-field">
+                    <span>Warranty (months)</span>
+                    <input class="cp-input" name="warranty" type="number" min="0" step="1" [(ngModel)]="product.warranty" required>
+                </label>
+                <label class="cp-field">
+                    <span>Price</span>
+                    <input class="cp-input" name="price" type="number" min="0" step="0.01" [(ngModel)]="product.price" required>
+                </label>
+                <input name="discount" type="hidden" [(ngModel)]="product.discount">
+                <label class="cp-field">
+                    <span>Quantity</span>
+                    <input class="cp-input" name="quantity" type="number" min="0" step="1" [(ngModel)]="product.quantity" required>
+                </label>
+                <label class="cp-field cp-field--wide">
+                    <span>Image</span>
+                    <div class="cp-image-picker">
+                        <img *ngIf="imagePreviewUrl" [src]="imagePreviewUrl" alt="Product image" class="cp-image-preview">
+                        <div class="cp-image-placeholder" *ngIf="!imagePreviewUrl">
+                            <i class="bi bi-image"></i>
+                            <span>No image selected</span>
+                        </div>
+
+                        <input #imageInput class="cp-file-hidden" type="file" accept="image/*" (change)="onImageSelected($event)">
+
+                        <div class="cp-image-actions">
+                            <button type="button" class="cp-upload-btn" (click)="triggerImagePicker()">
+                                <i class="bi bi-upload"></i>
+                                <span>{{ imagePreviewUrl ? 'Change photo' : 'Upload photo' }}</span>
+                            </button>
+                            <button type="button" class="cp-clear-btn" (click)="clearImage()" [disabled]="!selectedImageFile">
+                                <i class="bi bi-x-lg"></i>
+                                <span>Clear</span>
+                            </button>
+                        </div>
+
+                        <small class="cp-hint" *ngIf="selectedImageFile">Selected: {{ selectedImageFile.name }}</small>
+                        <small class="cp-hint" *ngIf="!selectedImageFile && isEdit && product.image">Current image will be kept.</small>
+                    </div>
+                </label>
+                <label class="cp-field cp-field--wide">
+                    <span>Category name</span>
+                    <select class="cp-input" name="categoryName" [(ngModel)]="product.categoryName" (change)="changeFields()" required>
+                        <option *ngFor="let category of categories" [ngValue]="category.name">{{ category.name }}</option>
+                    </select>
+                </label>
+                <label class="cp-field" *ngFor="let field of product.fields">
+                    <span>{{ field.name }}</span>
+                    <input class="cp-input" [name]="field.name" [type]="getFieldType(field)"
+                           [min]="getFieldMin(field)" [step]="getFieldStep(field)"
+                           [(ngModel)]="field.value" required>
+                </label>
+            </div>
+            <div class="cp-alert" *ngIf="shouldWarnDiscountReset">
+                Changing the price will clear the current discount after you save.
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="selectedOption == 1">
+            <div class="cp-form-grid">
+                <label class="cp-field">
+                    <span>Field name</span>
+                    <input class="cp-input" name="fieldName" type="text" [(ngModel)]="field.name" required>
+                </label>
+                <label class="cp-field">
+                    <span>Type</span>
+                    <select class="cp-input" name="typeCode" [(ngModel)]="field.typeCode" required>
+                        <option *ngFor="let typeCode of typeCodes" [ngValue]="typeCode.value">{{ typeCode.label }}</option>
+                    </select>
+                </label>
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="selectedOption == 2">
+            <div class="cp-form-grid">
+                <label class="cp-field cp-field--wide">
+                    <span>Category name</span>
+                    <input class="cp-input" name="categoryName" type="text" [(ngModel)]="category.name" required>
+                </label>
+            </div>
+
+            <div class="cp-list">
+                <div class="cp-list__header">
+                    <span>Fields</span>
+                    <button type="button" class="cp-icon-btn cp-icon-btn--primary" (click)="addField()" title="Add field">
+                        <i class="bi bi-plus-lg"></i>
+                    </button>
+                </div>
+                <div class="cp-list__row" *ngFor="let c of category.fields; let i = index">
+                    <select class="cp-input" [name]="'Field' + i" [(ngModel)]="category.fields[i].name" required>
+                        <option *ngFor="let field of fields" [value]="field.name">{{ field.name }}</option>
+                    </select>
+                    <button type="button" class="cp-icon-btn cp-icon-btn--delete" (click)="removeField(i)" title="Remove field">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="selectedOption == 3">
+            <div class="cp-form-grid">
+                <label class="cp-field">
+                    <span>First name</span>
+                    <input class="cp-input" name="employeeFirstName" type="text" [(ngModel)]="employee.firstName">
+                </label>
+                <label class="cp-field">
+                    <span>Last name</span>
+                    <input class="cp-input" name="employeeLastName" type="text" [(ngModel)]="employee.lastName">
+                </label>
+                <label class="cp-field">
+                    <span>Job title</span>
+                    <input class="cp-input" name="employeeJobTitle" type="text" [(ngModel)]="employee.jobTitle">
+                </label>
+                <label class="cp-field">
+                    <span>Email</span>
+                    <input class="cp-input" name="employeeEmail" type="email" [(ngModel)]="employee.email">
+                </label>
+                <label class="cp-field cp-field--wide">
+                    <span>Username</span>
+                    <input class="cp-input" name="employeeUsername" type="text" [(ngModel)]="employee.username">
+                </label>
+            </div>
+        </ng-container>
+
+        <div class="cp-form-actions">
+            <button type="submit" class="cp-save-btn">
+                <i class="bi bi-check-lg"></i>
+                <span>Save</span>
+            </button>
+        </div>
+        </form>
+    </div>
+
+    <ng-container *ngIf="isCategoryEditDialogOpen">
+    <div class="modal-backdrop show"></div>
+    <div class="modal d-block" tabindex="-1" (click)="closeCategoryEditDialog()">
+        <div class="modal-dialog modal-dialog-centered" (click)="$event.stopPropagation()">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Update category fields</h5>
+                <button type="button" class="btn-close" aria-label="Close"
+                        (click)="closeCategoryEditDialog()" [disabled]="categoryEditSaving"></button>
+            </div>
+
+            <div class="modal-body">
+                <p *ngIf="categoryEditPreviewLoading" class="text-muted mb-0">Checking impact...</p>
+
+                <ng-container *ngIf="!categoryEditPreviewLoading && categoryEditPreview">
+                    <p class="text-muted">
+                        This will permanently clear spec values from
+                        <strong>{{ categoryEditPreview.totalAffectedProducts }}</strong>
+                        product(s). The products themselves remain.
+                    </p>
+
+                    <ul class="mb-0" *ngIf="categoryEditPreview.affectedFields?.length">
+                        <li *ngFor="let f of categoryEditPreview.affectedFields">
+                            <strong>{{ f.fieldName }}</strong> - values on {{ f.productCount }} product(s)
+                            <span class="d-block text-muted small" *ngIf="f.sampleProducts?.length">
+                                Examples: {{ f.sampleProducts.join(', ') }}
+                            </span>
+                        </li>
+                    </ul>
+                </ng-container>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" (click)="closeCategoryEditDialog()" [disabled]="categoryEditSaving">
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-primary" (click)="confirmCategoryEdit()"
+                        [disabled]="categoryEditSaving || categoryEditPreviewLoading">
+                    Save changes
+                </button>
+            </div>
+            </div>
+        </div>
+    </div>
+    </ng-container>
+</div>

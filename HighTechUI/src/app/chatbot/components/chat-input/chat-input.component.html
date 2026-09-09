@@ -1,0 +1,17 @@
+<form class="chat-input" (ngSubmit)="submit()">
+  <textarea
+    class="chat-input__textarea"
+    [(ngModel)]="draft"
+    name="draft"
+    rows="2"
+    placeholder="Ask about builds, parts, or tech..."
+    [disabled]="disabled"
+    (keydown)="onKeyDown($event)"></textarea>
+  <button
+    type="submit"
+    class="chat-input__send"
+    [disabled]="disabled || !draft.trim()"
+    aria-label="Send">
+    <i class="bi bi-send-fill"></i>
+  </button>
+</form>

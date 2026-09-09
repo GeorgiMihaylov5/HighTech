@@ -1,0 +1,100 @@
+<div class="configurator-page">
+  <div class="configurator-header">
+    <h2 class="configurator-title">PC Configurator</h2>
+    <p class="configurator-subtitle">Select the best components for your build</p>
+  </div>
+
+  <ng-container *ngIf="vm$ | async as vm">
+
+    <div class="loading-state" *ngIf="vm.categories.length === 0 && vm.isBusy">
+      Loading categories...
+    </div>
+
+    <div class="configurator-layout" *ngIf="vm.categories.length > 0">
+
+      <div class="configurator-slots">
+        <ng-container *ngFor="let category of vm.categories">
+          <div class="slot-card" [class.slot-expanded]="expandedCategory === category.name">
+
+            <div class="slot-header">
+              <div class="slot-icon-wrap">
+                <i class="bi {{ getCategoryIcon(category.name) }}"></i>
+              </div>
+
+              <div class="slot-meta">
+                <span class="slot-label">{{ category.name }}</span>
+                <span class="slot-subtitle">{{ getCategorySubtitle(category.name) }}</span>
+              </div>
+
+              <div class="slot-middle">
+                <ng-container *ngIf="vm.selection[category.name] as productId; else emptySlot">
+                  <ng-container *ngIf="getResolvedItem(vm.validation, productId) as resolved">
+                    <img class="slot-product-img"
+                      *ngIf="resolved.product?.image"
+                      [src]="resolved.product.image"
+                      [alt]="resolved.product?.model">
+                    <div class="slot-product-info">
+                      <span class="slot-product-name">{{ resolved.product?.manufacturer }} {{ resolved.product?.model }}</span>
+                      <span class="slot-product-specs">{{ getSpecsString(resolved) }}</span>
+                    </div>
+                  </ng-container>
+                </ng-container>
+                <ng-template #emptySlot>
+                  <span class="slot-not-selected">Not selected</span>
+                </ng-template>
+              </div>
+
+              <div class="slot-actions">
+                <i class="bi bi-check-circle-fill slot-check"
+                  *ngIf="vm.selection[category.name] && !hasCompatibilityIssue(vm.validation, category.name)"></i>
+                <i class="bi bi-exclamation-triangle-fill slot-warning"
+                  *ngIf="vm.selection[category.name] && hasCompatibilityIssue(vm.validation, category.name)"></i>
+                <button
+                  class="btn-slot"
+                  [class.btn-change]="vm.selection[category.name]"
+                  (click)="toggleCategory(category.name)">
+                  <i class="bi bi-plus" *ngIf="!vm.selection[category.name]"></i>
+                  {{ vm.selection[category.name] ? 'Change' : 'Select' }}
+                </button>
+                <button
+                  class="btn-remove-slot"
+                  type="button"
+                  *ngIf="vm.selection[category.name]"
+                  (click)="removePart(category.name)"
+                  [attr.aria-label]="'Remove selected ' + category.name">
+                  <i class="bi bi-trash3"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="part-picker-panel" *ngIf="expandedCategory === category.name">
+              <app-part-picker
+                [categoryName]="category.name"
+                [currentSelectionId]="vm.selection[category.name]"
+                [validation]="vm.validation"
+                (partSelected)="onPartSelected(category.name, $event)">
+              </app-part-picker>
+            </div>
+
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="build-summary-panel">
+        <app-build-summary
+          [categories]="vm.categories"
+          [selection]="vm.selection"
+          [validation]="vm.validation"
+          [isBusy]="addingToBasket || vm.isBusy"
+          [addResult]="addResult"
+          (addToBasket)="addToBasket()"
+          (clearAll)="clearAll()"
+          (selectCategory)="toggleCategory($event)"
+          (fixWithAi)="fixWithAi($event)">
+        </app-build-summary>
+      </div>
+
+    </div>
+
+  </ng-container>
+</div>

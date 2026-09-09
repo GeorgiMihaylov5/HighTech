@@ -1,0 +1,90 @@
+
+<section class="register-page">
+  <form class="register-card" (ngSubmit)="register(f)" #f="ngForm" ngNativeValidate>
+    <div class="register-card__icon">
+      <i class="bi bi-person-plus"></i>
+    </div>
+
+    <div class="register-card__header">
+      <h1>Create account</h1>
+      <p>Join HighTech and start building your setup</p>
+    </div>
+
+    <div class="register-grid">
+      <label class="field field--half">
+        <span class="field__label">First name</span>
+        <span class="field__control">
+          <i class="bi bi-person"></i>
+          <input class="form-control" placeholder="Enter your first name" name="firstName" ngModel />
+        </span>
+      </label>
+
+      <label class="field field--half">
+        <span class="field__label">Last name</span>
+        <span class="field__control">
+          <i class="bi bi-person"></i>
+          <input class="form-control" placeholder="Enter your last name" name="lastName" ngModel />
+        </span>
+      </label>
+
+      <label class="field">
+        <span class="field__label">Email</span>
+        <span class="field__control">
+          <i class="bi bi-envelope"></i>
+          <input class="form-control" placeholder="Enter your email" type="email" name="email" ngModel required />
+        </span>
+      </label>
+
+      <label class="field">
+        <span class="field__label">Username</span>
+        <span class="field__control">
+          <i class="bi bi-person-circle"></i>
+          <input class="form-control" placeholder="Choose a username" name="username" ngModel required />
+        </span>
+      </label>
+
+      <label class="field">
+        <span class="field__label">Phone number</span>
+        <span class="field__control">
+          <i class="bi bi-telephone"></i>
+          <input class="form-control" placeholder="Enter your phone number" name="phoneNumber" ngModel />
+        </span>
+      </label>
+
+      <label class="field">
+        <span class="field__label">Address</span>
+        <span class="field__control">
+          <i class="bi bi-geo-alt"></i>
+          <input class="form-control" placeholder="Enter your address" name="address" ngModel />
+        </span>
+      </label>
+
+      <label class="field">
+        <span class="field__label">Password</span>
+        <span class="field__control">
+          <i class="bi bi-lock"></i>
+          <input class="form-control" placeholder="Create a password" type="password" name="password" ngModel required minlength="3" />
+        </span>
+      </label>
+
+      <label class="field">
+        <span class="field__label">Confirm password</span>
+        <span class="field__control">
+          <i class="bi bi-key"></i>
+          <input class="form-control" placeholder="Repeat your password" type="password" name="confirmPassword" ngModel required minlength="3" />
+        </span>
+      </label>
+    </div>
+
+    <button type="submit" class="register-card__submit">Register</button>
+
+    <div class="register-card__divider">
+      <span>OR</span>
+    </div>
+
+    <p class="register-card__footer">
+      Already have an account?
+      <a [routerLink]='["/authentication/login"]'>Login here</a>
+    </p>
+  </form>
+</section>

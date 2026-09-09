@@ -1,0 +1,187 @@
+<div class="orders">
+    <header class="orders__header">
+        <h1 class="orders__title">{{ isStaffView ? 'Orders' : 'My Orders' }}</h1>
+        <p class="orders__subtitle">{{ isStaffView ? 'Review and manage incoming orders.' : 'View and track your orders.' }}</p>
+    </header>
+
+    <div *ngIf="orders?.length === 0" class="orders__empty">
+        <i class="bi bi-bag empty-icon"></i>
+        <h3>No orders yet</h3>
+        <p>Once you place an order, it will appear here.</p>
+    </div>
+
+    <div *ngIf="orders?.length > 0" class="orders__list">
+        <article *ngFor="let order of orders"
+                 class="order-card"
+                 [class.is-expanded]="isOrderExpanded(order.id)">
+            <div class="order-card__row">
+                <div class="order-card__icon" [ngClass]="statusToClass(order.status)">
+                    <i class="bi bi-bag"></i>
+                </div>
+
+                <div class="order-card__primary">
+                    <h4 class="order-card__id">Order #{{ getOrderShortId(order) }}</h4>
+                    <p class="order-card__date">{{ getOrderDate(order) }}</p>
+                    <div class="order-card__thumbs">
+                        <div class="order-thumb" *ngFor="let op of getThumbnailProducts(order)">
+                            <img *ngIf="op.product?.image" [src]="op.product.image" [alt]="op.product?.model || 'Product'"/>
+                            <span class="order-thumb__placeholder" *ngIf="!op.product?.image">
+                                <i class="bi bi-box"></i>
+                            </span>
+                        </div>
+                        <span class="order-thumb order-thumb--count" *ngIf="getRemainingThumbnailCount(order) > 0">
+                            +{{ getRemainingThumbnailCount(order) }}
+                        </span>
+                    </div>
+                    <p class="order-card__summary">
+                        {{ getOrderItemCount(order) }} {{ getOrderItemCount(order) === 1 ? 'item' : 'items' }}
+                        <span class="dot">·</span>
+                        {{ getTotalPrice(order) | number:'1.0-0' }} EUR
+                    </p>
+                </div>
+
+                <div class="order-card__status">
+                    <span class="order-card__field-label">Status</span>
+                    <ng-container *ngIf="isStaffView; else statusReadOnly">
+                        <select class="status-select" [(ngModel)]="order.status" (change)="changeStatus(order)" (click)="$event.stopPropagation()">
+                            <option *ngFor="let s of getStatuses()" [ngValue]="s.key">{{ s.value }}</option>
+                        </select>
+                    </ng-container>
+                    <ng-template #statusReadOnly>
+                        <span class="status-pill" [ngClass]="statusToClass(order.status)">
+                            <span class="status-pill__dot"></span>
+                            {{ statusToString(order.status) }}
+                        </span>
+                    </ng-template>
+                </div>
+
+                <div class="order-card__total">
+                    <span class="order-card__field-label">Total</span>
+                    <span class="order-card__amount">{{ getTotalPrice(order) | number:'1.0-0' }} EUR</span>
+                    <button type="button"
+                            class="view-details-btn"
+                            *ngIf="!isOrderExpanded(order.id)"
+                            (click)="toggleOrderProducts(order.id)">
+                        View Details
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
+
+                <button type="button"
+                        class="order-card__chevron"
+                        (click)="toggleOrderProducts(order.id)"
+                        [attr.aria-expanded]="isOrderExpanded(order.id)"
+                        title="Toggle details">
+                    <i class="bi" [ngClass]="isOrderExpanded(order.id) ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                </button>
+            </div>
+
+            <div class="order-card__body" *ngIf="isOrderExpanded(order.id)">
+                <section class="order-delivery">
+                    <h5 class="order-card__body-title">Delivery Details</h5>
+                    <div class="order-delivery__grid">
+                        <div>
+                            <span>City</span>
+                            <strong>{{ order.city || 'Not provided' }}</strong>
+                        </div>
+                        <div>
+                            <span>Postal Code</span>
+                            <strong>{{ order.postalCode || 'Not provided' }}</strong>
+                        </div>
+                        <div>
+                            <span>Phone</span>
+                            <strong>{{ order.phoneNumber || 'Not provided' }}</strong>
+                        </div>
+                        <div>
+                            <span>Payment</span>
+                            <strong>{{ getPaymentMethod(order) }}</strong>
+                        </div>
+                        <div class="order-delivery__address">
+                            <span>Delivery Address</span>
+                            <strong>{{ order.deliveryAddress || 'Not provided' }}</strong>
+                        </div>
+                    </div>
+                </section>
+
+                <h5 class="order-card__body-title">Order Items</h5>
+                <ng-container *ngIf="getGroupedOrderItems(order) as grouped">
+
+                    <!-- PC Build groups -->
+                    <div *ngFor="let build of grouped.builds" class="order-build-card">
+                        <div class="order-build-card__header">
+                            <i class="bi bi-pc-display-horizontal"></i>
+                            <strong>PC Build</strong>
+                            <span class="order-build-card__meta">{{ getBuildItemCount(build.items) }} items &mdash; {{ build.total | number:'1.2-2' }} EUR</span>
+                        </div>
+                        <ul class="order-items">
+                            <li class="order-item" *ngFor="let op of build.items">
+                                <div class="order-item__media">
+                                    <img *ngIf="op.product?.image" [src]="op.product.image" [alt]="op.product?.model || 'Product'"/>
+                                    <span class="order-item__placeholder" *ngIf="!op.product?.image">
+                                        <i class="bi bi-box"></i>
+                                    </span>
+                                </div>
+                                <div class="order-item__info">
+                                    <strong class="order-item__name">
+                                        {{ op.product?.manufacturer || 'Unknown' }} {{ op.product?.model || '' }}
+                                    </strong>
+                                    <span class="order-item__sku">{{ getOrderSku(op) }}</span>
+                                    <button type="button" class="order-item__link" (click)="viewProduct(op.productId, $event)" [disabled]="!op.productId">View product</button>
+                                </div>
+                                <div class="order-item__numbers">
+                                    <span>Quantity: <strong>{{ op.count }}</strong></span>
+                                    <span>Unit price: <strong>{{ op.orderedPrice | number:'1.2-2' }} EUR</strong></span>
+                                    <span class="order-item__total">Total: <strong>{{ getLineTotal(op) | number:'1.2-2' }} EUR</strong></span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Regular products -->
+                    <ul class="order-items" *ngIf="grouped.regularProducts.length > 0">
+                        <li class="order-item" *ngFor="let op of grouped.regularProducts">
+                            <div class="order-item__media">
+                                <img *ngIf="op.product?.image" [src]="op.product.image" [alt]="op.product?.model || 'Product'"/>
+                                <span class="order-item__placeholder" *ngIf="!op.product?.image">
+                                    <i class="bi bi-box"></i>
+                                </span>
+                            </div>
+                            <div class="order-item__info">
+                                <strong class="order-item__name">
+                                    {{ op.product?.manufacturer || 'Unknown' }} {{ op.product?.model || '' }}
+                                </strong>
+                                <span class="order-item__sku">{{ getOrderSku(op) }}</span>
+                                <button type="button"
+                                        class="order-item__link"
+                                        (click)="viewProduct(op.productId, $event)"
+                                        [disabled]="!op.productId">
+                                    View product
+                                </button>
+                            </div>
+                            <div class="order-item__numbers">
+                                <span>Quantity: <strong>{{ op.count }}</strong></span>
+                                <span>Unit price: <strong>{{ op.orderedPrice | number:'1.2-2' }} EUR</strong></span>
+                                <span class="order-item__total">Total: <strong>{{ getLineTotal(op) | number:'1.2-2' }} EUR</strong></span>
+                            </div>
+                        </li>
+                    </ul>
+                </ng-container>
+
+                <div class="order-summary">
+                    <div class="order-summary__row">
+                        <span>Subtotal</span>
+                        <span>{{ getTotalPrice(order) | number:'1.2-2' }} EUR</span>
+                    </div>
+                    <div class="order-summary__row">
+                        <span>Shipping</span>
+                        <span>{{ getShipping(order) | number:'1.2-2' }} EUR</span>
+                    </div>
+                    <div class="order-summary__row order-summary__row--total">
+                        <span>Total</span>
+                        <span>{{ getTotalPrice(order) + getShipping(order) | number:'1.2-2' }} EUR</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+</div>

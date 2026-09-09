@@ -1,0 +1,87 @@
+<div class="part-picker" *ngIf="(parts$ | async) as parts">
+
+  <div class="compat-bar"
+    *ngIf="compatMessage"
+    [class.compat-success]="compatMessage.type === 'success'"
+    [class.compat-warning]="compatMessage.type === 'warning'">
+    <div class="compat-bar-left">
+      <i class="bi"
+        [class.bi-check-circle-fill]="compatMessage.type === 'success'"
+        [class.bi-exclamation-triangle-fill]="compatMessage.type === 'warning'"></i>
+      <span>{{ compatMessage.text }}</span>
+    </div>
+    <label class="incompat-toggle">
+      <input type="checkbox" [checked]="showIncompatible" (change)="toggleIncompatible()">
+      <span>Show incompatible</span>
+    </label>
+  </div>
+
+  <div class="picker-toolbar" *ngIf="!compatMessage">
+    <label class="incompat-toggle">
+      <input type="checkbox" [checked]="showIncompatible" (change)="toggleIncompatible()">
+      <span>Show incompatible</span>
+    </label>
+  </div>
+
+  <div class="search-wrap">
+    <i class="bi bi-search search-icon"></i>
+    <input
+      class="search-box"
+      type="text"
+      [placeholder]="'Search ' + categoryName.toLowerCase() + '...'"
+      [(ngModel)]="searchQuery">
+  </div>
+
+  <div class="carousel-wrap">
+    <button class="carousel-arrow arrow-left" (click)="scrollLeft()" aria-label="Scroll left">
+      <i class="bi bi-chevron-left"></i>
+    </button>
+
+    <div class="cards-container" #cardsContainer>
+      <div
+        *ngFor="let part of getFilteredParts(parts)"
+        class="part-card"
+        [class.selected]="part.id === currentSelectionId"
+        [class.incompatible]="!part.isCompatible"
+        (click)="selectPart(part.id)">
+
+        <div class="card-selected-badge" *ngIf="part.id === currentSelectionId">
+          <i class="bi bi-check"></i>
+        </div>
+
+        <div class="card-img-wrap">
+          <img *ngIf="part.image" [src]="part.image" [alt]="part.model">
+          <div class="card-no-img" *ngIf="!part.image">
+            <i class="bi bi-image"></i>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="card-name">{{ part.manufacturer }} {{ part.model }}</div>
+          <div class="card-price">{{ part.price | currency:'EUR' }}</div>
+          <div class="card-stock" [class.out-of-stock]="part.quantity === 0">
+            {{ part.quantity > 0 ? 'In stock: ' + part.quantity : 'Out of stock' }}
+          </div>
+        </div>
+
+        <div class="card-compat-badge"
+          [class.badge-compatible]="part.isCompatible"
+          [class.badge-incompatible]="!part.isCompatible">
+          <i class="bi"
+            [class.bi-check-circle]="part.isCompatible"
+            [class.bi-exclamation-triangle]="!part.isCompatible"></i>
+          {{ part.isCompatible ? 'Compatible' : 'Incompatible' }}
+        </div>
+      </div>
+
+      <div class="no-parts" *ngIf="getFilteredParts(parts).length === 0">
+        No parts found.
+      </div>
+    </div>
+
+    <button class="carousel-arrow arrow-right" (click)="scrollRight()" aria-label="Scroll right">
+      <i class="bi bi-chevron-right"></i>
+    </button>
+  </div>
+
+</div>

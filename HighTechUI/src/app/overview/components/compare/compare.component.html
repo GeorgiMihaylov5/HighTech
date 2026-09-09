@@ -1,0 +1,70 @@
+<main class="compare-page">
+    <header class="compare-header">
+        <div>
+            <h1>Compare Products</h1>
+            <p>{{ products.length }} selected {{ products.length === 1 ? 'product' : 'products' }}</p>
+        </div>
+        <button *ngIf="products.length > 0"
+                type="button"
+                class="compare-clear-btn"
+                (click)="clearComparison()">
+            Clear comparison
+        </button>
+    </header>
+
+    <section *ngIf="isLoading" class="compare-state">
+        <div class="compare-state__icon"><i class="bi bi-arrow-repeat"></i></div>
+        <h4>Loading comparison...</h4>
+    </section>
+
+    <section *ngIf="!isLoading && products.length === 0" class="compare-state">
+        <div class="compare-state__icon"><i class="bi bi-bar-chart"></i></div>
+        <h4>No products selected for comparison.</h4>
+        <a class="compare-primary-btn" [routerLink]="['/products']">Browse products</a>
+    </section>
+
+    <section *ngIf="!isLoading && products.length > 0"
+             class="compare-content"
+             [style.--compare-columns]="products.length">
+        <div class="compare-warning" *ngIf="hasMixedCategories">
+            <i class="bi bi-exclamation-triangle"></i>
+            <span>Comparison works best with products from the same category.</span>
+        </div>
+
+        <div class="compare-warning" *ngIf="removedCount > 0">
+            <i class="bi bi-info-circle"></i>
+            <span>{{ removedCount }} unavailable {{ removedCount === 1 ? 'product was' : 'products were' }} removed from comparison.</span>
+        </div>
+
+        <div class="compare-table">
+            <div class="compare-row compare-row--products">
+                <div class="compare-cell compare-cell--label">Product</div>
+                <div class="compare-cell compare-cell--product" *ngFor="let product of products">
+                    <button type="button"
+                            class="compare-product__remove"
+                            (click)="removeProduct(product.id)"
+                            title="Remove from comparison">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                    <a class="compare-product__image" [routerLink]="['/detail', product.id]">
+                        <img *ngIf="product.image; else imageFallback"
+                             [src]="product.image"
+                             [alt]="getProductTitle(product)">
+                        <ng-template #imageFallback>
+                            <span class="compare-product__image-fallback">{{ getProductTitle(product) }}</span>
+                        </ng-template>
+                    </a>
+                    <a class="compare-product__title" [routerLink]="['/detail', product.id]">
+                        {{ getProductTitle(product) }}
+                    </a>
+                    <span class="compare-product__category">{{ product.categoryName || '-' }}</span>
+                </div>
+            </div>
+
+            <div class="compare-row" *ngFor="let row of comparisonRows">
+                <div class="compare-cell compare-cell--label">{{ row.label }}</div>
+                <div class="compare-cell" *ngFor="let value of row.values">{{ value }}</div>
+            </div>
+        </div>
+    </section>
+</main>

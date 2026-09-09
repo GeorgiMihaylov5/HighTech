@@ -1,0 +1,82 @@
+<div class="home-page">
+    <section class="hero">
+        <div class="hero__inner">
+            <div class="hero__copy">
+                <h1 class="hero__title">
+                    High performance components for gamers, creators and professionals.
+                </h1>
+                <div class="hero__actions">
+                    <a class="hero-btn hero-btn--primary"
+                       [routerLink]="['/products']"
+                       [state]="{ showPromotionsOnly: true }">
+                        <i class="bi bi-tag-fill"></i>
+                        <span>Promotions</span>
+                    </a>
+                    <a class="hero-btn hero-btn--ghost"
+                       [routerLink]="['/configurator']">
+                        <i class="bi bi-tools"></i>
+                        <span>PC Builder</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="home-section">
+        <h2 class="home-section__title">Shop by Category</h2>
+        <div class="category-grid">
+            <a class="category-tile"
+               *ngFor="let tile of categoryTiles"
+               [routerLink]="['/products']"
+               [queryParams]="{ category: tile.name }">
+                <span class="category-tile__icon">
+                    <i class="bi" [ngClass]="tile.icon"></i>
+                </span>
+                <span class="category-tile__text">
+                    <span class="category-tile__title">{{ tile.name }}</span>
+                    <span class="category-tile__subtitle">{{ tile.subtitle }}</span>
+                </span>
+            </a>
+            <a class="category-tile category-tile--more" [routerLink]="['/products']">
+                <span class="category-tile__icon">
+                    <i class="bi bi-grid"></i>
+                </span>
+                <span class="category-tile__text">
+                    <span class="category-tile__title">More Categories</span>
+                    <span class="category-tile__subtitle">View all</span>
+                </span>
+            </a>
+        </div>
+    </section>
+
+    <section class="home-section" *ngIf="products && products.length > 0">
+        <h2 class="home-section__title">Most Seller Products</h2>
+        <div class="seller-grid">
+            <article class="seller-card"
+                     *ngFor="let product of products"
+                     (click)="routeToDetail(product)">
+                <div class="seller-card__media">
+                    <img [src]="product.image" [alt]="product.manufacturer + ' ' + product.model" class="seller-card__image"/>
+                </div>
+                <div class="seller-card__body">
+                    <h5 class="seller-card__title">{{ product.manufacturer }} {{ product.model }}</h5>
+                    <div class="seller-card__rating">
+                        <span class="seller-card__stars">
+                            <span *ngFor="let isFilled of getRatingStars(product)" [class.is-empty]="!isFilled">★</span>
+                        </span>
+                        <span class="seller-card__rating-value">{{ product.averageRating || 0 | number:'1.1-2' }}</span>
+                        <span class="seller-card__rating-count">({{ product.reviewCount || 0 }})</span>
+                    </div>
+                    <div class="seller-card__price">
+                        <span class="seller-card__price-old" *ngIf="product.discount > 0">
+                            {{ product.discount + product.price | number:'1.2-2' }} €
+                        </span>
+                        <span class="seller-card__price-current">
+                            {{ product.price | number:'1.2-2' }} €
+                        </span>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+</div>

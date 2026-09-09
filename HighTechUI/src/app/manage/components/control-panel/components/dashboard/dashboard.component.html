@@ -1,0 +1,168 @@
+<div class="dashboard" *ngIf="!isLoading && dashboard as d">
+    <section class="dashboard__kpis">
+        <article class="kpi-card">
+            <span class="kpi-card__icon"><i class="bi bi-currency-euro"></i></span>
+            <span class="kpi-card__label">Revenue</span>
+            <strong>{{ d.totalRevenue | number:'1.2-2' }} EUR</strong>
+        </article>
+        <article class="kpi-card">
+            <span class="kpi-card__icon"><i class="bi bi-bag-check"></i></span>
+            <span class="kpi-card__label">Orders</span>
+            <strong>{{ d.totalOrders }}</strong>
+        </article>
+        <article class="kpi-card">
+            <span class="kpi-card__icon is-warning"><i class="bi bi-hourglass-split"></i></span>
+            <span class="kpi-card__label">Pending</span>
+            <strong>{{ d.pendingOrders }}</strong>
+        </article>
+        <article class="kpi-card">
+            <span class="kpi-card__icon is-danger"><i class="bi bi-exclamation-triangle"></i></span>
+            <span class="kpi-card__label">Low stock</span>
+            <strong>{{ d.lowStockProducts }}</strong>
+        </article>
+        <article class="kpi-card">
+            <span class="kpi-card__icon"><i class="bi bi-people"></i></span>
+            <span class="kpi-card__label">Clients</span>
+            <strong>{{ d.clientsCount }}</strong>
+        </article>
+        <article class="kpi-card">
+            <span class="kpi-card__icon"><i class="bi bi-person-badge"></i></span>
+            <span class="kpi-card__label">Employees</span>
+            <strong>{{ d.employeesCount }}</strong>
+        </article>
+    </section>
+
+    <section class="dashboard__grid">
+        <article class="dashboard-panel dashboard-panel--wide">
+            <header class="dashboard-panel__header">
+                <h3>Recent sales</h3>
+                <span>Last 14 days</span>
+            </header>
+            <div class="sales-chart">
+                <div class="sales-chart__bar" *ngFor="let point of d.recentSales">
+                    <span class="sales-chart__value">{{ point.revenue | number:'1.0-0' }}</span>
+                    <div class="sales-chart__track">
+                        <span [style.height.%]="getSalesHeight(point)"></span>
+                    </div>
+                    <small>{{ point.date | date:'MM/dd' }}</small>
+                </div>
+            </div>
+        </article>
+
+        <article class="dashboard-panel">
+            <header class="dashboard-panel__header">
+                <h3>Order status</h3>
+                <span>{{ d.totalOrders }} total</span>
+            </header>
+            <ul class="status-list">
+                <li *ngFor="let item of d.ordersByStatus">
+                    <span class="status-pill" [ngClass]="statusToClass(item.statusName)">{{ item.statusName }}</span>
+                    <strong>{{ item.count }}</strong>
+                </li>
+            </ul>
+        </article>
+
+        <article class="dashboard-panel">
+            <header class="dashboard-panel__header">
+                <h3>Store signals</h3>
+                <span>Reviews and favorites</span>
+            </header>
+            <div class="signal-grid">
+                <div>
+                    <span>Products</span>
+                    <strong>{{ d.totalProducts }}</strong>
+                </div>
+                <div>
+                    <span>Reviews</span>
+                    <strong>{{ d.reviewsCount }}</strong>
+                </div>
+                <div>
+                    <span>Favorites</span>
+                    <strong>{{ d.favoritesCount }}</strong>
+                </div>
+                <div>
+                    <span>Low stock</span>
+                    <strong>{{ d.lowStockProducts }}</strong>
+                </div>
+            </div>
+        </article>
+
+        <article class="dashboard-panel dashboard-panel--wide">
+            <header class="dashboard-panel__header">
+                <h3>Recent orders</h3>
+                <span>Newest activity</span>
+            </header>
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Customer</th>
+                        <th class="dashboard-table__status">Status</th>
+                        <th>Date</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let order of d.recentOrders">
+                        <td>{{ getShortId(order.id) }}</td>
+                        <td>
+                            <strong>{{ order.customerName || 'Unknown' }}</strong>
+                            <span>{{ order.customerEmail }}</span>
+                        </td>
+                        <td class="dashboard-table__status">
+                            <span class="status-pill" [ngClass]="statusToClass(order.statusName)">{{ order.statusName }}</span>
+                        </td>
+                        <td>{{ getOrderDate(order) }}</td>
+                        <td>{{ order.total | number:'1.2-2' }} EUR</td>
+                    </tr>
+                </tbody>
+            </table>
+        </article>
+
+        <article class="dashboard-panel">
+            <header class="dashboard-panel__header">
+                <h3>Best sellers</h3>
+                <span>By quantity</span>
+            </header>
+            <ul class="product-list">
+                <li *ngFor="let product of d.bestSellingProducts">
+                    <span>{{ product.manufacturer }} {{ product.model }}</span>
+                    <strong>{{ product.quantitySold }} sold</strong>
+                    <small>{{ product.revenue | number:'1.2-2' }} EUR</small>
+                </li>
+            </ul>
+        </article>
+
+        <article class="dashboard-panel">
+            <header class="dashboard-panel__header">
+                <h3>Top rated</h3>
+                <span>Customer feedback</span>
+            </header>
+            <ul class="product-list">
+                <li *ngFor="let product of d.topRatedProducts">
+                    <span>{{ product.manufacturer }} {{ product.model }}</span>
+                    <strong>{{ product.averageRating | number:'1.1-2' }} / 5</strong>
+                    <small>{{ product.reviewCount }} reviews</small>
+                </li>
+            </ul>
+        </article>
+
+        <article class="dashboard-panel dashboard-panel--wide">
+            <header class="dashboard-panel__header">
+                <h3>Low stock</h3>
+                <span>Needs attention</span>
+            </header>
+            <ul class="stock-list">
+                <li *ngFor="let product of d.lowStockItems">
+                    <span>{{ product.manufacturer }} {{ product.model }}</span>
+                    <strong>{{ product.quantity }} left</strong>
+                </li>
+            </ul>
+        </article>
+    </section>
+</div>
+
+<div class="dashboard-empty" *ngIf="isLoading">
+    <i class="bi bi-speedometer2"></i>
+    <span>Loading dashboard...</span>
+</div>

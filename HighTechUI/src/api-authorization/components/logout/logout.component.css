@@ -1,0 +1,162 @@
+:host {
+  display: block;
+  margin-top: -1px;
+}
+
+.logout-page {
+  --logout-primary: #2563ff;
+  --logout-ink: #111827;
+  --logout-muted: #5f6f86;
+  --logout-border: #dce3ee;
+  min-height: calc(100vh - 73px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+}
+
+.logout-card {
+  width: min(100%, 560px);
+  padding: 3rem 2.5rem 2.5rem;
+  border: 1px solid rgba(216, 224, 238, 0.95);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+  text-align: center;
+}
+
+.logout-card__icon {
+  width: 86px;
+  height: 86px;
+  margin: 0 auto 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #dcf8df;
+  border: 1px solid #bcebc4;
+  color: #43bd5c;
+  font-size: 3rem;
+  box-shadow: 0 12px 30px rgba(67, 189, 92, 0.16);
+}
+
+.logout-card h1 {
+  margin: 0;
+  color: var(--logout-ink);
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+.logout-card__accent {
+  width: 70px;
+  height: 4px;
+  margin: 1.5rem auto;
+  border-radius: 999px;
+  background: var(--logout-primary);
+}
+
+.logout-card__copy {
+  margin: 0;
+  color: var(--logout-muted);
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+
+.logout-card__message {
+  margin: 1rem 0 0;
+  color: #7b8798;
+  font-size: 0.98rem;
+}
+
+.logout-card__actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.logout-card__button {
+  min-width: 210px;
+  min-height: 54px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.logout-card__button i {
+  font-size: 1.15rem;
+}
+
+.logout-card__button--primary {
+  background: linear-gradient(180deg, #316bff 0%, #1456f8 100%);
+  color: #fff;
+  box-shadow: 0 12px 22px rgba(37, 99, 255, 0.24);
+}
+
+.logout-card__button--primary:hover {
+  color: #fff;
+  background: #1456f8;
+}
+
+.logout-card__button--secondary {
+  border: 1px solid var(--logout-border);
+  background: #fff;
+  color: #1f2937;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.06);
+}
+
+.logout-card__button--secondary:hover {
+  color: var(--logout-primary);
+  border-color: rgba(37, 99, 255, 0.35);
+}
+
+@media (max-width: 767px) {
+  .logout-page {
+    align-items: flex-start;
+    min-height: calc(100vh - 65px);
+    padding: 2rem 0 2.5rem;
+  }
+
+  .logout-card__icon {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 1.25rem;
+    font-size: 2.4rem;
+  }
+
+  .logout-card {
+    padding: 2rem 1rem 1.5rem;
+  }
+
+  .logout-card h1 {
+    font-size: 2rem;
+  }
+
+  .logout-card__accent {
+    margin: 1.4rem auto;
+  }
+
+  .logout-card__copy {
+    font-size: 1.05rem;
+  }
+
+  .logout-card__actions {
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .logout-card__button {
+    width: 100%;
+    min-width: 0;
+    min-height: 56px;
+    font-size: 1rem;
+  }
+}

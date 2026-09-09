@@ -1,0 +1,191 @@
+import { Injectable, OnInit } from "@angular/core";
+import { Observable, combineLatest, map, of, switchMap, tap } from "rxjs";
+import { IToken } from "src/api-authorization/models/token.model";
+import { AuthorizeService } from "src/api-authorization/services/authorize-facade.service";
+import { ClientService } from "./client.service";
+import { EmployeeService } from "./employee.service";
+import { IEmployee } from "src/app/manage/models/employee.model";
+import { Client } from "src/app/manage/models/client.model";
+import { IChangePassword } from "../models/change-password.model";
+import { CategoryService } from "src/app/services/category.service";
+import { FieldService } from "./field.service";
+import { Category } from "src/app/models/category.model";
+import { Field } from "src/app/models/field.model";
+import { Product } from "src/app/models/product.model";
+import { ProductService } from "src/app/services/product.service";
+import { CreateOptions } from "src/app/manage/models/options.model";
+import { NavigationExtras, Router } from "@angular/router";
+import { CategoryRemovalPreview } from "src/app/models/category-removal-preview.model";
+import { AdminDashboard } from "../models/admin-dashboard.model";
+
+@Injectable()
+export class ManageServiceFacade {
+    //public token: Observable<IToken>;
+
+    constructor(private authService: AuthorizeService,
+        private clientApi: ClientService,
+        private employeeApi: EmployeeService,
+        private categoryApi: CategoryService,
+        private fieldApi: FieldService,
+        private productApi: ProductService,
+        private router: Router) {
+        
+    }
+
+    public get token(): Observable<IToken> {
+        return this.authService.getTokenData();
+    }
+
+    public checkUserRole(): Observable<boolean> {
+        return this.authService.getTokenData().pipe(
+            switchMap((token: IToken) => {
+                return this.employeeApi.checkUserRole(token).pipe(
+                    tap((isValid: boolean) => {
+                        if(!isValid) {
+                            const route = '/authentication/logout';
+                            const state = { local: true };
+                            const navigationExtras: NavigationExtras = {
+                              state: { ...state },
+                            };
+                        
+                            this.router.navigate([route], navigationExtras);
+                        }
+                    })
+                );
+            }));
+    }
+
+    public getProfileData(): Observable<Client | IEmployee> {
+        return this.token.pipe(
+            switchMap((tokenData: IToken) => {
+                if (tokenData.role.includes('Employee') || tokenData.role.includes('Administrator')) {
+                    return this.employeeApi.getEmployee(tokenData.nameid).pipe(
+                        map((emp: IEmployee) => {
+                            return emp;
+                        })
+                    );
+                }
+                else {
+                    return this.clientApi.getClient(tokenData.nameid).pipe(
+                        map((client): Client => {
+                            return client;
+                        })
+                    );
+                }
+            })
+        );
+    }
+
+    public editProfile(value: Client | IEmployee): Observable<Client | IEmployee> {
+        if ('jobTitle' in value) {
+            return this.employeeApi.editEmployee(value).pipe(
+                map((emp: IEmployee) => {
+                    return emp;
+                })
+            )
+        }
+        else {
+            return this.clientApi.editClient(value).pipe(
+                map((client: Client) => {
+                    return client;
+                })
+            )
+        }
+    }
+
+    public changePassword(changeModel: IChangePassword): Observable<void> {
+        return this.token.pipe(
+            switchMap((tokenData: IToken) => {
+                if (changeModel.username == null) {
+                    changeModel.username = tokenData.nameid;
+                }
+
+                return this.clientApi.changePassword(changeModel);
+            })
+        );
+    }
+
+    public getData(): Observable<[Category[], Field[], Product[]]> {
+        return combineLatest([
+            this.categoryApi.getCategories(),
+            this.fieldApi.getFields(),
+            this.productApi.getProducts()
+        ]);
+    }
+
+    public getCategoryAndFieldData(): Observable<[Category[], Field[]]> {
+        return combineLatest([
+            this.categoryApi.getCategories(),
+            this.fieldApi.getFields()
+        ]);
+    }
+
+    public delete(id: string, selectedOption: CreateOptions): Observable<boolean> {
+        if(selectedOption === CreateOptions.Field) {
+            return this.fieldApi.deleteField(id);
+        }
+        else if(selectedOption === CreateOptions.Category) {
+            return this.categoryApi.deleteCategory(id);
+        }
+        else if(selectedOption === CreateOptions.Product) {
+            return this.productApi.deleteProduct(id);
+        }
+
+        return of(false);
+    }
+
+    public createObj(arr: [Field, Category, Product, IEmployee ], selectedOption: CreateOptions): Observable<Field | Category | Product | IEmployee> {
+        if(selectedOption === CreateOptions.Field) {
+            return this.fieldApi.createField(arr[0]);
+        }
+        else if(selectedOption === CreateOptions.Category) {
+            return this.categoryApi.createCategory(arr[1]);
+        }
+        else if(selectedOption === CreateOptions.Product) {
+            return this.productApi.createProduct(arr[2]);
+        }
+        else if(selectedOption === CreateOptions.Employee) {
+            return this.employeeApi.createEmployee(arr[3]);
+        }
+
+        return of(null);
+    }
+
+    public editObj(arr: [Field, Category, Product ], selectedOption: CreateOptions): Observable<Field | Category | Product> {
+        if(selectedOption === CreateOptions.Field) {
+            return this.fieldApi.editField(arr[0]);
+        }
+        else if(selectedOption === CreateOptions.Category) {
+            return this.categoryApi.editCategory(arr[1]);
+        }
+        else if(selectedOption === CreateOptions.Product) {
+            return this.productApi.editProduct(arr[2]);
+        }
+
+        return of(null);
+    }
+
+    public uploadProductImage(file: File): Observable<string> {
+        return this.productApi.uploadImage(file);
+    }
+
+    public previewCategoryFieldRemoval(id: string, fieldIds: string[]): Observable<CategoryRemovalPreview> {
+        return this.categoryApi.previewFieldRemoval(id, fieldIds);
+    }
+
+    public getDashboard(): Observable<AdminDashboard> {
+        return this.employeeApi.getDashboard();
+    }
+
+    public previewCategoryRemoval(id: string): Observable<CategoryRemovalPreview> {
+        return this.categoryApi.previewCategoryRemoval(id);
+    }
+
+    public setDiscount(product: Product, percentage: number): Observable<Product> {
+        return this.productApi.increaseDiscount(product.id, percentage);
+    }
+
+    public removeDiscount(product: Product): Observable<Product> {
+        return this.productApi.removeDiscount(product.id);
+    }
+}

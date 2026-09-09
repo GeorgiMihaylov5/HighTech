@@ -1,0 +1,64 @@
+<div class="chat-fab" *ngIf="(isAuthenticated | async) && !(isOpen$ | async)">
+  <div class="chat-fab__label" *ngIf="showFabLabel">
+    <span>If you have questions, ask HighTech AI Assistant</span>
+    <button type="button" class="chat-fab__dismiss" (click)="dismissFabLabel()" title="Dismiss">
+      <i class="bi bi-x"></i>
+    </button>
+  </div>
+  <button type="button" class="chat-fab__btn" (click)="onToggle()">
+    <i class="bi bi-chat-dots"></i>
+  </button>
+</div>
+
+<aside
+  class="chat-panel"
+  *ngIf="isAuthenticated | async"
+  [class.is-open]="isOpen$ | async">
+  <header class="chat-panel__header">
+    <div class="chat-panel__title">
+      <i class="bi bi-robot"></i>
+      <span>HighTech Assistant</span>
+      <span class="chat-panel__ai-badge">AI</span>
+    </div>
+    <div class="chat-panel__header-actions">
+      <button
+        type="button"
+        class="chat-panel__icon-btn"
+        title="New chat"
+        (click)="onNewChat()">
+        <i class="bi bi-arrow-counterclockwise"></i>
+      </button>
+      <button
+        type="button"
+        class="chat-panel__icon-btn"
+        title="Close"
+        (click)="onClose()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="chat-panel__body" #scrollArea>
+    <ng-container *ngIf="(turns$ | async) as turns">
+      <div *ngIf="turns.length === 0" class="chat-panel__empty">
+        <p>Hi! Ask me about PC parts, builds, or tech in general.</p>
+        <p class="chat-panel__hint">Try: <em>"Build me a PC for 1500 EUR"</em> on the PC Configurator page.</p>
+      </div>
+
+      <app-chat-message
+        *ngFor="let turn of turns; trackBy: trackTurn"
+        [turn]="turn"
+        (apply)="onApply($event)">
+      </app-chat-message>
+
+      <div *ngIf="isBusy$ | async" class="chat-panel__typing">
+        <span></span><span></span><span></span>
+      </div>
+    </ng-container>
+  </div>
+
+  <app-chat-input
+    [disabled]="(isBusy$ | async) ?? false"
+    (send)="onSend($event)">
+  </app-chat-input>
+</aside>

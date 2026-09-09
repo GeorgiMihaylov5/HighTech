@@ -1,0 +1,280 @@
+.configurator-page {
+  max-width: 1280px;
+  margin: 24px auto;
+  padding: 0 24px;
+}
+
+.configurator-header {
+  margin-bottom: 24px;
+}
+
+.configurator-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: #111;
+}
+
+.configurator-subtitle {
+  font-size: 0.9rem;
+  color: #888;
+  margin: 0;
+}
+
+.configurator-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.configurator-slots {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.build-summary-panel {
+  width: 360px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 80px;
+}
+
+.slot-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.15s;
+}
+
+.slot-card.slot-expanded {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border-color: #d1d5db;
+}
+
+.slot-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+}
+
+.slot-icon-wrap {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  background: #f3f4f6;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: #374151;
+}
+
+.slot-meta {
+  display: flex;
+  flex-direction: column;
+  width: 160px;
+  flex-shrink: 0;
+}
+
+.slot-label {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #111;
+}
+
+.slot-subtitle {
+  font-size: 0.78rem;
+  color: #9ca3af;
+  margin-top: 1px;
+}
+
+.slot-middle {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+.slot-not-selected {
+  font-size: 0.88rem;
+  color: #2563eb;
+  font-weight: 500;
+}
+
+.slot-product-img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: 6px;
+  background: #f9fafb;
+  flex-shrink: 0;
+}
+
+.slot-product-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.slot-product-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #111;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slot-product-specs {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60vw;
+}
+
+.slot-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.slot-check {
+  color: #16a34a;
+  font-size: 1.2rem;
+}
+
+.slot-warning {
+  color: #d97706;
+  font-size: 1.2rem;
+}
+
+.btn-slot {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 16px;
+  background: #fff;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #374151;
+  white-space: nowrap;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.btn-slot:hover {
+  border-color: #9ca3af;
+  background: #f9fafb;
+}
+
+.btn-remove-slot {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 1.5px solid #fecaca;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #dc2626;
+  font-size: 0.85rem;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+
+.btn-remove-slot:hover {
+  background: #fef2f2;
+  border-color: #f87171;
+  color: #b91c1c;
+}
+
+.part-picker-panel {
+  border-top: 1px solid #e5e7eb;
+  padding: 16px 18px;
+}
+
+.loading-state {
+  text-align: center;
+  padding: 60px;
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 900px) {
+  .configurator-layout {
+    flex-direction: column;
+  }
+
+  .build-summary-panel {
+    width: 100%;
+    position: static;
+  }
+
+  .slot-meta {
+    width: auto;
+  }
+}
+
+/* Tablet / phone: let the slot header wrap instead of overflowing */
+@media (max-width: 768px) {
+  .configurator-page {
+    margin: 16px auto;
+    padding: 0 14px;
+  }
+
+  .slot-header {
+    flex-wrap: wrap;
+    gap: 10px 12px;
+    padding: 12px 14px;
+  }
+
+  .slot-meta {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .slot-actions {
+    margin-left: auto;
+  }
+
+  /* Selected product / "Not selected" drops to its own line below the title */
+  .slot-middle {
+    order: 3;
+    flex-basis: 100%;
+    padding-left: 58px;
+  }
+
+  .part-picker-panel {
+    padding: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .slot-icon-wrap {
+    width: 38px;
+    height: 38px;
+    font-size: 1.1rem;
+  }
+
+  .slot-middle {
+    padding-left: 0;
+  }
+
+  .btn-slot {
+    padding: 7px 14px;
+  }
+}

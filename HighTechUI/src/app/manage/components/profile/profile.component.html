@@ -1,0 +1,76 @@
+<div class="profile">
+    <header class="profile__header">
+        <h1 class="profile__title">Profile</h1>
+        <p class="profile__subtitle">Manage your personal information and account details.</p>
+    </header>
+
+    <hr class="profile__divider"/>
+
+    <form (submit)="editProfile(f)" #f="ngForm" ngNativeValidate class="profile__form">
+        <input class="d-none" name="id" [(ngModel)]="value.id" hidden/>
+
+        <div class="profile__grid">
+            <div class="profile-field">
+                <label class="profile-field__label" for="profileUsername">Username</label>
+                <input id="profileUsername"
+                       class="profile-field__input is-disabled"
+                       name="username"
+                       [(ngModel)]="value.username"
+                       [readOnly]="true"/>
+            </div>
+            <div class="profile-field">
+                <label class="profile-field__label" for="profileEmail">Email</label>
+                <input id="profileEmail"
+                       class="profile-field__input is-disabled"
+                       name="email"
+                       [(ngModel)]="value.email"
+                       [readOnly]="true"/>
+            </div>
+
+            <div class="profile-field">
+                <label class="profile-field__label" for="profileFirstName">First Name</label>
+                <input id="profileFirstName"
+                       class="profile-field__input"
+                       name="firstName"
+                       [(ngModel)]="value.firstName"/>
+            </div>
+            <div class="profile-field">
+                <label class="profile-field__label" for="profileLastName">Last Name</label>
+                <input id="profileLastName"
+                       class="profile-field__input"
+                       name="lastName"
+                       [(ngModel)]="value.lastName"/>
+            </div>
+
+            <div class="profile-field">
+                <label class="profile-field__label" for="profilePhone">Phone Number</label>
+                <input id="profilePhone"
+                       class="profile-field__input"
+                       name="phoneNumber"
+                       placeholder="Enter your phone number"
+                       [(ngModel)]="value.phoneNumber"/>
+            </div>
+            <div class="profile-field" *ngIf="isClient(value)">
+                <label class="profile-field__label" for="profileAddress">Address</label>
+                <input id="profileAddress"
+                       class="profile-field__input"
+                       name="address"
+                       placeholder="Enter your address"
+                       [(ngModel)]="value.address"/>
+            </div>
+            <div class="profile-field" *ngIf="isEmployee(value)">
+                <label class="profile-field__label" for="profileJobTitle">Job Title</label>
+                <input id="profileJobTitle"
+                       class="profile-field__input is-disabled"
+                       name="jobTitle"
+                       [(ngModel)]="value.jobTitle"
+                       [readOnly]="true"/>
+            </div>
+        </div>
+
+        <div class="profile__actions">
+            <button type="submit" class="profile-btn profile-btn--primary">Save Changes</button>
+            <button type="button" class="profile-btn profile-btn--ghost" (click)="f.resetForm(originalValue)">Cancel</button>
+        </div>
+    </form>
+</div>

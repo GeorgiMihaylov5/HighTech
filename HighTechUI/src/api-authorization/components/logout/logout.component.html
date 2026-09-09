@@ -1,0 +1,33 @@
+<section class="logout-page">
+  <div class="logout-card">
+    <div class="logout-card__icon">
+      <i class="bi bi-check-lg"></i>
+    </div>
+
+    <h1>You're logged out</h1>
+    <div class="logout-card__accent"></div>
+
+    <p class="logout-card__copy">
+      Thanks for visiting HighTech.<br />
+      We'll be here when you're ready to build your next setup.
+    </p>
+
+    <p class="logout-card__message" *ngIf="message | async as logoutMessage">
+      {{ logoutMessage }}
+    </p>
+
+    <div class="logout-card__actions">
+      <a class="logout-card__button logout-card__button--primary"
+         [routerLink]='["/authentication/login"]'>
+        <i class="bi bi-box-arrow-in-right"></i>
+        <span>Log in again</span>
+      </a>
+
+      <a class="logout-card__button logout-card__button--secondary"
+         [routerLink]='["/"]'>
+        <i class="bi bi-house-door"></i>
+        <span>Go to Home</span>
+      </a>
+    </div>
+  </div>
+</section>

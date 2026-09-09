@@ -1,0 +1,60 @@
+<main class="favorites-page container">
+    <header class="favorites-header card border rounded-4 p-4">
+        <div>
+            <h1>Favorites</h1>
+            <p>{{ favorites.length }} saved products</p>
+        </div>
+        <button *ngIf="favorites.length > 0" type="button" class="favorites-clear-btn btn btn-outline-danger rounded-3" (click)="clearFavorites()">
+            Clear favorites
+        </button>
+    </header>
+
+    <div *ngIf="isLoading" class="favorites-state card border rounded-4">
+        <h4>Loading favorites...</h4>
+    </div>
+
+    <div *ngIf="!isLoading && favorites.length === 0" class="empty-state card border rounded-4">
+        <i class="bi bi-heart"></i>
+        <h4>No favorite products yet.</h4>
+        <a class="favorites-primary-btn btn btn-primary rounded-3" [routerLink]="['/products']">Browse products</a>
+    </div>
+
+    <section *ngIf="!isLoading && favorites.length > 0" class="favorites-list card border rounded-4">
+        <article *ngFor="let favorite of favorites" class="favorite-row">
+            <a class="favorite-image" [routerLink]="['/detail', favorite.productId]">
+                <img *ngIf="favorite.product.image; else favoriteImageFallback"
+                    [src]="favorite.product.image"
+                    [alt]="favorite.product.manufacturer + ' ' + favorite.product.model">
+                <ng-template #favoriteImageFallback>
+                    <span class="favorite-image__placeholder"
+                        [attr.aria-label]="favorite.product.manufacturer + ' ' + favorite.product.model + ' image unavailable'">
+                        <i class="bi bi-image"></i>
+                    </span>
+                </ng-template>
+            </a>
+            <div class="favorite-info">
+                <a class="favorite-title" [routerLink]="['/detail', favorite.productId]">
+                    {{ favorite.product.manufacturer }} - {{ favorite.product.model }}
+                </a>
+                <div class="favorite-meta">
+                    <span>{{ favorite.product.categoryName }}</span>
+                    <span>Warranty: {{ favorite.product.warranty }} months</span>
+                    <span class="favorite-stock" *ngIf="favorite.product.quantity > 0">In Stock: {{ favorite.product.quantity }}</span>
+                    <span *ngIf="favorite.product.quantity === 0" class="favorite-unavailable">Not Available</span>
+                </div>
+            </div>
+            <strong class="favorite-price">{{ favorite.product.price | number:'1.2-2' }} &euro;</strong>
+            <div class="favorite-actions">
+                <button class="favorite-order-btn btn btn-primary rounded-3" type="button" (click)="addToBasket(favorite.product)"
+                    [disabled]="favorite.product.quantity <= 0">
+                    <i class="bi bi-cart-plus"></i>
+                    Order
+                </button>
+                <button class="favorite-remove-btn btn btn-outline-danger rounded-3" type="button" (click)="removeFromFavorites(favorite.productId)">
+                    <i class="bi bi-trash"></i>
+                    Remove
+                </button>
+            </div>
+        </article>
+    </section>
+</main>

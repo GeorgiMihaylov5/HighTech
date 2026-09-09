@@ -1,0 +1,50 @@
+<div class="control-panel">
+    <nav class="control-panel__tabs">
+        <div class="control-panel__tabs-left">
+            <a class="control-panel__tab"
+               *ngIf="showTab"
+               [class.is-active]="controlPanelTab === 5"
+               (click)="ChangeTab(5)"
+               [routerLink]="[{ outlets: { 'control-panel': ['dashboard'] } }]">
+                Dashboard
+            </a>
+            <a class="control-panel__tab"
+               [class.is-active]="controlPanelTab === 0"
+               (click)="ChangeTab(0)"
+               [routerLink]="[{ outlets: { 'control-panel': ['orders'] } }]">
+                Orders
+            </a>
+            <a class="control-panel__tab"
+               [class.is-active]="controlPanelTab === 1"
+               (click)="ChangeTab(1)"
+               [routerLink]="[{ outlets: { 'control-panel': ['clients'] } }]">
+                Clients
+            </a>
+            <a class="control-panel__tab"
+               *ngIf="showTab"
+               [class.is-active]="controlPanelTab === 2"
+               (click)="ChangeTab(2)"
+               [routerLink]="[{ outlets: { 'control-panel': ['employees'] } }]">
+                Employees
+            </a>
+            <a class="control-panel__tab"
+               *ngIf="showTab"
+               [class.is-active]="controlPanelTab === 3"
+               (click)="ChangeTab(3)"
+               [routerLink]="[{ outlets: { 'control-panel': ['table'] } }]">
+                All
+            </a>
+        </div>
+        <a class="control-panel__create"
+           *ngIf="showTab"
+           [class.is-active]="controlPanelTab === 4"
+           (click)="ChangeTab(4)"
+           [routerLink]="[{ outlets: { 'control-panel': ['create'] } }]">
+            Create
+        </a>
+    </nav>
+
+    <div class="control-panel__body">
+        <router-outlet name="control-panel"></router-outlet>
+    </div>
+</div>

@@ -1,0 +1,95 @@
+:host {
+    --border: #e5e7eb;
+    --border-soft: #f1f3f5;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --primary: #2f6bff;
+    --primary-soft: rgba(47, 107, 255, 0.08);
+    display: block;
+}
+
+.control-panel__tabs {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+}
+
+.control-panel__tabs-left {
+    display: inline-flex;
+    align-items: stretch;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+}
+
+.control-panel__tab,
+.control-panel__create {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.85rem 1.4rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.15s ease;
+    background: none;
+    border: none;
+}
+
+.control-panel__tab:hover,
+.control-panel__create:hover {
+    color: var(--text);
+}
+
+.control-panel__tab.is-active {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.control-panel__tab.is-active::after {
+    content: "";
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    bottom: -1px;
+    height: 2px;
+    background: var(--primary);
+    border-radius: 2px;
+}
+
+.control-panel__create {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.control-panel__create.is-active::after {
+    content: "";
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    bottom: -1px;
+    height: 2px;
+    background: var(--primary);
+    border-radius: 2px;
+}
+
+.control-panel__create:hover {
+    color: var(--primary);
+    text-decoration: underline;
+}
+
+.control-panel__body {
+    width: 100%;
+}
+
+@media (max-width: 575px) {
+    .control-panel__tab,
+    .control-panel__create {
+        padding: 0.7rem 0.85rem;
+        font-size: 0.9rem;
+    }
+}

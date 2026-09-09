@@ -396,4 +396,16 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-/HighTech/HighTech/ClientApp/.angular/cache/15.2.7
+
+# Angular build cache (all projects)
+**/.angular/
+
+# Visual Studio local service dependency overrides
+**/serviceDependencies.local.json
+
+# Uploaded product images (folder is recreated at runtime by ImageService)
+HighTechServer/wwwroot/uploads/products/
+
+# Ignore Angular instructions file
+.github/instructions/angular.instructions.md
+

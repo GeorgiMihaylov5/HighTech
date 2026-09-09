@@ -1,0 +1,142 @@
+<main *ngIf="product as currentProduct; else productState" class="product-detail">
+    <section class="detail-card product-hero">
+        <div class="product-media">
+            <div class="product-media__badge" *ngIf="currentProduct.discount > 0">
+                -{{ discountPercentage }}%
+            </div>
+            <img *ngIf="currentProduct.image; else imageFallback"
+                 [src]="currentProduct.image"
+                 [alt]="currentProduct.manufacturer + ' ' + currentProduct.model"/>
+            <ng-template #imageFallback>
+                <div class="product-media__fallback">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+            </ng-template>
+        </div>
+
+        <div class="product-info">
+            <div class="product-kicker">
+                <span>{{ currentProduct.categoryName }}</span>
+                <span class="product-stock" [ngClass]="stockStatusClass">{{ stockStatusText }}</span>
+            </div>
+
+            <h1>{{ currentProduct.manufacturer }} {{ currentProduct.model }}</h1>
+
+            <div class="rating-summary">
+                <span class="rating-stars" aria-label="Average rating">
+                    <span *ngFor="let isFilled of ratingStars" [class.star-empty]="!isFilled">&#9733;</span>
+                </span>
+                <span class="rating-value">{{ currentProduct.averageRating || 0 | number:'1.1-2' }}</span>
+                <span class="rating-count">{{ currentProduct.reviewCount || 0 }} reviews</span>
+            </div>
+
+            <div class="product-meta">
+                <div>
+                    <span class="product-meta__label">Warranty</span>
+                    <strong>{{ currentProduct.warranty }} months</strong>
+                </div>
+                <div>
+                    <span class="product-meta__label">Available</span>
+                    <strong>{{ currentProduct.quantity }}</strong>
+                </div>
+                <div>
+                    <span class="product-meta__label">Category</span>
+                    <strong>{{ currentProduct.categoryName }}</strong>
+                </div>
+            </div>
+
+            <div class="purchase-panel">
+                <div class="price-grid">
+                    <div>
+                        <span class="price-label">Single price</span>
+                        <p class="old-price" *ngIf="currentProduct.discount > 0">
+                            {{ originalSinglePrice | number:'1.2-2' }} &euro;
+                        </p>
+                        <p class="current-price" [class.has-discount]="currentProduct.discount > 0">
+                            {{ currentProduct.price | number:'1.2-2' }} &euro;
+                        </p>
+                    </div>
+                    <div>
+                        <span class="price-label">Total price</span>
+                        <p class="old-price" *ngIf="currentProduct.discount > 0">
+                            {{ originalTotalPrice | number:'1.2-2' }} &euro;
+                        </p>
+                        <p class="current-price" [class.has-discount]="currentProduct.discount > 0">
+                            {{ totalPrice | number:'1.2-2' }} &euro;
+                        </p>
+                    </div>
+                </div>
+
+                <div class="purchase-actions">
+                    <div class="quantity-control" [class.is-disabled]="currentProduct.quantity === 0">
+                        <button type="button" (click)="decreaseQuantity()" [disabled]="orderedCount <= 1 || currentProduct.quantity === 0">
+                            <i class="bi bi-dash"></i>
+                        </button>
+                        <input type="number"
+                               [min]="1"
+                               [max]="currentProduct.quantity"
+                               [(ngModel)]="orderedCount"
+                               (change)="normalizeOrderedCount()"
+                               [disabled]="currentProduct.quantity === 0"
+                               aria-label="Quantity"/>
+                        <button type="button" (click)="increaseQuantity()" [disabled]="orderedCount >= currentProduct.quantity || currentProduct.quantity === 0">
+                            <i class="bi bi-plus"></i>
+                        </button>
+                    </div>
+
+                    <button type="button" class="order-btn" (click)="makeOrder()" [disabled]="currentProduct.quantity === 0">
+                        <i class="bi bi-bag-plus"></i>
+                        <span>Add to shopping cart</span>
+                    </button>
+
+                    <button type="button"
+                            class="favorite-btn"
+                            [class.is-active]="isFavorite"
+                            (click)="toggleFavorite()"
+                            title="Toggle favorite">
+                        <i [ngClass]="isFavorite ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
+                    </button>
+
+                    <button type="button"
+                            class="compare-btn"
+                            [class.is-active]="isCompared"
+                            (click)="toggleCompare()"
+                            title="Toggle compare">
+                        <i [ngClass]="isCompared ? 'bi bi-bar-chart-fill' : 'bi bi-bar-chart'"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="detail-card details-section" *ngIf="visibleFields.length">
+        <div class="section-heading">
+            <h2>Technical details</h2>
+        </div>
+        <div class="spec-table">
+            <div class="spec-cell" *ngFor="let item of visibleFields">
+                <div class="spec-cell__icon"><i class="bi bi-cpu"></i></div>
+                <span>{{ item.name }}</span>
+                <strong>{{ item.value }}</strong>
+            </div>
+        </div>
+    </section>
+
+    <section class="detail-card reviews-card">
+        <app-product-reviews [product]="currentProduct" (productChange)="updateProduct($event)"></app-product-reviews>
+    </section>
+</main>
+
+<ng-template #productState>
+    <div class="product-state" *ngIf="isLoading; else productMissing">
+        <div class="product-state__icon"><i class="bi bi-arrow-repeat"></i></div>
+        <h4>Loading product...</h4>
+    </div>
+</ng-template>
+
+<ng-template #productMissing>
+    <div class="product-state">
+        <div class="product-state__icon"><i class="bi bi-exclamation-circle"></i></div>
+        <h4>Product not found.</h4>
+    </div>
+</ng-template>

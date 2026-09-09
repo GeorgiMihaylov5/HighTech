@@ -1,0 +1,39 @@
+<div class="manage-page">
+    <aside class="manage-sidebar">
+        <h6 class="manage-sidebar__label">My account</h6>
+        <nav class="manage-sidebar__nav">
+            <a class="manage-sidebar__item"
+               [class.is-active]="currentTab === 0"
+               (click)="ChangeTab(0)"
+               [routerLink]="['/manage']">
+                <i class="bi bi-person"></i>
+                <span>Profile</span>
+            </a>
+            <a class="manage-sidebar__item"
+               [class.is-active]="currentTab === 1"
+               (click)="ChangeTab(1)"
+               [routerLink]="['/manage', { outlets: { 'manage': ['orders'] } }]">
+                <i class="bi bi-bag"></i>
+                <span>Orders</span>
+            </a>
+            <a class="manage-sidebar__item"
+               [class.is-active]="currentTab === 2"
+               (click)="ChangeTab(2)"
+               [routerLink]="['/manage', { outlets: { 'manage': ['change-password'] } }]">
+                <i class="bi bi-lock"></i>
+                <span>Change Password</span>
+            </a>
+            <a class="manage-sidebar__item"
+               *ngIf="showControlPanel"
+               [class.is-active]="currentTab === 3"
+               (click)="ChangeTab(3)"
+               [routerLink]="['/manage', { outlets: { 'manage': ['control-panel'] } }]">
+                <i class="bi bi-gear"></i>
+                <span>Control Panel</span>
+            </a>
+        </nav>
+    </aside>
+    <section class="manage-content">
+        <router-outlet name="manage"></router-outlet>
+    </section>
+</div>

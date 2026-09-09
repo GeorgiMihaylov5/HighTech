@@ -1,0 +1,98 @@
+<div class="reviews-section text-left">
+    <h2 class="reviews-title">Reviews</h2>
+
+    <div class="reviews-summary-panel">
+        <div class="reviews-score">
+            <strong>{{ product.averageRating || 0 | number:'1.1-1' }}/5</strong>
+            <div class="rating-stars review-stars-large" aria-label="Average rating">
+                <span *ngFor="let isFilled of ratingStars" [class.star-empty]="!isFilled">★</span>
+            </div>
+            <span class="text-muted">{{ product.reviewCount || 0 }} reviews</span>
+        </div>
+
+        <div class="rating-breakdown">
+            <div class="rating-breakdown-row" *ngFor="let item of ratingBreakdown">
+                <span>{{ item.rating }}</span>
+                <span class="rating-stars rating-breakdown-star">★</span>
+                <div class="rating-breakdown-track">
+                    <div class="rating-breakdown-fill" [ngClass]="getRatingBarClass(item.rating)"
+                        [style.width.%]="item.percent"></div>
+                </div>
+                <span class="rating-breakdown-count">({{ item.count }})</span>
+            </div>
+        </div>
+
+        <div class="review-cta">
+            <h5>Have an opinion about this product?</h5>
+            <div class="review-action-buttons">
+                <button *ngIf="isAuthenticated" class="btn btn-primary btn-sm" type="button"
+                    (click)="openReviewDialog()">
+                    {{ currentUserReview ? 'Edit review' : 'Add review' }}
+                </button>
+                <button *ngIf="currentUserReview" class="btn btn-outline-danger btn-sm" type="button"
+                    (click)="removeReview()" [disabled]="isReviewRemoving">
+                    {{ isReviewRemoving ? 'Removing...' : 'Remove review' }}
+                </button>
+            </div>
+            <span *ngIf="!isAuthenticated" class="text-muted">Log in to add a review.</span>
+        </div>
+    </div>
+
+    <div *ngIf="hasReviews; else noReviews">
+        <div class="review-item" *ngFor="let review of reviews">
+            <div class="review-author">
+                <div class="review-avatar">{{ getReviewAuthor(review).charAt(0) }}</div>
+                <div>
+                    <strong>{{ getReviewAuthor(review) }}</strong>
+                    <small class="text-muted d-block">{{ review.updatedOn | date:'mediumDate' }}</small>
+                </div>
+            </div>
+            <div class="review-content">
+                <div class="rating-stars review-item-stars">
+                    <span *ngFor="let star of [1, 2, 3, 4, 5]" [class.star-empty]="star > review.rating">★</span>
+                </div>
+                <p class="review-comment">{{ review.comment || 'No comment provided.' }}</p>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #noReviews>
+        <p class="text-muted">No reviews yet.</p>
+    </ng-template>
+</div>
+
+<div *ngIf="isReviewDialogOpen" class="review-dialog-backdrop" (click)="closeReviewDialog()">
+    <div class="review-dialog" (click)="$event.stopPropagation()">
+        <div class="review-dialog-header">
+            <h5>{{ currentUserReview ? 'Edit your review' : 'Add your review' }}</h5>
+            <button type="button" class="btn-close" aria-label="Close" (click)="closeReviewDialog()"
+                [disabled]="isReviewSaving"></button>
+        </div>
+
+        <form (ngSubmit)="saveReview()">
+            <div class="form-group">
+                <label for="reviewRating">Rating</label>
+                <select id="reviewRating" class="form-control" name="reviewRating" [(ngModel)]="reviewRating">
+                    <option [ngValue]="1">1</option>
+                    <option [ngValue]="2">2</option>
+                    <option [ngValue]="3">3</option>
+                    <option [ngValue]="4">4</option>
+                    <option [ngValue]="5">5</option>
+                </select>
+            </div>
+            <div class="form-group mb-2">
+                <label for="reviewComment">Comment</label>
+                <textarea id="reviewComment" class="form-control" name="reviewComment" rows="4"
+                    [(ngModel)]="reviewComment"></textarea>
+            </div>
+            <div class="review-dialog-actions">
+                <button class="btn btn-outline-secondary" type="button" (click)="closeReviewDialog()">
+                    Cancel
+                </button>
+                <button class="btn btn-primary" type="submit" [disabled]="!canSaveReview">
+                    {{ isReviewSaving ? 'Saving...' : (currentUserReview ? 'Save changes' : 'Add review') }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

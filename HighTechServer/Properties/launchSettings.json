@@ -1,0 +1,18 @@
+﻿{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:37969",
+      "sslPort": 44382
+    }
+  },
+  "profiles": {
+    "HighTech": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "applicationUrl": "https://localhost:7140"
+      
+    }
+  }
+}

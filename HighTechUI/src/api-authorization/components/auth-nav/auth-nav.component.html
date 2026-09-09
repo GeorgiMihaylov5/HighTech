@@ -1,0 +1,31 @@
+<ng-container *ngIf="isAuthenticated | async; else guestNav">
+  <div class="profile-menu" [class.is-open]="isMenuOpen">
+    <button type="button" class="profile-pill" (click)="toggleMenu($event)">
+      <span class="profile-pill__avatar"><i class="bi bi-person"></i></span>
+      <span class="profile-pill__name">{{ name | async }}</span>
+      <i class="bi bi-chevron-down profile-pill__caret"></i>
+    </button>
+    <div class="profile-menu__panel" *ngIf="isMenuOpen">
+      <a class="profile-menu__item"
+         [routerLink]="['/manage']"
+         (click)="onNavigated()">
+        <i class="bi bi-person-gear"></i>
+        <span>Manage</span>
+      </a>
+      <a class="profile-menu__item"
+         [routerLink]="['/authentication/logout']"
+         [state]="{ local: true }"
+         (click)="onNavigated()">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Logout</span>
+      </a>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #guestNav>
+  <div class="guest-nav">
+    <a class="guest-nav__link" [routerLink]="['/authentication/login']" (click)="onNavigated()">Login</a>
+    <a class="guest-nav__link guest-nav__link--cta" [routerLink]="['/authentication/register']" (click)="onNavigated()">Register</a>
+  </div>
+</ng-template>

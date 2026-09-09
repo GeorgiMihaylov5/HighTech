@@ -1,0 +1,104 @@
+<header class="site-header">
+  <nav class="site-nav">
+    <div class="site-nav__inner">
+      <a class="brand" [routerLink]="['/']" (click)="closeAll()">
+        <span class="brand__logo"><i class="bi bi-cpu"></i></span>
+        <span class="brand__name">HighTech</span>
+      </a>
+
+      <button class="nav-toggle"
+              type="button"
+              [attr.aria-expanded]="isExpanded"
+              aria-label="Toggle navigation"
+              (click)="toggle()">
+        <i class="bi bi-list"></i>
+      </button>
+
+      <div class="site-nav__panel" [class.is-open]="isExpanded">
+        <ul class="primary-nav">
+          <li class="primary-nav__item">
+            <a class="primary-nav__link"
+               [routerLink]="['/']"
+               routerLinkActive="is-active"
+               [routerLinkActiveOptions]="{ exact: true }"
+               (click)="collapse()">
+              Home
+            </a>
+          </li>
+          <li class="primary-nav__item">
+            <a class="primary-nav__link"
+               [routerLink]="['/products']"
+               routerLinkActive="is-active"
+               (click)="collapse()">
+              Products
+            </a>
+          </li>
+          <li class="primary-nav__item primary-nav__item--dropdown"
+              [class.is-open]="isCategoriesOpen">
+            <button class="primary-nav__link primary-nav__link--button"
+                    type="button"
+                    (click)="toggleCategories($event)">
+              Categories
+              <i class="bi bi-chevron-down primary-nav__caret"></i>
+            </button>
+            <div class="dropdown-panel" *ngIf="isCategoriesOpen">
+              <a *ngFor="let category of categories"
+                 class="dropdown-panel__item"
+                 [routerLink]="['/products']"
+                 [queryParams]="{ category: category.name }"
+                 (click)="closeAll()">
+                {{ category.name }}
+              </a>
+              <span *ngIf="categories.length === 0" class="dropdown-panel__empty">
+                No categories yet
+              </span>
+            </div>
+          </li>
+          <li class="primary-nav__item primary-nav__item--cta">
+            <a class="pc-builder-btn" [routerLink]="['/configurator']" routerLinkActive="is-active" (click)="closeAll()">
+              <i class="bi bi-tools"></i>
+              <span>PC Builder</span>
+            </a>
+          </li>
+        </ul>
+
+        <div class="nav-actions">
+          <a class="nav-action"
+             [routerLink]="['/compare']"
+             title="Compare"
+             (click)="closeAll()">
+            <i class="bi bi-bar-chart"></i>
+            <span *ngIf="(comparisonCount$ | async) as comparisonCount"
+                  class="nav-action__badge nav-action__badge--compare"
+                  [class.is-hidden]="comparisonCount === 0">
+              {{ comparisonCount }}
+            </span>
+          </a>
+          <a class="nav-action"
+             [routerLink]="['/favorites']"
+             title="Favorites"
+             (click)="closeAll()">
+            <i class="bi bi-heart"></i>
+            <span *ngIf="(favoriteCount$ | async) as favoriteCount"
+                  class="nav-action__badge nav-action__badge--favorite"
+                  [class.is-hidden]="favoriteCount === 0">
+              {{ favoriteCount }}
+            </span>
+          </a>
+          <a class="nav-action"
+             [routerLink]="['/basket']"
+             title="Basket"
+             (click)="closeAll()">
+            <i class="bi bi-cart3"></i>
+            <span *ngIf="(itemCount$ | async) as itemCount"
+                  class="nav-action__badge"
+                  [class.is-hidden]="itemCount === 0">
+              {{ itemCount }}
+            </span>
+          </a>
+          <app-auth-nav (navigated)="closeAll()"></app-auth-nav>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>

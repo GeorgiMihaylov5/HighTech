@@ -1,0 +1,83 @@
+<div class="cp-employees">
+    <section class="cp-summary">
+        <div class="cp-summary__icon"><i class="bi bi-person-badge"></i></div>
+        <div class="cp-summary__title">
+            <h3>Employees</h3>
+            <p>Review staff accounts and manage administrator access</p>
+        </div>
+        <div class="cp-summary__stats">
+            <div class="cp-stat">
+                <span class="cp-stat__label">Total employees</span>
+                <span class="cp-stat__value">{{ employees?.length || 0 }}</span>
+            </div>
+            <div class="cp-stat">
+                <span class="cp-stat__label">Admins</span>
+                <span class="cp-stat__value cp-stat__value--success">{{ getAdminCount() }}</span>
+            </div>
+            <div class="cp-stat">
+                <span class="cp-stat__label">Staff</span>
+                <span class="cp-stat__value">{{ getStaffCount() }}</span>
+            </div>
+        </div>
+    </section>
+
+    <div class="cp-table-wrapper">
+        <table class="cp-data-table">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Full name</th>
+                    <th>Phone</th>
+                    <th>Job title</th>
+                    <th>Role</th>
+                    <th class="cp-data-table__actions-th"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let emp of employees">
+                    <td>{{ emp.username }}</td>
+                    <td>{{ emp.email }}</td>
+                    <td>{{ emp.firstName }} {{ emp.lastName }}</td>
+                    <td>
+                        <span *ngIf="emp.phoneNumber; else emptyValue">{{ emp.phoneNumber }}</span>
+                    </td>
+                    <td>
+                        <span *ngIf="emp.jobTitle; else emptyValue">{{ emp.jobTitle }}</span>
+                    </td>
+                    <td>
+                        <span class="cp-pill" [class.cp-pill--admin]="emp.isAdmin">
+                            {{ emp.isAdmin ? 'Administrator' : 'Employee' }}
+                        </span>
+                    </td>
+                    <td class="cp-data-table__actions">
+                        <button *ngIf="emp.isAdmin && emp.username !== currentUsername"
+                                type="button"
+                                class="cp-action-btn cp-action-btn--danger"
+                                (click)="demote(emp)">
+                            Demote
+                        </button>
+                        <span *ngIf="emp.isAdmin && emp.username === currentUsername"
+                              class="cp-data-table__empty">You</span>
+                        <button *ngIf="!emp.isAdmin"
+                                type="button"
+                                class="cp-action-btn cp-action-btn--success"
+                                (click)="promote(emp)">
+                            Promote
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <p class="cp-table__footer" *ngIf="employees?.length">
+        Showing 1 to {{ employees.length }} of {{ employees.length }} employees
+    </p>
+
+    <p class="cp-empty" *ngIf="employees && !employees.length">No employees found.</p>
+</div>
+
+<ng-template #emptyValue>
+    <span class="cp-data-table__empty">Not set</span>
+</ng-template>
